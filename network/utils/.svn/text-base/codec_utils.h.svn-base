@@ -1,0 +1,40 @@
+#ifndef _LED_AD_UTILS_CODEC_UTILS_H_
+#define _LED_AD_UTILS_CODEC_UTILS_H_
+#include "common.h"
+
+namespace utl
+{
+
+	
+
+
+class CodecUtils
+{
+public:
+	static String	int2String(unsigned int n);
+	static String	toMultiByte(char *strSM, int nLength);
+	static String	toUCS2(char *strSM, int nLength);
+	static String	toBCD(char *strNormal, int nLength);
+	static String	fromBCD(char *strBCD, int nLength);
+	static String 	int2HexString(BYTE n);
+	
+	
+	static String &	exchange(String &pSrc);
+	static int     	ahtoi(const char *pOrg);
+	static int 		ahtoi(char c1, char c2);
+	
+	static int 		ctoi(const char cOrg);
+	static String 	from7Bit(String s7BitData, UINT nCount);
+	static String   hex2Binary(String hexString);
+
+	static int 		txtLen(const char *pdu,int pdu_lem);
+	static int		decodeFromPDU(const char * pdu,char *txt, int pdu_len);
+
+	static int 		pduLen(int txtLen);
+	static int 		codecToPDU(char *pdu, const char *txt, int txtLen);
+
+	//TODO(A.A) complete the remained methods from OnlySM::common.h
+};
+}
+#endif
+

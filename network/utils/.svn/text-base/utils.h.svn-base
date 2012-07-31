@@ -1,0 +1,14 @@
+#ifndef _LED_AD_UTILS_UTILS_H_
+#define _LED_AD_UTILS_UTILS_H_
+#include "common.h"
+
+
+namespace utl
+{
+uint16_t		generateCheckSum(const char * content, uint32_t count);
+
+//format AB4EDB...
+uint64_t		generateLongIntFromString(const char * str, int len);
+uint64_t        generateLongIntFromString(const String& str);
+}
+#endif

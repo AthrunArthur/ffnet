@@ -1,0 +1,489 @@
+/*
+ * codec_utils.cpp
+ *
+ *  Created on: 2012-6-24
+ *      Author: Administrator
+ */
+
+#include "utils/codec_utils.h"
+
+#ifdef WIN32
+#include <winsock2.h>
+#endif // WIN32
+#include <cmath>
+#include <iostream>
+#include <sstream>
+#include <cassert>
+#include <stdlib.h>
+
+
+namespace utl {
+int _CFP_[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
+		'C', 'D', 'E', 'F' };
+/***
+ * description	:Integer to string
+ * return		:string that is conversed
+ */
+String CodecUtils::int2String(unsigned int n) {
+	std::stringstream ss;
+	ss << n;
+	return ss.str();
+}
+
+/**
+ * Description	:Unicode To MultiByte
+ * Parameters 	:char*	strSM --the Buffer address
+ *               int	nLength -- data length
+ * Return   	:MultiByte String
+ * Notice 		:this function must use in windows
+ */
+String CodecUtils::toMultiByte(char *strSM, int nLength) {
+#ifdef WIN32
+	UINT nLen = 0;
+	PBYTE lpszM;
+	PBYTE lpszW = new BYTE[nLength];
+	memcpy(lpszW, strSM, nLength);
+
+	for(int i = 0; i < nLength/2; i++)
+	*((unsigned short*)lpszW + i) = ntohs(*((unsigned short*)lpszW + i));
+
+	nLen = WideCharToMultiByte(936, WC_COMPOSITECHECK,
+			/*(const unsigned short*)*/(LPCWSTR)lpszW, nLength/2, NULL, 0, NULL, NULL);
+
+	lpszM = new BYTE[nLen+1];
+
+	nLen = WideCharToMultiByte(936, WC_COMPOSITECHECK,
+			/*(const unsigned short*)*/(LPCWSTR)lpszW, nLength/2, (char*)lpszM, nLen, NULL, NULL);
+
+	lpszM[nLen] = 0;
+	String csSM((char *)lpszM, nLen);
+	//CString csSM((LPCTSTR)lpszM, nLen);
+	delete lpszM;
+	delete lpszW;
+	return csSM;
+
+#else
+	assert(0);
+#endif
+}
+
+/***
+ * Description: Multibyte to USC32
+ * Parameters : char*	strSM -- the address of MultiByte buffer
+ *              int	nLength   -- data length
+ * Return     : UCS32 string
+ * Notice 	  : This function must use in windows
+ */
+String CodecUtils::toUCS2(char *strSM, int nLength) {
+#ifdef WIN32
+	String csSM(strSM, nLength);
+
+	PBYTE lpszW = NULL;
+	UINT nLen = 0;
+
+	nLen = MultiByteToWideChar(936, MB_PRECOMPOSED,
+			(LPCSTR)csSM.c_str(), csSM.length(), NULL, 0);
+
+	lpszW = new BYTE[nLen * 2];
+
+	nLen = MultiByteToWideChar(936, MB_PRECOMPOSED,
+			(LPCSTR)csSM.c_str(), csSM.length(), (LPWSTR)lpszW, nLen);
+
+	for(UINT i = 0; i < nLen; i ++)
+	*((unsigned short*)lpszW + i) = htons(*((unsigned short*)lpszW + i));
+
+	String csRet((char *)lpszW, nLen * 2);
+	delete lpszW;
+	return csRet;
+#else
+	assert(0);
+#endif
+}
+
+/***
+ * Description:
+ * Parameters : char* strNormal--Ҫת���Ķ��ֽڻ���
+ *              int	nLength -- ���ֽڻ���ĳ���?
+ * Return     : ת�����BCD�ִ�
+ */
+String CodecUtils::toBCD(char *strNormal, int nLength) {
+	std::stringstream ss;
+	ss << strNormal;
+	String sNormal = ss.str();
+	//ASSERT(nLength==sNormal.GetLength());
+	nLength = sNormal.length();
+
+	if (0 != nLength % 2) //����ַ������������ĩβ��'F';
+	{
+		sNormal += "F";
+	}
+	nLength = sNormal.length();
+
+	String sResult(sNormal);
+	for (int i = 0; i < nLength; i++) {
+		sResult[i] = '#';
+	}
+	for (int i = 0; i < nLength / 2; i++) {
+		sResult[2 * i] = sNormal[2 * i + 1];
+
+		sResult[2 * i + 1] = sNormal[2 * i];
+	}
+	return sResult;
+}
+/*********************************************************************
+ * Description: ��BCD��ת������ͨ���ַ�
+ * Parameters : char* strBCD--Ҫת��BCD��
+ *              int	nLength -- ���ֽڻ���ĳ���?
+ * Return     : ת�������ͨ�ִ�?
+ * *******************************************************************/
+String CodecUtils::fromBCD(char *strBCD, int nLength) {
+	std::stringstream ss;
+	ss << strBCD;
+
+	String sResult = ss.str();
+	//std::cout << "strBCD = " << strBCD << "   nLength = " << nLength << std::endl;
+
+	//sResult.Format("%s",strBCD);
+
+	for (int i = 0; i < nLength; i++) {
+		sResult[i] = '#';
+	}
+
+	//sResult.Format("%s",strBCD);
+
+
+	String sBCD = ss.str();
+	//sBCD.Format("%s",strBCD);
+
+	for (int i = 0; i < nLength / 2; i++) {
+		sResult[2 * i] = sBCD[2 * i + 1];
+
+		sResult[2 * i + 1] = sBCD[2 * i];
+
+	}
+	assert(0 == nLength % 2);
+	//ASSERT(0==nLength%2);
+
+	//std::cout << "sResult = " << sResult << std::endl;
+
+	return sResult;
+}
+/*****************************************************************************
+ * Description: �����͵����ת���?6���Ƶ�CString,��ݴ�С������?-255����
+ * Parameters : unsigned int n--Ҫת��������
+ * Return     : ת�������ͨ�ִ�?
+ ******************************************************************************/
+String CodecUtils::int2HexString(BYTE n) {
+	String sResult = "00";
+	sResult[1] = _CFP_[n % 16];
+	sResult[0] = _CFP_[n / 16];
+	return sResult;
+}
+
+
+String &CodecUtils::exchange(String &sOrg) {
+	assert(2 == sOrg.size());
+	String sTemp;
+
+	char d1 = sOrg[0];
+	char d2 = sOrg[1];
+	sTemp += d2;
+	sTemp += d1;
+
+	sOrg = sTemp;
+
+	return sOrg;
+}
+/***
+ * Description: ���?���ֽڳ���16����ACS2�ַ�ת��ΪINT
+ * Parameters : const char cOrg--Ҫת�����ַ�
+ * Return     : ת����������?
+ */
+int CodecUtils::ahtoi(const char *pOrg) {
+	int bResult = 0;
+	String sOrg(pOrg);
+
+	assert(2 == sOrg.length());
+
+	//�ȸ�λ
+	bResult = ctoi(sOrg[0]);
+
+	//����?
+	int dd = ctoi(sOrg[1]);
+	bResult = bResult * 16 + dd;
+
+	return bResult;
+}
+
+int CodecUtils::ahtoi(char c1, char c2)
+{
+	int bResult = ctoi(c1);
+	bResult += bResult * 16 + ctoi(c2);
+	return bResult;
+}
+
+/***
+ * Description: ���?6����ACS2�ַ�ת��ΪINT
+ * Parameters : const char cOrg--Ҫת�����ַ�
+ * Return     : ת����������?
+ */
+int CodecUtils::ctoi(const char cOrg) {
+	int bResult = 0;
+
+	//is Digit
+	if (0 != isdigit(cOrg)) {
+		bResult = cOrg - 48;
+		return bResult;
+	}
+
+	switch (cOrg) {
+	case 'a':
+	case 'A': {
+		bResult = 10;
+		break;
+	}
+	case 'b':
+	case 'B': {
+		bResult = 11;
+		break;
+	}
+	case 'c':
+	case 'C': {
+		bResult = 12;
+		break;
+	}
+	case 'd':
+	case 'D': {
+		bResult = 13;
+		break;
+	}
+	case 'e':
+	case 'E': {
+		bResult = 14;
+		break;
+	}
+	case 'f':
+	case 'F': {
+		bResult = 15;
+		break;
+	}
+
+	default: {
+		assert(false);
+		break;
+	}
+	}
+	return bResult;
+}
+
+/**
+ * Description: 	��7λ��PDU����ת�������ACS2�ַ�
+ * Parameters : 	s7BitData:7λ��PDU������ַ�?
+ nCount: acs2�ַ�ĸ���?
+ * Return     : 	����ʾ��ACS2�ַ�,����ʧ�ܷ��ؿ��ַ�
+ */
+String CodecUtils::from7Bit(String s7BitData, UINT nCount) {
+	String result;
+	//1.��֤��Ч��
+	UINT length = s7BitData.size();
+	if (length * 7 < nCount * 8) {
+		return result; //���Ϸ������ؿ��ַ�
+	}
+
+	//2.��16���Ƶ��ַ�ת���ɶ����Ƶ��ַ�
+	s7BitData = hex2Binary(s7BitData);
+
+	String singleByte; //8λ��2������
+	String spareLetter; //ÿ�ж�����ַ�?
+	int countLine = 0;
+
+	int total = s7BitData.size();
+
+	int letterValue;
+
+	char resolvedLetter; //�Ѿ����������ַ�
+	for (;;) {
+		singleByte = s7BitData.substr(countLine * 8, 8); //
+
+		total -= 8; //�ܵ��ַ�����-8
+
+		//CString newSingleByte=singleByte.Right(8-(countLine+1)%7);
+		String newSingleByte = singleByte.substr(
+				singleByte.size() - (8 - (countLine + 1) % 7),
+				8 - (countLine + 1) % 7);
+
+		newSingleByte += spareLetter; //����һ��ʣ����ַ�?
+
+		/*
+		 if((countLine+1)%8==0)
+		 {
+		 newSingleByte=newSingleByte.Right(7);
+		 spareLetter="1";
+		 }
+		 */
+
+		if (newSingleByte.size() == 14) {
+			letterValue = 0;
+
+			for (int i = 7; i < 14; i++) {
+				letterValue += ctoi(newSingleByte[i]) * (int) pow((double) 2,
+						14 - i) / 2;
+			}
+
+			resolvedLetter = letterValue;
+			result += resolvedLetter; //���ӽ�����?
+		}
+
+		letterValue = 0;
+
+		for (int i = 0; i < 7; i++) {
+			letterValue += ctoi(newSingleByte[i])
+					* (int) pow((double) 2, 7 - i) / 2;
+		}
+
+		resolvedLetter = letterValue;
+		result += resolvedLetter; //���ӽ�����?
+
+
+		//�õ�ÿ��ʣ����ַ���һ��ѭ��ʹ��?
+		//spareLetter=singleByte.Left((countLine+1)%7);
+		spareLetter = singleByte.substr(0, (countLine + 1) % 7);
+
+		if (total <= 8) {
+			String newSingleByte;
+			//newSingleByte=s7BitData.Right(total-nCount%8);
+			newSingleByte
+					= s7BitData.substr(s7BitData.size() - (total - nCount % 8),
+							total - nCount % 8);
+			newSingleByte += spareLetter;
+
+			if (newSingleByte.size() < 7) {
+				return result;
+			}
+
+			letterValue = 0;
+
+			for (int i = 0; i < 7; i++) {
+				letterValue += ctoi(newSingleByte[i]) * (int) pow((double) 2,
+						7 - i) / 2;
+			}
+
+			resolvedLetter = letterValue;
+			result += resolvedLetter; //���ӽ�����?
+
+			break; //����˽������˳�ѭ��?
+		}
+
+		//������һ��
+		countLine++;
+	}
+	return result;
+}
+String CodecUtils::hex2Binary(String hexString) {
+	String result; //����ַ�?
+	char cTemp;
+	int iHexValue;
+	String singleLetter;//һ���ַ�Ľ��
+	for (size_t i = 0; i < hexString.size(); i++) {
+		singleLetter = "";
+		cTemp = hexString[i];
+		iHexValue = ctoi(cTemp);
+
+		//�õ�����?
+		if (iHexValue >= 8) {
+			singleLetter = "1";
+			iHexValue -= 8;
+		} else {
+			singleLetter = "0";
+		}
+
+		if (iHexValue >= 4) {
+			singleLetter += "1";
+			iHexValue -= 4;
+		} else {
+			singleLetter += "0";
+		}
+
+		if (iHexValue >= 2) {
+			singleLetter += "1";
+			iHexValue -= 2;
+		} else {
+			singleLetter += "0";
+		}
+
+		if (iHexValue >= 1) {
+			singleLetter += "1";
+		} else {
+			singleLetter += "0";
+		}
+
+		result += singleLetter;
+	}//for for
+	return result;
+}
+
+int getHexCharValue(char ch) {
+	if (ch <= '9' && ch >= '0')
+		return ch - '0';
+	else if (ch <= 'F' && ch >= 'A')
+		return ch - 'A' + 10;
+	else if (ch <= 'f' && ch >= 'a')
+		return ch - 'a' + 10;
+	else {
+		return ch / 0; //Throw an exception here!
+	}
+}
+charchar codePDU(char c) {
+	dchar t;
+	t.c = c;
+	charchar cc;
+	cc.ch = _CFP_[t.d.h];
+	cc.cl = _CFP_[t.d.l];
+	return cc;
+}
+char decodeFromTwoChar(char ch, char cl) {
+	dchar t;
+	t.d.h = getHexCharValue(ch);
+	t.d.l = getHexCharValue(cl);
+	return t.c;
+}
+
+int CodecUtils::txtLen(const char *pdu, int pdu_len) {
+	int fill_len = getHexCharValue(pdu[0]);
+	return (pdu_len - fill_len - 1) / 2;
+}
+int CodecUtils::decodeFromPDU(const char * pdu, char *txt, int pdu_len) {
+	if (pdu == 0)
+		return 0;
+	int fill_len = getHexCharValue(pdu[0]);
+	int txt_len = (pdu_len - fill_len - 1) / 2;
+
+	for (int i = 1, j = 0; i < pdu_len - fill_len; i += 2, j++) {
+		txt[j] = decodeFromTwoChar(pdu[i], pdu[i + 1]);
+	}
+	return txt_len;
+}
+
+int CodecUtils::pduLen(int txtLen) {
+	return ((txtLen * 2 + 1) / 4 + 1) * 4;
+}
+int CodecUtils::codecToPDU(char *pdu, const char *txt, int txtLen) {
+	//cout << "codecToPDU : txt_len "<< txt_len << endl;
+	if (txt == 0)
+		return 0;
+	int pdu_len = ((txtLen * 2 + 1) / 4 + 1) * 4;
+	//cout << "codecToPDU : pdu_len = " << pdu_len << endl;
+	int fill_len = pdu_len - (txtLen * 2 + 1);
+	pdu[0] = _CFP_[fill_len];
+	for (int i = 1; i <= fill_len; ++i)
+		pdu[pdu_len - i] = '0';
+	for (int i = 0; i < txtLen; ++i) {
+		charchar cc = codePDU(txt[i]);
+		pdu[i * 2 + 1] = cc.ch;
+		pdu[i * 2 + 2] = cc.cl;
+	}
+	return pdu_len;
+}
+
+}
+
