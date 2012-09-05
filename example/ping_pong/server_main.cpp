@@ -1,7 +1,6 @@
 #include <iostream>
 #include <network.h>
-#include "common/app_global_meta.h"
-#include "common/message.h"
+#include "message.h"
 #include "log.h"
 
 void onRecvPing(ffnet::PackagePtr_t pPing, ffnet::EndpointPtr_t pEP)

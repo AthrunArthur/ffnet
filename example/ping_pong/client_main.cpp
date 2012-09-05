@@ -1,7 +1,6 @@
 #include <iostream>
 #include <network.h>
-#include "common/app_global_meta.h"
-#include "common/message.h"
+#include "message.h"
 #include "log.h"
 #include <boost/serialization/array.hpp>
 #include <boost/archive/binary_iarchive.hpp>
