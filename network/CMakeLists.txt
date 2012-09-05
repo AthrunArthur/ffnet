@@ -4,8 +4,8 @@ project(network)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
 #####Specify the path of boost
-#set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_46_1")
-#set(CMAKE_LIBRARY_PATH${CMAKE_LIBRARY_PATH} "/home/athrun/boost_1_46_1/stage/lib")
+set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_46_1")
+set(CMAKE_LIBRARY_PATH${CMAKE_LIBRARY_PATH} "/home/athrun/boost_1_46_1/stage/lib")
 
 
 find_package(Boost COMPONENTS thread system date_time)
@@ -16,7 +16,7 @@ if(Boost_FOUND)
 	include_directories(${PROJECT_SOURCE_DIR} ${Boost_INCLUDE_DIR})
 	link_directories(${Boost_LIBRARY_DIRS})
 else(Boost_FOUND)
-	message(FATAL " Cannot find boost library. You can install boost or hack ${PROJECT_SOURCE_DIR}/CMakeList.txt to specify boost path")
+	message(FATAL_ERROR " Cannot find boost library. You can install boost or hack ${PROJECT_SOURCE_DIR}/CMakeList.txt to specify boost path")
 endif(Boost_FOUND)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

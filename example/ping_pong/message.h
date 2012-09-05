@@ -2,7 +2,6 @@
 #define TEST_NETWORK_COMMON_MESSAGE_H_
 
 #include "network.h"
-#include "common/app_global_meta.h"
 #include "log.h"
 
 enum MsgType {
