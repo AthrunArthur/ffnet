@@ -45,9 +45,9 @@ std::list<SharedBuffer> LengthBonderSplitter::split(NetBuffer &oRecvBuffer)
 	while(oRecvBuffer.filled() - bi >= sizeof(len) &&
 		oRecvBuffer.filled() -bi - sizeof(len) >=len)
 	{
-#ifdef ENABLE_LOG_CONSOLE
-log_connection("LengthBonderSplitter", "split(), split pkg with len: %d", len);
-#endif
+		FFNET_DEBUG(
+			log_connection("LengthBonderSplitter", "split(), split pkg with len: %d", len);
+		)
 		bi += sizeof(len);
 		SharedBuffer sb(boost::shared_array<char>(new char[len]), len);
 		std::memcpy(sb.buffer().get(), pBuf + bi, len);

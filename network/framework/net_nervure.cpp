@@ -51,15 +51,15 @@ void NetNervure::initTCPServer(uint16_t iTCPPort)
 	if(m_pTCPServer == NULL)
 	{
 		m_pTCPServer = boost::shared_ptr<TCPServer>(new TCPServer(this, iTCPPort));
-#ifdef ENABLE_LOG_CONSOLE
+		FFNET_DEBUG(
 		log_frmwk("NetNervure", "initTCPServer(), tcp server is initialized on port:%d with Nervure:%d", iTCPPort, this);
-#endif
+		)
 	}
 	else
 	{
-#ifdef ENABLE_LOG_CONSOLE
+		FFNET_DEBUG(
 		log_frmwk("NetNervure", "initTCPServer(), error: tcp server has been initialized!");
-#endif
+		)
 	}
 }
 void NetNervure::initUDPServer(uint16_t iUDPPort)
@@ -67,18 +67,18 @@ void NetNervure::initUDPServer(uint16_t iUDPPort)
 	UDPPointPtr_t upp = UDPPointPtr_t(new UDPPoint(this, iUDPPort));
 	m_oConnections.push_back(upp);
 	
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
 	log_frmwk("NetNervure", "initUDPServer(), udp server is initialized on port:%d", iUDPPort);
-#endif
+	)
 }
 
 void NetNervure::addTCPClient(EndpointPtr_t remoteEndPoint)
 {
 	ASIOConnectionPtr_t acp = ASIOConnectionPtr_t(new TCPClient(this, *(remoteEndPoint.get())));
 	m_oConnections.push_back(acp);
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
 	log_frmwk("NetNervure", "addTCPClient(), tcp client has been initialized!");
-#endif
+	)
 }
 
 void NetNervure::run()

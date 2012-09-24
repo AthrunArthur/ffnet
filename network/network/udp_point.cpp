@@ -23,9 +23,7 @@ EndpointPtr_t UDPPoint::getRemoteEndpointPtr()
 void UDPPoint::startRecv()
 {
 	//m_pHandler->onUDPStartReceive(this);
-#ifdef ENABLE_LOG_CONSOLE
-	log_udp_server("UDPPoint", "startRecv(), start receiving...");
-#endif
+	FFNET_DEBUG(log_udp_server("UDPPoint", "startRecv(), start receiving...");)
 
  m_oSocket.async_receive_from(
         boost::asio::buffer(m_oRecvBuffer.writeable()), m_oRemoteEndPoint,

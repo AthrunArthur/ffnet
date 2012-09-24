@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     
 	
 	ffnet::NetNervureFromFile nnff("svr_net_conf.ini");
-	nnff.addNeedToRecvPkg(ffnet::PackagePtr_t(new PingMsg()), boost::bind(onRecvPing, _1, _2));
+	nnff.addNeedToRecvPkg<PingMsg>(boost::bind(onRecvPing, _1, _2));
 	
 	
 	nnff.run();

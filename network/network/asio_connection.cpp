@@ -41,18 +41,18 @@ void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::siz
 void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, size_t bytes_transferred)
 {
     if(!error) {
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
         log_connection("ASIOConnection", "handleReceivedPkg() get pkg with len: %d", bytes_transferred);
-#endif
+	)
         m_oRecvBuffer.filled() += bytes_transferred;
         sliceAndDispatchPkg();
         startRecv();
     } else	{
 		m_pHandler->onRecvError(this, error);
         //call handler
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
         log_connection("ASIOConnection", "handleReceivedPkg() get error: %s", boost::system::system_error(error).what());
-#endif
+	)
     }
 }
 

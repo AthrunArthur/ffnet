@@ -18,6 +18,7 @@
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/bind.hpp>
 
+#include "common/defines.h"
 
 typedef std::string		String;
 typedef boost::int64_t	int64_t;

@@ -16,9 +16,8 @@ EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 
 void TCPConnectionBase::startRecv()
 {
-#ifdef ENABLE_LOG_CONSOLE
-	log_connection("TCPConnectionBase", "startRecv(), start receiving..." );
-#endif
+	FFNET_DEBUG(	log_connection("TCPConnectionBase", "startRecv(), start receiving..." );)
+	
     m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
                               boost::bind(&TCPConnectionBase::handlReceivedPkg, shared_from_this(), boost::asio::placeholders::error(),
                                           boost::asio::placeholders::bytes_transferred()));
@@ -54,12 +53,12 @@ void TCPConnectionBase::startSend()
 {
     m_oMutex.lock();
     if(m_oSendBuffer.filled() != 0) {
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
 		log_connection("TCPConnectionBase", "startSend(), send buf:%s", 
 					   printBuf(boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
-								boost::asio::buffer_size(m_oSendBuffer.readable())).c_str());
-#endif
-        m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
+								boost::asio::buffer_size(m_oSendBuffer.readable())).c_str());)
+    
+	m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
                                    boost::bind(&TCPConnectionBase::handlePkgSent, shared_from_this(),
                                                boost::asio::placeholders::error,
                                                boost::asio::placeholders::bytes_transferred));

@@ -15,30 +15,19 @@ TypedNetNervure::TypedNetNervure()
 {
 }
 
-
-void TypedNetNervure::addNeedToRecvPkg(PackagePtr_t pPkg, PkgRecvHandler_t handler)
-{
-#ifdef ENABLE_LOG_CONSOLE
-	log_frmwk("TypedNetNervure", "addNeedToRecvPkg(), insert type id:%d into service recv pkg set!", pPkg->getTypeID());
-#endif
-    m_oPkgInstanceContainer.insert(std::make_pair(pPkg->getTypeID(), pPkg));
-	m_oPkgHandlers.insert(std::make_pair(pPkg->getTypeID(), handler));
-}
-
-
 void TypedNetNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
 {
     const char *pBuf = ebp->buffer().buffer().get();
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
 	log_frmwk("TypedNetNervure", "deseralizeAndDispatchHandler(), buf: %s", printBuf(pBuf, ebp->buffer().length()).c_str());
-#endif
+	)
     uint32_t iTypeID;
     ffnet::deseralize(pBuf, iTypeID);
 
     if(m_oPkgInstanceContainer.find(iTypeID)  == m_oPkgInstanceContainer.end()) {
-#ifdef ENABLE_LOG_CONSOLE
-		 log_frmwk("NetNervure", "deseralizeAndDispatchHandler(), can't find the type id: %d in service recv pkg set!", iTypeID);
-#endif
+	FFNET_DEBUG(
+	 log_frmwk("NetNervure", "deseralizeAndDispatchHandler(), can't find the type id: %d in service recv pkg set!", iTypeID);
+	)
         assert(0 && "can't find the type id in service recv pkg set!");
         return ;
     }

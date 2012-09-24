@@ -7,6 +7,7 @@
 #include "common/archive.h"
 #include "network/endpoint_data.h"
 #include "network/end_point.h"
+#include "package/pkg_callback.h"
 #include <map>
 #include <cassert>
 
@@ -23,7 +24,13 @@ public:
         
     virtual ~TypedNetNervure() {};
 
-    void						addNeedToRecvPkg(PackagePtr_t pPkg, PkgRecvHandler_t handler);
+	template<class PkgTy_>
+	void						addNeedToRecvPkg(typename TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
+	{
+		boost::shared_ptr<PkgTy_> pPkg(new PkgTy_());
+		m_oPkgInstanceContainer.insert(std::make_pair(pPkg->getTypeID(), pPkg));
+		m_oPkgHandlers.insert(std::make_pair(pPkg->getTypeID(), handler));
+	}
 protected:
 	virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);
 

@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     
 	ffnet::NetNervureFromFile nnff("clnt_net_conf.ini");
 	
-	nnff.addNeedToRecvPkg(ffnet::PackagePtr_t(new PongMsg()), boost::bind(&onRecvPong, _1, _2));
+	nnff.addNeedToRecvPkg<PongMsg>(onRecvPong);
 	
 	
 	char * pContent = new char[16];

@@ -37,9 +37,9 @@ void NetDispatcher::run()
 
 void NetDispatcher::dispatch(Func_t f)
 {
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
     log_frmwk("NetDispatcher", "dispatch(), a pkg is dispatched to pNervure!");
-#endif
+	)
     m_oDispatchTasks.push_back(f);
 }
 

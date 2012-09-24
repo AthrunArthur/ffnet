@@ -33,9 +33,9 @@ void TCPServer::startAccept()
     TCPConnectionPtr_t pNewConn(new TCPConnection(m_pNervure, this));
 
     //m_pHandler->onStartListening(this);
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
 	log_tcp_server("TCPServer", "startAccept(), listening on %s:%d", ffnet::toString(m_oAcceptor.local_endpoint()).c_str(), m_oAcceptor.local_endpoint().port());
-#endif
+	)
     m_oAcceptor.async_accept(pNewConn->getSocket(),
                              boost::bind(&TCPServer::handleAccept, this, pNewConn,
                                          boost::asio::placeholders::error)
@@ -45,13 +45,13 @@ void TCPServer::startAccept()
 void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::error_code &error)
 {
     if(!error) {
-#ifdef ENABLE_LOG_CONSOLE
+	FFNET_DEBUG(
 		log_tcp_server("TCPServer", 
 					   "handleAccept(), got a connection from %s:%d with pNervure:%d", 
 					   ffnet::toString(pNewConn->getSocket().remote_endpoint()).c_str(), 
 					   pNewConn->getSocket().remote_endpoint().port(), 
 					   pNewConn->nervure());
-#endif
+	)
         //m_pHandler->onGotConnection(this, pNewConn);
         pNewConn->start();
     } else {

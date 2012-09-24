@@ -1,24 +1,107 @@
+%% LyX 2.0.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
 \documentclass{article}
+\usepackage[latin9]{inputenc}
+\usepackage{calc}
 
-\newcommand{\ffnet} {\textsf{ffnet}}
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
 
+
+\newcommand{\ffnet}{\textsf{ffnet}}
+\newcommand{\ffnetdir}[1]{\textit{/ffnet/root/dir${#1}$}}
 \author{Athrun Arthur}
 \title{A Quick Start for \ffnet{}}
 
+\makeatother
+
 \begin{document}
-\maketitle
-\tableofcontents
+\maketitle{}\tableofcontents{}\newpage{}
+
+
 \section{Introduction}
+
+
 \subsection{Why \ffnet}
 
-\subsection{\ffnet is ...}
+Network programming is a very complicated thing. Of course it's simple
+to write a simple ping-pong network application using socket. But
+you have to consider many other possible situations in productive
+applications. 
 
-\subsection{An Example}
-\subsection{Build and Run}
+Consider ping-pong as an example. There is a server which replys pong
+message when receives ping message, and a client which replys ping
+message when receives pong message. To make the infinite loop start,
+the client need to send the first ping message when the connection
+is established. Now let's see what you need to consider if ping-pong
+is a product which means avalibility, scalibility, strong and easy
+to extend.
+\begin{itemize}
+\item Connection management. It's obvious as there may be multiple clients.
+When a client is offline, the server need to know that.
+\item Avalibility. Network is complex partly because you may receive any
+possible messages, legal or illegal. You must distinguish those illegal
+messages from raw messages. This means you may need to handle some
+hostile attacks, like DDoS.
+\item Performance. It's a good practice to consider response time in network
+programming although ping-pong is simple. Maybe you know proactor
+pattern, reactor pattern, asynchronized I/O (like boost.asio), parallel
+programming. But you may turn a blind to these solutions because of
+complexity 
+\item Maintainable. Code refactoring is a normal thing in network programming.
+There are many situations recall code refactoring, for example, new
+business requirements, unexpected network behaviors, performance tunes
+and security ensurance. Again, you turn a blind to possible design
+patterns because of complexity.
+\item Configurable. Another burdern to adjust very network enviornments.
+\end{itemize}
+There are many network libraries which aim to bring simple and powerful
+network programming, like boost.asio, protocol buffer from Google,
+ACE and mudo. But \ffnet{} is aim to provide higher level network
+programming enviornment with parallel, asynchronization, security
+, debugging and configurable features.
+
+
+\subsection{\ffnet{} is ...}
+
+\ffnet{} is a opensource framework for network programming in C++.
+It's based on boost.asio and provide network management, package serialization
+and deserialization, asynchronization, security, debugging and configurable
+features. Now \ffnet{} is still under heavy development.
+
+
+\subsection{Build \ffnet{}}
+
+\ffnet{} uses CMake to organize its source code and it depends on
+Boost (1.40 or higher). Suppose you have got the source code of \ffnet{}
+and the directory is \ffnetdir{/}. Here are the steps you need to
+build it.
+\begin{enumerate}
+\item cd \ffnetdir{/build}
+\item cmake ../
+\item make
+\end{enumerate}
+If you didn't install Boost into system path, you will get an error
+in the second step. In this case, you need to specify path of you
+Boost in \ffnetdir{/CMakeLists.txt}, like this.
+
+\framebox{\begin{minipage}[t]{1\columnwidth}%
+set(CMAKE\_INCLUDE\_PATH \$\{CMAKE\_INCLUDE\_PATH\} ``/home/athrun/boost\_1\_46\_1'')
+
+set(CMAKE\_LIBRARY\_PATH \$\{CMAKE\_LIBRARY\_PATH\} ``/home/athrun/boost\_1\_46\_1/stage/lib'') %
+\end{minipage}}You can find two generated file in \ffnetdir{/lib} now if you have
+built \ffnet{} successfully. One is a static library and the other
+is a shared library.
+
+
+\subsection{An example}
+
 
 \section{Use \ffnet}
 
-\section{Inside \ffnet}
-\section{Furthur Help}
 
+\section{Inside \ffnet}
+
+
+\section{Furthur Help}
 \end{document}
