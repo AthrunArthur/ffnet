@@ -11,7 +11,7 @@ void	sendPingMsg()
 	const char *str = "ping world!";
 	std::memcpy(pContent, str, std::strlen(str) + 1); 
 	boost::shared_ptr<PingMsg> pMsg(new PingMsg(pContent, std::strlen(str) + 1));
-	ffnet::EndpointPtr_t tpp(new ffnet::Endpoint(ffnet::tcp_v4, boost::asio::ip::address_v4::from_string("127.0.0.1"), 8198));
+	ffnet::EndpointPtr_t tpp(new ffnet::Endpoint(ffnet::tcp_v4, boost::asio::ip::address_v4::from_string("127.0.0.1"), 39));
 	ffnet::NetNervure::send(pMsg, tpp);
 	
 	std::cout<<"service running..."<<std::endl;

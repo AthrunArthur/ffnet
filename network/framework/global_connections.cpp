@@ -38,7 +38,9 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
 	boost::unique_lock<boost::mutex> _l(m_oMutex);
     for(std::list<ASIOConnection *>::iterator it = m_oConnections.begin(); it != m_oConnections.end();
             ++it) {
-        return *it;
+        EndpointPtr_t epp = (*it)->getRemoteEndpointPtr();
+        if(*(epp.get())==*(pEndpoint.get()))
+	  return *it;
     }
     return NULL;
 }

@@ -44,9 +44,9 @@ public:
     virtual UDPPoint 	*UDPPointPointer() {
         return NULL;
     }
-    
-protected:
     virtual EndpointPtr_t getRemoteEndpointPtr() = 0;
+
+protected:
     virtual 	void 		startSend() = 0;
     virtual void			startRecv() = 0;
     
