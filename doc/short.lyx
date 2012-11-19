@@ -8,6 +8,8 @@
 
 \newcommand{\ffnet}{\textsf{ffnet}}
 \newcommand{\ffnetdir}[1]{\textit{/ffnet/root/dir${#1}$}}
+\newcommand{\pingpong}{\textsf{ping\_pong}}
+\newcommand{\pingpongdir}[1]{\textit{/ffnet/root/dir/example/ping\_pong${#1}$}}
 \author{Athrun Arthur}
 \title{A Quick Start for \ffnet{}}
 \end_preamble
@@ -110,7 +112,7 @@ Introduction
 \begin_layout Subsection
 Why 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -186,7 +188,7 @@ There are many network libraries which aim to bring simple and powerful
  mudo.
  But 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -203,7 +205,7 @@ ffnet{}
 
 \begin_layout Subsection
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -236,7 +238,7 @@ ffnet{}
  features.
  Now 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -253,7 +255,7 @@ ffnet{}
 \begin_layout Subsection
 Build 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -269,7 +271,7 @@ ffnet{}
 
 \begin_layout Standard
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -284,7 +286,7 @@ ffnet{}
  higher).
  Suppose you have got the source code of 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -340,7 +342,7 @@ make
 \begin_layout Standard
 If you didn't install Boost into system path, you will get an error in the
  second step.
- In this case, you need to specify path of you Boost in 
+ In this case, you need to specify path of your Boost in 
 \begin_inset ERT
 status open
 
@@ -413,6 +415,249 @@ ffnet{}
 
 \begin_layout Subsection
 An example
+\end_layout
+
+\begin_layout Standard
+A 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpong{}
+\end_layout
+
+\end_inset
+
+ example uses the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ffnet{}
+\end_layout
+
+\end_inset
+
+ framework to realize a infinite 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpong{}
+\end_layout
+
+\end_inset
+
+ process.
+ Suppose you have got the source code of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpong{}
+\end_layout
+
+\end_inset
+
+ and the directory is 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpongdir{/}
+\end_layout
+
+\end_inset
+
+.
+ Here are the steps you need to build it.
+\end_layout
+
+\begin_layout Enumerate
+cd 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpongdir{/build}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+cmake ../
+\end_layout
+
+\begin_layout Enumerate
+make
+\end_layout
+
+\begin_layout Standard
+If you didn't install 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ffnet{}
+\end_layout
+
+\end_inset
+
+ or Boost into system path, you will get an error in the second step.
+ In this case, you need to specify path of your 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ffnet{}
+\end_layout
+
+\end_inset
+
+ and Boost in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpongdir{/CMakeLists.txt}
+\end_layout
+
+\end_inset
+
+, like this.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
+set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ``/home/athrun/boost_1_46_1'')
+\end_layout
+
+\begin_layout Plain Layout
+set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ``/home/athrun/boost_1_46_1/stage/l
+ib'') 
+\end_layout
+
+\begin_layout Plain Layout
+set(FFNET_ROOT_DIR ${PROJECT_SOURCE_DIR}/../../network)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You can find two executable programs in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpongdir{/build}
+\end_layout
+
+\end_inset
+
+ now if you have built 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpong{}
+\end_layout
+
+\end_inset
+
+ successfully.
+ One is client and the other is server.
+\end_layout
+
+\begin_layout Standard
+Before running, you need to copy clnt_net_conf.ini and svr_net_conf.ini from
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpongdir{/}
+\end_layout
+
+\end_inset
+
+ into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pingpongdir{/build}
+\end_layout
+
+\end_inset
+
+.
+ Then you can run the example by using the command below.
+\end_layout
+
+\begin_layout Enumerate
+./server
+\end_layout
+
+\begin_layout Enumerate
+./client
 \end_layout
 
 \begin_layout Section
