@@ -1,23 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
 project(network)
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+add_definitions(-DPROTO_BUF_SUPPORT)
 
 #####Specify the path of boost
-set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_46_1")
-set(CMAKE_LIBRARY_PATH${CMAKE_LIBRARY_PATH} "/home/athrun/boost_1_46_1/stage/lib")
+#set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_52_0/stage/include")
+#set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/home/athrun/boost_trunk/stage/lib")
 
-
-find_package(Boost COMPONENTS thread system date_time)
-if(Boost_FOUND)
-	message(STATUS "boost include directory: ${Boost_INCLUDE_DIR}")
-	message(STATUS "boost library directory: ${Boost_LIBRARY_DIRS}")
-	message(STATUS "source code directory: ${PROJECT_SOURCE_DIR}")
-	include_directories(${PROJECT_SOURCE_DIR} ${Boost_INCLUDE_DIR})
-	link_directories(${Boost_LIBRARY_DIRS})
-else(Boost_FOUND)
-	message(FATAL_ERROR " Cannot find boost library. You can install boost or hack ${PROJECT_SOURCE_DIR}/CMakeList.txt to specify boost path")
-endif(Boost_FOUND)
+set(Boost_DIR /home/athrun/boost_1_52_0)
+set(CMAKE_MODULE_PATH ${FFNET_ROOT_DIR}/cmake)
+include_directories(${PROJECT_SOURCE_DIR} ${Boost_DIR})
+link_directories(${Boost_DIR}/stage/lib)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
@@ -33,6 +28,7 @@ set(src_list 	common/shared_buffer.cpp
 	middleware/length_bonder_splitter.cpp
 	nervures/typed_net_nervure.cpp
 	nervures/net_nervure_from_file.cpp
+	nervures/proto_buf_nervure.cpp
 	network/asio_connection.cpp
 	network/endpoint_data.cpp
 	network/net_buffer.cpp
@@ -40,7 +36,8 @@ set(src_list 	common/shared_buffer.cpp
 	network/tcp_client.cpp
 	network/tcp_server.cpp
 	network/udp_point.cpp
-	package/package.cpp
+	package/proto_buf_wrapper_pkg.cpp
+	archive/archive.cpp
 	log.cpp
 )
 	

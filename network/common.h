@@ -19,6 +19,7 @@
 #include <boost/bind.hpp>
 
 #include "common/defines.h"
+#include <stddef.h>
 
 typedef std::string		String;
 typedef boost::int64_t	int64_t;
@@ -33,8 +34,5 @@ typedef boost::asio::ip::tcp::endpoint TCPEndPoint;
 typedef boost::asio::ip::udp::endpoint UDPEndPoint;
 typedef boost::shared_ptr<TCPEndPoint> TCPEndPointPtr_t;
 typedef boost::shared_ptr<UDPEndPoint> UDPEndPointPtr_t;
-
-
-
 
 #endif

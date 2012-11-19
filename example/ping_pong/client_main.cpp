@@ -1,11 +1,9 @@
 #include <iostream>
-#include <network.h>
+#include "network.h"
 #include "message.h"
 #include "log.h"
-#include <boost/serialization/array.hpp>
-#include <boost/archive/binary_iarchive.hpp>
 
-void		onRecvPong(ffnet::PackagePtr_t pPong, ffnet::EndpointPtr_t pEP)
+void		onRecvPong(boost::shared_ptr<PongMsg> pPong, ffnet::EndpointPtr_t  pEP)
 {
 	PongMsg & msg = *((PongMsg *)pPong.get());
 	std::cout<<"got pong!"<<std::endl;
@@ -15,12 +13,13 @@ int main(int argc, char **argv) {
 	
 	initialize_log("clnt.log");
     
-	ffnet::NetNervureFromFile nnff("clnt_net_conf.ini");
+	ffnet::NetNervureFromFile nnff("/home/athrun/projects/ffnet.git/example/ping_pong/clnt_net_conf.ini");
 	
 	nnff.addNeedToRecvPkg<PongMsg>(onRecvPong);
+	//nnff.addNeedToRecvPkg<PongMsg>(onRecvPong);
 	
 	
-	char * pContent = new char[16];
+	int8_t * pContent = new int8_t[16];
 	const char *str = "ping world!";
 	std::memcpy(pContent, str, std::strlen(str) + 1); 
 	boost::shared_ptr<PingMsg> pMsg(new PingMsg(pContent, std::strlen(str) + 1));

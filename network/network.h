@@ -2,9 +2,9 @@
 #define _NETWORK_NETWORK_H_
 
 #include "common.h"
-#include "common/archive.h"
+#include "archive/archive.h"
 #include "common/cond_pop_queue.h"
-#include "common/serializer.h"
+#include "archive/serializer.h"
 #include "common/shared_buffer.h"
 
 

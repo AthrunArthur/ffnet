@@ -7,6 +7,7 @@
 namespace ffnet
 {
 	struct BasicType{};
+	struct StringType{};
 	struct STLContainerType{};
 	struct UnknownType{};
 	
@@ -79,6 +80,12 @@ namespace ffnet
 		typedef BasicType CategoryType;
 	};
 	
+	template <>
+	class TypeCategory<std::string>
+	{
+	public:
+		typedef StringType CategoryType;
+	};
 	
 }
 #endif

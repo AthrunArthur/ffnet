@@ -12,40 +12,34 @@ enum MsgType {
 
 class PingMsg : public ffnet::Package
 {
-protected:
-	ARCHIVE_PACKAGE(PingMsg);
 public:
     PingMsg()
         : Package(msg_ping)
         , m_iContentLen(0)
         , m_pContent(NULL) {}
 
-    PingMsg(char *pContent, int iLen)
+    PingMsg(int8_t *pContent, int iLen)
         : Package(msg_ping)
         , m_iContentLen(iLen)
         , m_pContent(pContent) {}
 
 
-	
-	template <class Ar_t>
-	void			archive(Ar_t &ar) 
+	virtual void			archive(ffnet::Archive &ar) 
 	{
 		ar.archive(m_pContent, m_iContentLen);
 	}
 	void			print()
 	{
-		std::cout<<"ping: "<<m_iContentLen<<" content:"<<m_pContent<<std::endl;
+		std::cout<<"ping: "<<m_iContentLen<<" content:"<<(char *)m_pContent<<std::endl;
 	}
 protected:
 
     int 			m_iContentLen;
-    char 		*m_pContent;
+    int8_t	 		*m_pContent;
 };
 
 class PongMsg: public ffnet::Package
 {
-protected:
-	ARCHIVE_PACKAGE(PongMsg);
 public:
     PongMsg()
         : ffnet::Package(msg_pong)
@@ -55,9 +49,7 @@ public:
         : ffnet::Package(msg_pong)
         , m_iPongTimes(times) {}
 
-
-	template <class Ar_t>
-	void			archive(Ar_t &ar) 
+	virtual void			archive(ffnet::Archive &ar) 
 	{
 		ar.archive(m_iPongTimes);
 	}

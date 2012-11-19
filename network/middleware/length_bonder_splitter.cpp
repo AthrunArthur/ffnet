@@ -1,6 +1,8 @@
 #include "middleware/length_bonder_splitter.h"
-#include "common/archive.h"
-
+#include "archive/archive.h"
+#include "archive/deseralizer.h"
+#include "archive/length_retriver.h"
+#include "archive/serializer.h"
 #include "package/package.h"
 #include "log.h"
 
@@ -17,7 +19,7 @@ void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, PackagePtr_t pkg)
 {
 	LengthRetriver lr;
 	
-	pkg->archiveLength(lr);
+	pkg->arch(lr);
 	uint32_t len = lr.getLength();
 	
 	oSendBuffer.reserveIdle(static_cast<size_t>(len + sizeof(len)));
@@ -27,7 +29,7 @@ void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, PackagePtr_t pkg)
 	
 	pBuf = boost::asio::buffer_cast<char *>(oSendBuffer.writeable());
 	Seralizer s(pBuf, oSendBuffer.idle());
-	pkg->archiveSerialize(s);
+	pkg->arch(s);
 	oSendBuffer.filled() += len;
 }
 

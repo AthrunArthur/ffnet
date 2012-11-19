@@ -4,7 +4,7 @@
 #include "common.h"
 #include "framework/net_nervure.h"
 #include "package/package.h"
-#include "common/archive.h"
+#include "archive/archive.h"
 #include "network/endpoint_data.h"
 #include "network/end_point.h"
 #include "package/pkg_callback.h"
@@ -13,8 +13,7 @@
 
 namespace ffnet
 {
-typedef boost::function<void (PackagePtr_t, EndpointPtr_t)> PkgRecvHandler_t;
-	
+typedef boost::function<PackagePtr_t ()> PkgCreator_t;
 namespace details
 {
 class TypedNetNervure : public NetNervure
@@ -28,17 +27,19 @@ public:
 	void						addNeedToRecvPkg(typename TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
 	{
 		boost::shared_ptr<PkgTy_> pPkg(new PkgTy_());
-		m_oPkgInstanceContainer.insert(std::make_pair(pPkg->getTypeID(), pPkg));
-		m_oPkgHandlers.insert(std::make_pair(pPkg->getTypeID(), handler));
+		m_oPkgCreatorContainer.insert(std::make_pair(pPkg->getTypeID(), boost::bind(PackageNewWrapper<PkgTy_>::New)));
+		PkgRecvHandler_t rh(boost::bind(TypedPkgRecvCallback<PkgTy_>::recvHandler, _1, _2, handler));
+		m_oPkgHandlers.insert(std::make_pair(pPkg->getTypeID(), rh));
 	}
 protected:
 	virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);
 
 protected:
-    typedef std::map<uint32_t, PackagePtr_t> PkgInstanceContainer_t;
+	typedef boost::function<void (PackagePtr_t, EndpointPtr_t)> PkgRecvHandler_t;
+    typedef std::map<uint32_t, PkgCreator_t> PkgCreatorContainer_t;
 	typedef std::map<uint32_t, PkgRecvHandler_t> PkgHandlers_t;
 	
-    PkgInstanceContainer_t		m_oPkgInstanceContainer;
+    PkgCreatorContainer_t		m_oPkgCreatorContainer;
 	PkgHandlers_t				m_oPkgHandlers;
 };//end class TypedNetNervure;
 }//end namespace details

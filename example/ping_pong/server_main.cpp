@@ -3,7 +3,7 @@
 #include "message.h"
 #include "log.h"
 
-void onRecvPing(ffnet::PackagePtr_t pPing, ffnet::EndpointPtr_t pEP)
+void onRecvPing(boost::shared_ptr<PingMsg> pPing, ffnet::EndpointPtr_t pEP)
 {
 	PingMsg & msg = *((PingMsg *)pPing.get());
 	
@@ -19,8 +19,8 @@ int main(int argc, char **argv) {
 	initialize_log("svr.log");
     
 	
-	ffnet::NetNervureFromFile nnff("svr_net_conf.ini");
-	nnff.addNeedToRecvPkg<PingMsg>(boost::bind(onRecvPing, _1, _2));
+	ffnet::NetNervureFromFile nnff("/home/athrun/projects/ffnet.git/example/ping_pong/svr_net_conf.ini");
+	nnff.addNeedToRecvPkg<PingMsg>(onRecvPing);
 	
 	
 	nnff.run();
