@@ -1,0 +1,11 @@
+package PingPong;
+
+message Ping{
+required string msg = 1;
+required int32 id = 2;
+}
+
+message Pong{
+required string msg = 1;
+required int32 id = 2;
+}
