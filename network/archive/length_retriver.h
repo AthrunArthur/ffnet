@@ -61,9 +61,9 @@ class LengthRetriver : public Archive
 		template<class Ty_>
 		void				length(const Ty_ &val, BasicType)
 		{
-			m_iBase += sizeof(val);
+			m_iBase += sizeof(Ty_);
 		}
-		void 				length(std::string &val, StringType)
+		void 				length(const std::string &val, StringType)
 		{
 			int32_t len = sizeof(int32_t) + static_cast<int32_t>(val.size());
 			

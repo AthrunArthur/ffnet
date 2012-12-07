@@ -4,6 +4,8 @@ project(network)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 add_definitions(-DPROTO_BUF_SUPPORT)
+#add_definitions(-g)
+#add_definitions(-DENABLE_LOG_CONSOLE)
 
 #####Specify the path of boost
 #set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_52_0/stage/include")

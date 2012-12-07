@@ -6,6 +6,9 @@
 #include "framework/global_connections.h"
 #include "network/asio_connection.h"
 #include "log.h"
+#ifdef PROTO_BUF_SUPPORT
+#include "package/proto_buf_wrapper_pkg.h"
+#endif
 
 namespace ffnet
 {
@@ -44,7 +47,14 @@ void NetNervure::send(boost::shared_ptr< Package > pPkg, EndpointPtr_t ep)
     }
     tcb->send(pPkg, ep);
 }
+#ifdef PROTO_BUF_SUPPORT
+void NetNervure::send(boost::shared_ptr< google::protobuf::Message > pMsg, EndpointPtr_t ep)
+{
+	boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
+	send(pPkg, ep);
+}
 
+#endif
 
 void NetNervure::initTCPServer(uint16_t iTCPPort)
 {

@@ -62,7 +62,7 @@ void			ProtoBufWrapperPkg::archiveS(Seralizer & ar)
 void			ProtoBufWrapperPkg::archiveD(Deseralizer & ar)
 {
     ar.archive(m_strProtoBufMsgName);
-    m_strProtoBufMsgName.append('\0');
+    m_strProtoBufMsgName.append("\0");
     String buf;
     ar.archive(buf);
     m_pPBMsg = createMessage(m_strProtoBufMsgName);

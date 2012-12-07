@@ -61,8 +61,8 @@ namespace ffnet
 		void				seralize(const Ty_ &val, BasicType)
 		{
 			assert( m_iBase +sizeof(Ty_) <= m_iBufLen && "buffer overflow");
-			std::memcpy(m_pBuf + m_iBase, (const char *)&val, sizeof(val));
-			m_iBase += sizeof(val);
+			std::memcpy(m_pBuf + m_iBase, (const char *)&val, sizeof(Ty_));
+			m_iBase += sizeof(Ty_);
 		}
 		
 		void 				seralize(const std::string &val, StringType)

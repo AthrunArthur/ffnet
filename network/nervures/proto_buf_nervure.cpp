@@ -9,8 +9,6 @@ namespace ffnet
 {
 	using ffnet::ConnectionHolderHandler;
 	
-namespace details
-{
 ProtoBufNervure::ProtoBufNervure()
 : NetNervure(ASIOConnHandlerPtr_t(new ConnectionHolderHandler()),BonderSplitterPtr_t(new LengthBonderSplitter()) )
 {
@@ -23,8 +21,10 @@ void ProtoBufNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
 	FFNET_DEBUG(
 		log_frmwk("ProtoBufNervure", "deseralizeAndDispatchHandler(), buf: %s", printBuf(pBuf, ebp->buffer().length()).c_str());
 	)
+	uint32_t id;
 	String s;
-	ffnet::deseralize(pBuf, s);
+	ffnet::deseralize(pBuf, id);
+	ffnet::deseralize(pBuf + sizeof(id), s);
 	ProtoBufWrapperPkg pkg(s);
 	
 	PkgRecvHandler_t handler = m_oPkgHandlers[s];
@@ -32,12 +32,11 @@ void ProtoBufNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
 
 	//pPkg->m_oBuffer = ebp->buffer().buffer();
 	Deseralizer d(const_cast<const char *>(ebp->buffer().buffer().get()), ebp->buffer().length());
-	pkg.archive(d);
+	pkg.arch(d);
 	
 	m_oTasks.push_back(boost::bind(handler, pkg.PBMessage(), ebp->Endpoint()));
 }
 
 
-}//end namespace details
 }//end namespace ffnet
 #endif//end PROTO_BUF_SUPPORT

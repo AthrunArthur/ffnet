@@ -2,14 +2,16 @@
 BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 
 [CMake]
-BuildDirs=/home/athrun/projects/ffnet.git/example/ping_pong/build
+Build Directory Count=1
 CMakeDir=/usr/share/cmake/Modules
-Current CMake Binary=file:///usr/bin/cmake
-CurrentBuildDir=file:///home/athrun/projects/ffnet.git/example/ping_pong/build
-CurrentBuildType=Debug
-CurrentInstallDir=
-Extra Arguments=
+Current Build Directory Index=0
 ProjectRootRelative=./
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=file:///home/athrun/projects/ffnet.git/example/ping_pong/build
+Build Type=
+CMake Binary=file:///usr/bin/cmake
+Install Directory=file:///usr/local
 
 [Launch]
 Launch Configurations=Launch Configuration 0

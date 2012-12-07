@@ -59,8 +59,8 @@ class Deseralizer : public Archive
 		void				deseralize(Ty_ &val, BasicType _)
 		{
 			assert( m_iBase +sizeof(Ty_) <= m_iBufLen && "buffer overflow");
-			std::memcpy((char *)&val, m_pBuf + m_iBase, sizeof(val));
-			m_iBase += sizeof(val);
+			std::memcpy((char *)&val, m_pBuf + m_iBase, sizeof(Ty_));
+			m_iBase += sizeof(Ty_);
 		}
 		void 				deseralize(std::string &val, StringType)
 		{

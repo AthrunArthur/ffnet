@@ -8,6 +8,9 @@
 #include <boost/thread/detail/thread.hpp>
 #include <handler/asio_conn_handler.h>
 #include <map>
+#ifdef PROTO_BUF_SUPPORT
+#include <google/protobuf/message.h>
+#endif
 
 
 namespace ffnet
@@ -27,7 +30,9 @@ public:
     virtual ~NetNervure();
 	
 	static void				send(boost::shared_ptr<Package> pPkg, EndpointPtr_t ep);
-	
+#ifdef PROTO_BUF_SUPPORT
+	static void				send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
+#endif
     void 					run();
 
 	void						stop();
@@ -38,15 +43,13 @@ public:
     inline ASIOConnHandlerPtr_t & getHandler() {return m_pConnHandler;}
     inline BonderSplitterPtr_t 	getBonderSplitter(){return m_pBonderSplitter;}
     
-    
+    void						initTCPServer(uint16_t iTCPPort);
+	void						initUDPServer(uint16_t iUDPPort);
+	void						addTCPClient(EndpointPtr_t remoteEndPoint);
 	
 protected:
     friend class ASIOConnection;
 	typedef boost::function<void () > Func_t;
-	
-	void						initTCPServer(uint16_t iTCPPort);
-	void						initUDPServer(uint16_t iUDPPort);
-	void						addTCPClient(EndpointPtr_t remoteEndPoint);
 	
 	void					stopInThisThread();
 

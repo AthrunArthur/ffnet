@@ -12,3 +12,5 @@
 *.a
 # Temp File
 *~
+*.aux
+*.log
