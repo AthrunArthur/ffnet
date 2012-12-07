@@ -2,12 +2,14 @@
 #include "framework/net_nervure.h"
 #include "middleware/net_dispatcher.h"
 #include "framework/global_connections.h"
-#include "log.h"
+#include "handler/event.h"
 
 namespace ffnet
 {
 namespace details
 {
+using namespace ::ffnet::event;
+
 ASIOConnection::ASIOConnection(NetNervure *pNervure)
     : m_pNervure(pNervure)
     , m_oIOService(pNervure->getIOService())
@@ -18,41 +20,47 @@ ASIOConnection::ASIOConnection(NetNervure *pNervure)
     , m_oMutex()
     , m_bIsSending(false)
 {
-	GlobalConnections::instance()->addConnection(this);
+	//We need this to initialize event register.
+	GlobalConnections::instance();
 }
 
 ASIOConnection::~ASIOConnection()
 {
-	GlobalConnections::instance()->delConnection(this);
 }
 
 void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::size_t bytes_transferred)
 {
     if(!ec) {
+		Event<connect_sent_stream_succ>::triger(
+			boost::bind(connect_sent_stream_succ::event, 
+						this, bytes_transferred, _1)
+		);
         m_oSendBuffer.eraseBuffer(bytes_transferred);
         startSend();
     } else {
-        m_pHandler->onSendError(this, ec);
-#ifdef ENABLE_LOG_CONSOLE
-        log_connection("ASIOConnection", "handlePkgSent get error: %s", boost::system::system_error(ec).what());
-#endif
+		Event<connect_sent_stream_error>::triger(
+			boost::bind(connect_sent_stream_error::event,
+						this, ec, _1)
+		);
+        m_pHandler->onSendError(this, ec); //TODO, replace this with event
     }
 }
 void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, size_t bytes_transferred)
 {
     if(!error) {
-	FFNET_DEBUG(
-        log_connection("ASIOConnection", "handleReceivedPkg() get pkg with len: %d", bytes_transferred);
-	)
+		Event<connect_recv_stream_succ>::triger(
+			boost::bind(connect_recv_stream_succ::event,
+						this, bytes_transferred, _1)
+		);
         m_oRecvBuffer.filled() += bytes_transferred;
         sliceAndDispatchPkg();
         startRecv();
     } else	{
-		m_pHandler->onRecvError(this, error);
-        //call handler
-	FFNET_DEBUG(
-        log_connection("ASIOConnection", "handleReceivedPkg() get error: %s", boost::system::system_error(error).what());
-	)
+		m_pHandler->onRecvError(this, error); //TODO, replace this with event
+        Event<connect_recv_stream_error>::triger(
+			boost::bind(connect_recv_stream_error::event,
+						this, error, _1)
+		);
     }
 }
 

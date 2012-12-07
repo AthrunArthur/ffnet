@@ -3,12 +3,14 @@
 #include "archive/archive.h"
 #include "framework/global_connections.h"
 #include "framework/net_nervure.h"
-#include "log.h"
+#include "handler/event.h"
 
 namespace ffnet
 {
 namespace details
 {
+using namespace ::ffnet::event;
+	
 EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 {
 	return EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
@@ -16,8 +18,11 @@ EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 
 void TCPConnectionBase::startRecv()
 {
-	FFNET_DEBUG(	log_connection("TCPConnectionBase", "startRecv(), start receiving..." );)
-	
+	Event<tcp_start_recv_stream>::triger(
+		boost::bind(tcp_start_recv_stream::event, 
+					m_oSocket.local_endpoint(), 
+					m_oSocket.remote_endpoint(), _1)
+	);
     m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
                               boost::bind(&TCPConnectionBase::handlReceivedPkg, shared_from_this(), boost::asio::placeholders::error(),
                                           boost::asio::placeholders::bytes_transferred()));
@@ -53,12 +58,13 @@ void TCPConnectionBase::startSend()
 {
     m_oMutex.lock();
     if(m_oSendBuffer.filled() != 0) {
-	FFNET_DEBUG(
-		log_connection("TCPConnectionBase", "startSend(), send buf:%s", 
-					   printBuf(boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
-								boost::asio::buffer_size(m_oSendBuffer.readable())).c_str());)
-    
-	m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
+		Event<tcp_start_send_stream>::triger(
+			boost::bind(tcp_start_send_stream::event, 
+						m_oSocket, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
+						boost::asio::buffer_size(m_oSendBuffer.readable()), _1)
+		);
+	
+		m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
                                    boost::bind(&TCPConnectionBase::handlePkgSent, shared_from_this(),
                                                boost::asio::placeholders::error,
                                                boost::asio::placeholders::bytes_transferred));

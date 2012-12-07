@@ -5,7 +5,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 add_definitions(-DPROTO_BUF_SUPPORT)
 #add_definitions(-g)
-#add_definitions(-DENABLE_LOG_CONSOLE)
+add_definitions(-DENABLE_LOG_CONSOLE)
 
 #####Specify the path of boost
 #set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_52_0/stage/include")
@@ -26,6 +26,7 @@ set(src_list 	common/shared_buffer.cpp
 	framework/global_connections.cpp
 	framework/net_nervure.cpp
 	handler/conn_holder_handler.cpp
+	handler/debug_event.cpp
 	middleware/net_dispatcher.cpp
 	middleware/length_bonder_splitter.cpp
 	nervures/typed_net_nervure.cpp

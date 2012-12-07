@@ -10,7 +10,7 @@ UDPPoint::UDPPoint(ffnet::NetNervure *pNervure, uint16_t iPort)
 : ffnet::details::ASIOConnection(pNervure)
 , m_oSocket(pNervure->getIOService(), udp::endpoint(udp::v4(), iPort))
 {
-
+	
 	startRecv();
 }
 
@@ -23,7 +23,6 @@ EndpointPtr_t UDPPoint::getRemoteEndpointPtr()
 void UDPPoint::startRecv()
 {
 	//m_pHandler->onUDPStartReceive(this);
-	FFNET_DEBUG(log_udp_server("UDPPoint", "startRecv(), start receiving...");)
 
  m_oSocket.async_receive_from(
         boost::asio::buffer(m_oRecvBuffer.writeable()), m_oRemoteEndPoint,

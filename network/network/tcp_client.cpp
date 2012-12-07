@@ -1,21 +1,23 @@
 #include "network/tcp_client.h"
-#include "log.h"
 #include "network/endpoint_data.h"
 #include "framework/net_nervure.h"
+#include "handler/event.h"
 
 namespace ffnet
 {
 namespace details
 {
+using namespace ::ffnet::event;
+
 TCPClient::TCPClient(NetNervure *pNervure, Endpoint &ep)
 : TCPConnectionBase(pNervure)
 {
     boost::system::error_code ec;
 	tcp::endpoint tep;
 	ep.generateTypedEndpoint(tep);
-	FFNET_DEBUG(
-	log_tcp_client("TCPClient", "TCPClient(), connecting to %s:%d", ffnet::toString(ep).c_str(), ep.port());
-	)
+	Event<tcp_client_start_connection>::triger(
+		boost::bind(tcp_client_start_connection::event, tep, _1)
+	);
     m_oSocket.async_connect(tep, boost::bind(&TCPClient::handleConnected,
                                             this, boost::asio::placeholders::error()));
 }
@@ -23,14 +25,16 @@ TCPClient::TCPClient(NetNervure *pNervure, Endpoint &ep)
 void TCPClient::handleConnected(const boost::system::error_code &ec)
 {
     if(!ec) {
-	FFNET_DEBUG(log_tcp_client("TCPClient", "handleConnected(), connected!");)
-        //m_pHandler->onGotConnection(this, ec);
+		Event<tcp_client_get_connection_succ>::triger(
+			boost::bind(tcp_client_get_connection_succ::event,
+						this, _1)
+		);
         startRecv();
     } else {
-        m_pHandler->onConnectionError(this, ec);
-	FFNET_DEBUG(
-        log_tcp_client("TCPClient", "handleConnected, get error:%s", boost::system::system_error(ec).what());
-	)
+		Event<tcp_client_conn_error>::triger(
+			boost::bind(tcp_client_conn_error::event,
+						this, ec, _1)
+		);
     }
 }
 }//end namespace details

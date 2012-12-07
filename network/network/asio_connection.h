@@ -51,7 +51,7 @@ protected:
     virtual void			startRecv() = 0;
     
     virtual void			sliceAndDispatchPkg();
-	virtual void 		handlReceivedPkg(const boost::system::error_code &error, size_t bytes_transferred);
+	virtual void 			handlReceivedPkg(const boost::system::error_code &error, size_t bytes_transferred);
     virtual void			handlePkgSent(const boost::system::error_code & /*error*/,
                                           std::size_t /*bytes_transferred*/);
 	

@@ -12,6 +12,9 @@
 #include <google/protobuf/message.h>
 #endif
 
+#ifdef ENABLE_LOG_CONSOLE
+#include "handler/event.h"
+#endif
 
 namespace ffnet
 {
@@ -35,7 +38,8 @@ public:
 #endif
     void 					run();
 
-	void						stop();
+	void					stop();
+	
 	
     inline io_service 		&getIOService() {
         return m_oIOService;
