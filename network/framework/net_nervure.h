@@ -29,7 +29,7 @@ using boost::asio::io_service;
 class NetNervure
 {
 public:
-    NetNervure(ASIOConnHandlerPtr_t pNetHandler, BonderSplitterPtr_t pBonderSplitter);
+    NetNervure( BonderSplitterPtr_t pBonderSplitter);
     virtual ~NetNervure();
 	
 	static void				send(boost::shared_ptr<Package> pPkg, EndpointPtr_t ep);
@@ -44,7 +44,6 @@ public:
     inline io_service 		&getIOService() {
         return m_oIOService;
     }
-    inline ASIOConnHandlerPtr_t & getHandler() {return m_pConnHandler;}
     inline BonderSplitterPtr_t 	getBonderSplitter(){return m_pBonderSplitter;}
     
     void						initTCPServer(uint16_t iTCPPort);
@@ -67,7 +66,6 @@ protected:
     CondPopQueue<Func_t>				m_oTasks;
     boost::shared_ptr<TCPServer>		m_pTCPServer;
 	ConnContainer_t					m_oConnections;
-	ASIOConnHandlerPtr_t				m_pConnHandler;
 	boost::thread					m_oIOThread;
 	BonderSplitterPtr_t				m_pBonderSplitter;
 	bool								m_bIsStopped;

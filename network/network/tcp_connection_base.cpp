@@ -10,6 +10,7 @@ namespace ffnet
 namespace details
 {
 using namespace ::ffnet::event;
+using namespace ::ffnet::event::more;
 	
 EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 {
@@ -60,7 +61,7 @@ void TCPConnectionBase::startSend()
     if(m_oSendBuffer.filled() != 0) {
 		Event<tcp_start_send_stream>::triger(
 			boost::bind(tcp_start_send_stream::event, 
-						m_oSocket, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
+						this, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
 						boost::asio::buffer_size(m_oSendBuffer.readable()), _1)
 		);
 	

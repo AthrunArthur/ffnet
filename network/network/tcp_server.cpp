@@ -7,10 +7,11 @@ namespace ffnet
 {
 namespace details
 {
-	using namespace ::ffnet::event;
+using namespace ::ffnet::event;
+using namespace ::ffnet::event::more;
 TCPConnection::TCPConnection(NetNervure *pNervure, TCPServer *pSvr)
-: TCPConnectionBase(pNervure)
-, m_pTCPServer(pSvr)
+    : TCPConnectionBase(pNervure)
+    , m_pTCPServer(pSvr)
 {
 }
 
@@ -18,14 +19,14 @@ TCPConnection::TCPConnection(NetNervure *pNervure, TCPServer *pSvr)
 
 void TCPConnection::start()
 {
-	startRecv();
+    startRecv();
 }
 
 TCPServer::TCPServer(NetNervure *pNervure, uint16_t iPort)
-: m_oAcceptor(pNervure->getIOService(), tcp::endpoint(tcp::v4(), iPort))
-, m_pNervure(pNervure)
+    : m_oAcceptor(pNervure->getIOService(), tcp::endpoint(tcp::v4(), iPort))
+    , m_pNervure(pNervure)
 {
-	startAccept();
+    startAccept();
 }
 
 void TCPServer::startAccept()
@@ -33,10 +34,10 @@ void TCPServer::startAccept()
     TCPConnectionPtr_t pNewConn(new TCPConnection(m_pNervure, this));
 
     //m_pHandler->onStartListening(this);
-	Event<tcp_server_start_listen>::triger(boost::bind(
-			tcp_server_start_listen::event, m_oAcceptor.local_endpoint(), _1
-			));
-	
+    Event<tcp_server_start_listen>::triger(boost::bind(
+            tcp_server_start_listen::event, m_oAcceptor.local_endpoint(), _1
+                                           ));
+
     m_oAcceptor.async_accept(pNewConn->getSocket(),
                              boost::bind(&TCPServer::handleAccept, this, pNewConn,
                                          boost::asio::placeholders::error)
@@ -46,14 +47,14 @@ void TCPServer::startAccept()
 void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::error_code &error)
 {
     if(!error) {
-		Event<tcp_server_accept_connection>::triger(
-			boost::bind(tcp_server_accept_connection::event,
-						pNewConn, _1));
+        Event<tcp_server_accept_connection>::triger(
+            boost::bind(tcp_server_accept_connection::event,
+                        pNewConn, _1));
         pNewConn->start();
     } else {
-		Event<tcp_server_accept_error>::triger(
-			boost::bind(tcp_server_accept_error::event, m_oAcceptor.local_endpoint(), error)
-		);
+        Event<tcp_server_accept_error>::triger(
+            boost::bind(tcp_server_accept_error::event, m_oAcceptor.local_endpoint(), error, _1)
+        );
     }
     startAccept();
 }

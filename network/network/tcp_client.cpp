@@ -8,6 +8,7 @@ namespace ffnet
 namespace details
 {
 using namespace ::ffnet::event;
+using namespace ::ffnet::event::more;
 
 TCPClient::TCPClient(NetNervure *pNervure, Endpoint &ep)
 : TCPConnectionBase(pNervure)

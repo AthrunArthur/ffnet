@@ -1,6 +1,6 @@
 #include "network/udp_point.h"
 #include "framework/net_nervure.h"
-#include "log.h"
+#include "framework/global_connections.h"
 
 namespace ffnet
 {
@@ -10,8 +10,13 @@ UDPPoint::UDPPoint(ffnet::NetNervure *pNervure, uint16_t iPort)
 : ffnet::details::ASIOConnection(pNervure)
 , m_oSocket(pNervure->getIOService(), udp::endpoint(udp::v4(), iPort))
 {
-	
+	GlobalConnections::instance()->addUDPPoint(this);
 	startRecv();
+}
+
+UDPPoint::~UDPPoint()
+{
+	GlobalConnections::instance()->delUDPPoint(this);
 }
 
 EndpointPtr_t UDPPoint::getRemoteEndpointPtr()
@@ -63,7 +68,7 @@ void UDPPoint::actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
 	//m_pHandler->onUDPStartSend(this);
 	m_pBonderSplitter->bond(m_oSendBuffer, pkg);
 	UDPEndPoint uep;
-	pEndpoint->generateTypedEndpoint( uep);
+	pEndpoint->generateTypedEndpoint(uep);
 	m_oSocket.async_send_to(boost::asio::buffer(m_oSendBuffer.readable()), uep,
                                    boost::bind(&UDPPoint::handlePkgSent, this,
                                                boost::asio::placeholders::error,

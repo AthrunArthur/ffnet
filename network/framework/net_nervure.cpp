@@ -17,12 +17,11 @@ using ffnet::details::TCPClient;
 using ffnet::details::UDPPoint;
 using ffnet::details::UDPPointPtr_t;
 
-NetNervure::NetNervure(ASIOConnHandlerPtr_t pNetHandler, BonderSplitterPtr_t pBonderSplitter)
+NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
 : m_oIOService()
 , m_oTasks()
 , m_pTCPServer()
 , m_oConnections()
-, m_pConnHandler(pNetHandler)
 , m_pBonderSplitter(pBonderSplitter)
 , m_bIsStopped(false)
 {

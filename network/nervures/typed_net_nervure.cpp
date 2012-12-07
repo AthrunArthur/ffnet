@@ -1,18 +1,15 @@
 #include "nervures/typed_net_nervure.h"
-#include "handler/conn_holder_handler.h"
 #include "middleware/length_bonder_splitter.h"
 #include "archive/deseralizer.h"
 #include "log.h"
 
 namespace ffnet
-{
-	using ffnet::ConnectionHolderHandler;
-	
+{	
 namespace details
 {
 	
 TypedNetNervure::TypedNetNervure()
-: NetNervure(ASIOConnHandlerPtr_t(new ConnectionHolderHandler()),BonderSplitterPtr_t(new LengthBonderSplitter()))
+: NetNervure(BonderSplitterPtr_t(new LengthBonderSplitter()))
 {
 }
 

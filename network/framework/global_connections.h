@@ -6,7 +6,7 @@
 #include "network/tcp_client.h"
 #include "network/tcp_server.h"
 #include "network/tcp_connection_base.h"
-
+#include "network/udp_point.h"
 #include <boost/noncopyable.hpp>
 #include <list>
 
@@ -20,9 +20,8 @@ class GlobalConnections : public boost::noncopyable
 public:
     static boost::shared_ptr< GlobalConnections> 		instance();
 
-	void				addConnection(ASIOConnection *pConn);
-	
-	void				delConnection(ASIOConnection *pConn);
+	void 				addUDPPoint(UDPPoint * pPoint);
+	void				delUDPPoint(UDPPoint *pPoint);
 	
 	ASIOConnection *		findRemoteEndPoint( EndpointPtr_t pEndpoint);
 	
@@ -38,7 +37,8 @@ protected:
 	typedef std::list<TCPConnectionBasePtr_t>	ConnHolder_t;
 	ConnHolder_t		m_oConnHolder;
 	
-	std::list<ASIOConnection *>			m_oConnections;
+	std::list<TCPClient *>			m_oTCPClients;
+	std::list<UDPPoint *>			m_oUDPPoints;
 	boost::mutex						m_oMutex;
 	static boost::shared_ptr< GlobalConnections> 	s_pInstance;
 };//end class GlobalConnections

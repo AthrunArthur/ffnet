@@ -15,7 +15,7 @@ class UDPPoint: public ffnet::details::ASIOConnection
 {
 public:
     UDPPoint(NetNervure *pNervure, uint16_t iPort);
-	
+    virtual ~UDPPoint();
 	virtual void			send(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
 	
     virtual UDPPoint* 	UDPPointPointer(){return this;}

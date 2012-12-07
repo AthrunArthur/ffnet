@@ -1,16 +1,13 @@
 #ifdef PROTO_BUF_SUPPORT
 #include "nervures/proto_buf_nervure.h"
-#include "handler/conn_holder_handler.h"
 #include "middleware/length_bonder_splitter.h"
 #include "log.h"
 #include "common.h"
 #include "package/proto_buf_wrapper_pkg.h"
 namespace ffnet
-{
-	using ffnet::ConnectionHolderHandler;
-	
+{	
 ProtoBufNervure::ProtoBufNervure()
-: NetNervure(ASIOConnHandlerPtr_t(new ConnectionHolderHandler()),BonderSplitterPtr_t(new LengthBonderSplitter()) )
+: NetNervure(BonderSplitterPtr_t(new LengthBonderSplitter()) )
 {
 
 }

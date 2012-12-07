@@ -5,17 +5,26 @@ namespace ffnet
 {
 namespace details
 {
-	using namespace ::ffnet::event;
-	
+using namespace ::ffnet::event;
+using namespace ::ffnet::event::more;
+
 boost::shared_ptr<GlobalConnections> GlobalConnections::s_pInstance;
 GlobalConnections::GlobalConnections()
 {
-	Event<tcp_server_accept_connection>::listen(
-		boost::bind(GlobalConnections::onTCPConnect, this, _1)
+	
+    Event<tcp_server_accept_connection>::listen(
+        boost::bind(&GlobalConnections::onTCPConnect, this, _1)
+    );
+    Event<tcp_client_get_connection_succ>::listen(
+        boost::bind(&GlobalConnections::onTCPClntConnect, this, _1)
+    );
+	Event<connect_recv_stream_error>::listen(
+		boost::bind(&GlobalConnections::onConnRecvOrSendError, this, _1)
 	);
-	Event<tcp_client_get_connection_succ>::listen(
-		boost::bind(GlobalConnections::onTCPClntConnect, this, _1)
+	Event<connect_sent_stream_error>::listen(
+		boost::bind(&GlobalConnections::onConnRecvOrSendError, this, _1)
 	);
+	
 }
 
 boost::shared_ptr< GlobalConnections> GlobalConnections::instance()
@@ -25,51 +34,140 @@ boost::shared_ptr< GlobalConnections> GlobalConnections::instance()
     }
     return s_pInstance;
 }
-void GlobalConnections::addConnection(ASIOConnection *pConn)
+void GlobalConnections::addUDPPoint(UDPPoint* pPoint)
 {
-	boost::unique_lock<boost::mutex> _l(m_oMutex);
-	m_oConnections.push_back(pConn);
+    boost::unique_lock<boost::mutex> _l(m_oMutex);
+    m_oUDPPoints.push_back(pPoint);
+}
+void GlobalConnections::delUDPPoint(UDPPoint* pPoint)
+{
+    boost::unique_lock<boost::mutex> _l(m_oMutex);
+	
+	RECHECK_DEL:
+	for(std::list<UDPPoint *>::iterator it = m_oUDPPoints.begin();
+		it != m_oUDPPoints.end();
+		it ++)
+		{
+			if(pPoint == (*it))
+			{
+				m_oUDPPoints.erase(it);
+				goto RECHECK_DEL;
+			}
+		}
 }
 
-void GlobalConnections::delConnection(ASIOConnection *pConn)
-{
-   boost::unique_lock<boost::mutex> _l(m_oMutex);
-    for(std::list<ASIOConnection *>::iterator it = m_oConnections.begin(); it != m_oConnections.end();
-            ++it) {
-        if(*it == pConn) {
-            m_oConnections.erase(it);
-            break;
-        }
-    }
-}
-//TODO, we need to compare the endpoint
 ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
 {
-	boost::unique_lock<boost::mutex> _l(m_oMutex);
-    for(std::list<ASIOConnection *>::iterator it = m_oConnections.begin(); it != m_oConnections.end();
-            ++it) {
-        return *it;
+    boost::unique_lock<boost::mutex> _l(m_oMutex);
+    if(pEndpoint->is_udp())
+    {
+        for(std::list<UDPPoint *>::iterator it = m_oUDPPoints.begin();
+                it != m_oUDPPoints.end();
+                it ++)
+        {
+            return *it;
+        }
+    }
+    else
+    {
+        for(ConnHolder_t::iterator it = m_oConnHolder.begin();
+                it != m_oConnHolder.end();
+                it ++)
+        {
+            Endpoint ep((*it)->getSocket().remote_endpoint());
+            if(ep == *(pEndpoint.get()))
+            {
+                return it->get();
+            }
+        }
+
+        for(std::list<TCPClient *>::iterator it = m_oTCPClients.begin();
+                it != m_oTCPClients.end();
+                it ++)
+        {
+			Endpoint ep((*it)->getSocket().remote_endpoint());
+            if(ep == *(pEndpoint.get()))
+            {
+                return *it;
+            }
+        }
     }
     return NULL;
 }
 
 void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
 {
-	boost::unique_lock<boost::mutex> _l(m_oMutex);
-	m_oConnHolder.push_back(pConn);
-	m_oConnections.push_back(pConn.get());
+    m_oMutex.lock();
+    m_oConnHolder.push_back(pConn);
+	m_oMutex.unlock();
+    Endpoint remote(pConn->getSocket().remote_endpoint());
+    Endpoint local(pConn->getSocket().local_endpoint());
+    Event<tcp_get_connection>::triger(
+        boost::bind(tcp_get_connection::event, remote, local, _1)
+    );
+
 }
 void GlobalConnections::onTCPClntConnect(TCPClient* pClnt)
 {
-	boost::unique_lock<boost::mutex> _l(m_oMutex);
-	m_oConnections.push_back(pClnt);
+    m_oMutex.lock();
+    m_oTCPClients.push_back(pClnt);
+	m_oMutex.unlock();
+    Endpoint remote(pClnt->getSocket().remote_endpoint());
+    Endpoint local(pClnt->getSocket().local_endpoint());
+    Event<tcp_get_connection>::triger(
+        boost::bind(tcp_get_connection::event, remote, local, _1)
+    );
 }
 void GlobalConnections::onConnRecvOrSendError(ASIOConnection* pConn)
 {
-	boost::unique_lock<boost::mutex> _l(m_oMutex);
-	//TODO, need to check it's tcp or udp
-	//if it's tcp, then we need to check if it's in m_oConnHolder
-	//if it's tcp, we also need to emit lost connection error
+    boost::unique_lock<boost::mutex> _l(m_oMutex);
+    if(pConn->UDPPointPointer() != NULL)
+    {
+        //TODO, need to emit udp error event.
+        return ;
+    }
+    if(pConn->TCPConnectionBasePointer() == NULL)
+        return ;
+    TCPConnectionBase * p = dynamic_cast<TCPConnectionBase *>(pConn);
+    Endpoint remote(p->getSocket().remote_endpoint());
+    Endpoint local(p->getSocket().local_endpoint());
+
+    if(dynamic_cast<TCPClient *>(p) == NULL)
+    {
+        //if it's tcp, then we need to check if it's in m_oConnHolder
+RECHECK:
+        for(ConnHolder_t::iterator it = m_oConnHolder.begin();
+                it != m_oConnHolder.end();
+                ++it) {
+            if(it->get() == pConn) {
+                m_oConnHolder.erase(it);
+                Event<tcp_lost_connection>::triger(
+                    boost::bind(tcp_lost_connection::event, remote, local, _1)
+                );
+                pConn->close();
+                goto RECHECK;
+            }
+        }
+    }
+    else
+    {
+        //if it's tcp, we also need to emit lost connection error
+RECHECK_CLIENT:
+        for(std::list<TCPClient *>::iterator it = m_oTCPClients.begin();
+                it != m_oTCPClients.end();
+                it ++)
+        {
+            if((*it) == p)
+            {
+                m_oTCPClients.erase(it);
+                Event<tcp_lost_connection>::triger(
+                    boost::bind(tcp_lost_connection::event, remote, local, _1)
+                );
+                pConn->close();
+                goto RECHECK_CLIENT;
+            }
+        }
+    }
 }
 
 }//end namespace details

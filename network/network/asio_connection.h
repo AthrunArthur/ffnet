@@ -9,8 +9,6 @@
 
 namespace ffnet
 {
-	class ASIOConnHandler;
-	typedef boost::shared_ptr<ASIOConnHandler> ASIOConnHandlerPtr_t;
 class NetNervure;
 	namespace details
 {
@@ -29,9 +27,6 @@ public:
 
     NetNervure 			*nervure() const {
         return m_pNervure;
-    }
-    ASIOConnHandlerPtr_t handler() const {
-        return m_pHandler;
     }
     BonderSplitter 		*bonderSplitter() const {
         return m_pBonderSplitter;
@@ -59,7 +54,6 @@ protected:
 protected:
     NetNervure 			*m_pNervure;
     io_service 			&m_oIOService;
-    ASIOConnHandlerPtr_t m_pHandler;
     BonderSplitter 		*m_pBonderSplitter;
     NetBuffer		m_oRecvBuffer;
     NetBuffer		m_oSendBuffer;

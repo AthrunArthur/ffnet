@@ -9,11 +9,11 @@ namespace ffnet
 namespace details
 {
 using namespace ::ffnet::event;
+using namespace ::ffnet::event::more;
 
 ASIOConnection::ASIOConnection(NetNervure *pNervure)
     : m_pNervure(pNervure)
     , m_oIOService(pNervure->getIOService())
-    , m_pHandler(pNervure->getHandler().get())
     , m_pBonderSplitter(pNervure->getBonderSplitter().get())
     , m_oRecvBuffer()
     , m_oSendBuffer()
@@ -42,7 +42,6 @@ void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::siz
 			boost::bind(connect_sent_stream_error::event,
 						this, ec, _1)
 		);
-        m_pHandler->onSendError(this, ec); //TODO, replace this with event
     }
 }
 void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, size_t bytes_transferred)
@@ -56,7 +55,6 @@ void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, si
         sliceAndDispatchPkg();
         startRecv();
     } else	{
-		m_pHandler->onRecvError(this, error); //TODO, replace this with event
         Event<connect_recv_stream_error>::triger(
 			boost::bind(connect_recv_stream_error::event,
 						this, error, _1)

@@ -4,7 +4,7 @@ project(network)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 add_definitions(-DPROTO_BUF_SUPPORT)
-#add_definitions(-g)
+add_definitions(-g)
 add_definitions(-DENABLE_LOG_CONSOLE)
 
 #####Specify the path of boost
@@ -25,7 +25,6 @@ set(src_list 	common/shared_buffer.cpp
 	configure/nervure_config.cpp
 	framework/global_connections.cpp
 	framework/net_nervure.cpp
-	handler/conn_holder_handler.cpp
 	handler/debug_event.cpp
 	middleware/net_dispatcher.cpp
 	middleware/length_bonder_splitter.cpp

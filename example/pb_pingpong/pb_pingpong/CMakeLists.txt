@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(pb_pingpong)
 
 add_definitions(-DPROTO_BUF_SUPPORT)
-#add_definitions(-g)
-#add_definitions(-DENABLE_LOG_CONSOLE)
+add_definitions(-g)
+add_definitions(-DENABLE_LOG_CONSOLE)
 
 
 ####Specify the path of ffnet/network
