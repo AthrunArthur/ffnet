@@ -10,14 +10,13 @@
 namespace ffnet
 {
 class NetNervure;
-	namespace details
+class TCPConnectionBase;
+class UDPPoint;
+namespace details
 {
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-
-class TCPConnectionBase;
-class UDPPoint;
 
 class ASIOConnection : public boost::noncopyable
 {

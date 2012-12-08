@@ -5,8 +5,6 @@
 
 namespace ffnet
 {
-namespace details
-{
 using namespace ::ffnet::event;
 using namespace ::ffnet::event::more;
 
@@ -38,5 +36,4 @@ void TCPClient::handleConnected(const boost::system::error_code &ec)
 		);
     }
 }
-}//end namespace details
 }//end namespace ffnet

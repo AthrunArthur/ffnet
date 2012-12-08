@@ -1,4 +1,5 @@
 #include "framework/net_nervure.h"
+#include "handler/event.h"
 #include "network/tcp_server.h"
 #include "network/tcp_client.h"
 #include "network/udp_point.h"
@@ -13,9 +14,11 @@
 namespace ffnet
 {
 using ffnet::details::GlobalConnections;
-using ffnet::details::TCPClient;
-using ffnet::details::UDPPoint;
-using ffnet::details::UDPPointPtr_t;
+using ffnet::TCPClient;
+using ffnet::UDPPoint;
+using ffnet::UDPPointPtr_t;
+using namespace ::ffnet::event;
+using namespace ::ffnet::event::more;
 
 NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
 : m_oIOService()
@@ -28,6 +31,23 @@ NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
 #ifdef ENABLE_LOG_CONSOLE
 	log_frmwk("NetNervure", "NetNervure is initialized!");
 #endif
+	Event<tcp_server_accept_connection>::listen(this, 
+        boost::bind(&GlobalConnections::onTCPConnect, 
+					GlobalConnections::instance().get(), _1)
+    );
+    Event<tcp_client_get_connection_succ>::listen(this,
+        boost::bind(&GlobalConnections::onTCPClntConnect, 
+					GlobalConnections::instance().get(), _1)
+    );
+	Event<connect_recv_stream_error>::listen(this,
+		boost::bind(&GlobalConnections::onConnRecvOrSendError, 
+					GlobalConnections::instance().get(), _1)
+	);
+	Event<connect_sent_stream_error>::listen(this,
+		boost::bind(&GlobalConnections::onConnRecvOrSendError, 
+					GlobalConnections::instance().get(), _1)
+	);
+	
 }
 
 NetNervure::~NetNervure()

@@ -9,14 +9,12 @@ namespace ffnet
 {
 
 class NetNervure;
-
-namespace details
-{
+class TCPServer;
 using namespace boost::asio;
 using namespace boost::asio::ip;
 using boost::asio::ip::tcp;
 
-class TCPServer;
+
 
 //////////////////////////////////////////////////////
 class TCPConnection : public TCPConnectionBase
@@ -58,8 +56,6 @@ protected:
     tcp::acceptor		m_oAcceptor;
 };//end class TCPServer
 typedef boost::shared_ptr<TCPServer> TCPServerPtr_t;
-
-}//end namespace details;
 }//end namespace ffnet
 
 #endif

@@ -12,19 +12,6 @@ boost::shared_ptr<GlobalConnections> GlobalConnections::s_pInstance;
 GlobalConnections::GlobalConnections()
 {
 	
-    Event<tcp_server_accept_connection>::listen(
-        boost::bind(&GlobalConnections::onTCPConnect, this, _1)
-    );
-    Event<tcp_client_get_connection_succ>::listen(
-        boost::bind(&GlobalConnections::onTCPClntConnect, this, _1)
-    );
-	Event<connect_recv_stream_error>::listen(
-		boost::bind(&GlobalConnections::onConnRecvOrSendError, this, _1)
-	);
-	Event<connect_sent_stream_error>::listen(
-		boost::bind(&GlobalConnections::onConnRecvOrSendError, this, _1)
-	);
-	
 }
 
 boost::shared_ptr< GlobalConnections> GlobalConnections::instance()
@@ -100,10 +87,8 @@ void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
     m_oMutex.lock();
     m_oConnHolder.push_back(pConn);
 	m_oMutex.unlock();
-    Endpoint remote(pConn->getSocket().remote_endpoint());
-    Endpoint local(pConn->getSocket().local_endpoint());
     Event<tcp_get_connection>::triger(
-        boost::bind(tcp_get_connection::event, remote, local, _1)
+        boost::bind(tcp_get_connection::event,pConn.get(), _1)
     );
 
 }
@@ -112,10 +97,8 @@ void GlobalConnections::onTCPClntConnect(TCPClient* pClnt)
     m_oMutex.lock();
     m_oTCPClients.push_back(pClnt);
 	m_oMutex.unlock();
-    Endpoint remote(pClnt->getSocket().remote_endpoint());
-    Endpoint local(pClnt->getSocket().local_endpoint());
     Event<tcp_get_connection>::triger(
-        boost::bind(tcp_get_connection::event, remote, local, _1)
+        boost::bind(tcp_get_connection::event, pClnt, _1)
     );
 }
 void GlobalConnections::onConnRecvOrSendError(ASIOConnection* pConn)
@@ -129,8 +112,6 @@ void GlobalConnections::onConnRecvOrSendError(ASIOConnection* pConn)
     if(pConn->TCPConnectionBasePointer() == NULL)
         return ;
     TCPConnectionBase * p = dynamic_cast<TCPConnectionBase *>(pConn);
-    Endpoint remote(p->getSocket().remote_endpoint());
-    Endpoint local(p->getSocket().local_endpoint());
 
     if(dynamic_cast<TCPClient *>(p) == NULL)
     {
@@ -140,11 +121,11 @@ RECHECK:
                 it != m_oConnHolder.end();
                 ++it) {
             if(it->get() == pConn) {
-                m_oConnHolder.erase(it);
-                Event<tcp_lost_connection>::triger(
-                    boost::bind(tcp_lost_connection::event, remote, local, _1)
-                );
                 pConn->close();
+                Event<tcp_lost_connection>::triger(
+                    boost::bind(tcp_lost_connection::event, p, _1)
+                );
+                m_oConnHolder.erase(it);
                 goto RECHECK;
             }
         }
@@ -161,7 +142,7 @@ RECHECK_CLIENT:
             {
                 m_oTCPClients.erase(it);
                 Event<tcp_lost_connection>::triger(
-                    boost::bind(tcp_lost_connection::event, remote, local, _1)
+                    boost::bind(tcp_lost_connection::event, p, _1)
                 );
                 pConn->close();
                 goto RECHECK_CLIENT;

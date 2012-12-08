@@ -4,8 +4,8 @@
 
 namespace ffnet
 {
-namespace details
-{
+using namespace ffnet::details;
+
 UDPPoint::UDPPoint(ffnet::NetNervure *pNervure, uint16_t iPort)
 : ffnet::details::ASIOConnection(pNervure)
 , m_oSocket(pNervure->getIOService(), udp::endpoint(udp::v4(), iPort))
@@ -74,6 +74,4 @@ void UDPPoint::actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
                                                boost::asio::placeholders::error,
                                                boost::asio::placeholders::bytes_transferred));
 }
-
-}//end namespace details
 }//end namespace ffnet

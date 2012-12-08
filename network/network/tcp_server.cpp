@@ -5,8 +5,7 @@
 
 namespace ffnet
 {
-namespace details
-{
+
 using namespace ::ffnet::event;
 using namespace ::ffnet::event::more;
 TCPConnection::TCPConnection(NetNervure *pNervure, TCPServer *pSvr)
@@ -58,5 +57,4 @@ void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::e
     }
     startAccept();
 }
-}//end namespace details
 }//end namespace ffnet

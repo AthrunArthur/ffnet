@@ -25,7 +25,6 @@ public:
 	
 	ASIOConnection *		findRemoteEndPoint( EndpointPtr_t pEndpoint);
 	
-protected:
 	//event
 	void				onTCPConnect(TCPConnectionPtr_t pConn);
 	void				onTCPClntConnect(TCPClient * pClnt);

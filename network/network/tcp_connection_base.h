@@ -7,12 +7,10 @@
 
 namespace ffnet
 {
-namespace details
-{
 	using namespace boost::asio;
 	using namespace boost::asio::ip;
 	
-class TCPConnectionBase : public ASIOConnection, public boost::enable_shared_from_this<TCPConnectionBase>
+class TCPConnectionBase : public details::ASIOConnection, public boost::enable_shared_from_this<TCPConnectionBase>
 {
 public:
 
@@ -38,7 +36,6 @@ protected:
     tcp::socket 		m_oSocket;
 };//class TCPConnectionBase
 typedef boost::shared_ptr<TCPConnectionBase> TCPConnectionBasePtr_t;
-}//end namespace details
 }//end namespace ffnet
 #endif
 

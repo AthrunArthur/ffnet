@@ -8,9 +8,10 @@
 
 namespace ffnet
 {
-	class NetNervure;
-namespace details
-{
+class NetNervure;
+using boost::asio::ip::udp;
+using boost::asio::ip::udp;
+
 class UDPPoint: public ffnet::details::ASIOConnection
 {
 public:
@@ -31,6 +32,5 @@ protected:
 	utl::sync_queue<Func_t>		m_oSendTasks;
 };//end class UDPPoint
 typedef boost::shared_ptr<UDPPoint> UDPPointPtr_t;
-}//end namespace details
 }//end namespace ffnet
 #endif

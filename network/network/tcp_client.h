@@ -5,8 +5,6 @@
 namespace ffnet
 {
 	
-namespace details
-{
 class TCPClient : public TCPConnectionBase
 {
 public:
@@ -16,6 +14,5 @@ public:
 
 protected:
 };//end class TCPClient
-}//end namespace details
 }//end namespace ffnet
 #endif

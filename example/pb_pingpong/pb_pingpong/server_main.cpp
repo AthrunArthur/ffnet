@@ -16,7 +16,7 @@ void onRecvPing(boost::shared_ptr<PingPong::Ping> pPing, ffnet::EndpointPtr_t pE
 	pkg->set_id(0);
 	ffnet::NetNervure::send(pkg, pEP);
 }
-void onLostTCPConnection(ffnet::Endpoint remote, ffnet::Endpoint local)
+void onLostTCPConnection(ffnet::TCPConnectionBase * pConn)
 {
 	std::cout<<"lost connection!"<<std::endl;
 }
@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 	initialize_log("svr.log");
 	
 	ffnet::ProtoBufNervure pbn;
-	ffnet::event::Event<ffnet::event::tcp_lost_connection>::listen(onLostTCPConnection);
+	ffnet::event::Event<ffnet::event::tcp_lost_connection>::listen(&pbn, onLostTCPConnection);
 	
 	ffnet::NervureConfigure nc("/home/athrun/projects/ffnet.git/example/pb_pingpong/pb_pingpong/svr_net_conf.ini");
     uint16_t port = nc.get<uint16_t>("tcp-server.port");

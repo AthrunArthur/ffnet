@@ -7,8 +7,6 @@
 
 namespace ffnet
 {
-namespace details
-{
 using namespace ::ffnet::event;
 using namespace ::ffnet::event::more;
 	
@@ -74,5 +72,4 @@ void TCPConnectionBase::startSend()
     }
     m_oMutex.unlock();
 }
-}//end namespace details
 }//end namespace ffnet

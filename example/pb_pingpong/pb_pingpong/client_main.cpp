@@ -24,11 +24,16 @@ void	onRecvPong(boost::shared_ptr<PingPong::Pong>pPong, ffnet::EndpointPtr_t pEP
 	sendPingMsg(pEP);
 }
 
-void	onConnSucc(ffnet::Endpoint remote, ffnet::Endpoint local)
+void	onConnSucc(ffnet::TCPConnectionBase *pConn)
 {
 	std::cout<<"connect success"<<std::endl;
-	ffnet::EndpointPtr_t tpp(new ffnet::Endpoint(remote));
+	ffnet::EndpointPtr_t tpp(new ffnet::Endpoint(pConn->getSocket().remote_endpoint()));
 	sendPingMsg(tpp);
+}
+void	onLostConn(ffnet::TCPConnectionBase *pConn, ffnet::ProtoBufNervure * pbn)
+{
+	std::cout<<"Server lost!"<<std::endl;
+	pbn->stop();
 }
 int main(int argc, char **argv) {
 	
@@ -43,9 +48,13 @@ int main(int argc, char **argv) {
 	
 	pbn.addNeedToRecvPkg<PingPong::Pong>(onRecvPong);
 	
-	ffnet::event::Event<ffnet::event::tcp_get_connection>::listen(onConnSucc);
+	ffnet::event::Event<ffnet::event::tcp_get_connection>::listen(&pbn, onConnSucc);
+	ffnet::event::Event<ffnet::event::tcp_lost_connection>::listen
+			(&pbn, 
+			 boost::bind(onLostConn, _1, &pbn));
+			 
 	pbn.run();
 	
-	
+	std::cout<<"Quiting main..."<<std::endl;
     return 0;
 }
