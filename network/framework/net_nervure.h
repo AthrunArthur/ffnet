@@ -60,7 +60,7 @@ protected:
     friend class ASIOConnection;
 
 
-    void					stopInThisThread();
+    void						stopInThisThread();
 
 
     virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);

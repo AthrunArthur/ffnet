@@ -47,7 +47,7 @@ NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
 		boost::bind(&GlobalConnections::onConnRecvOrSendError, 
 					GlobalConnections::instance().get(), _1)
 	);
-	
+	ffnet::details::NetDispatcher::instance();
 }
 
 NetNervure::~NetNervure()
