@@ -57,4 +57,8 @@ void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::e
     }
     startAccept();
 }
+void TCPServer::close()
+{
+	m_oAcceptor.close();
+}
 }//end namespace ffnet

@@ -11,7 +11,7 @@ namespace ffnet
 	public:
 		NetNervureFromFile(String conf);
 		
-		inline NervureConfigurePtr_t &		nervure(){return m_pConfigure;}
+		inline NervureConfigurePtr_t &		NervureConf(){return m_pConfigure;}
 	protected:
 		NervureConfigurePtr_t		m_pConfigure; 
 	};//end class NetNervureFromFile

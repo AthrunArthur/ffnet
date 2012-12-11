@@ -3,6 +3,9 @@
 #include "middleware/net_dispatcher.h"
 #include "framework/global_connections.h"
 #include "handler/event.h"
+#ifdef PROTO_BUF_SUPPORT
+#include "package/proto_buf_wrapper_pkg.h"
+#endif
 
 namespace ffnet
 {
@@ -71,5 +74,14 @@ void ASIOConnection::sliceAndDispatchPkg()
         NetDispatcher::instance()->dispatch(boost::bind(&NetNervure::deseralizeAndDispatchHandler, m_pNervure, ebp));
     }
 }
+#ifdef PROTO_BUF_SUPPORT
+void ASIOConnection::send(boost::shared_ptr< google::protobuf::Message > pMsg, EndpointPtr_t ep)
+{
+    boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
+    send(pPkg, ep);
+}
+
+#endif
+
 }//end namespace details
 }//end namespace ffnet

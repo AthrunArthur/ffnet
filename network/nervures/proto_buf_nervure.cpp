@@ -20,14 +20,12 @@ void ProtoBufNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
 	)
 	uint32_t id;
 	String s;
-	ffnet::deseralize(pBuf, id);
+	//ffnet::deseralize(pBuf, id); //We don't need to deseralize id;
 	ffnet::deseralize(pBuf + sizeof(id), s);
 	ProtoBufWrapperPkg pkg(s);
 	
 	PkgRecvHandler_t handler = m_oPkgHandlers[s];
 
-
-	//pPkg->m_oBuffer = ebp->buffer().buffer();
 	Deseralizer d(const_cast<const char *>(ebp->buffer().buffer().get()), ebp->buffer().length());
 	pkg.arch(d);
 	

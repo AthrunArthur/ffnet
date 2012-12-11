@@ -25,6 +25,7 @@ public:
 
     virtual ~ProtoBufNervure() {};
 
+	//! Not thread-safe
     template<class PkgTy_>
     void						addNeedToRecvPkg(typename details::TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
     {

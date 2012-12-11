@@ -74,4 +74,17 @@ void UDPPoint::actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
                                                boost::asio::placeholders::error,
                                                boost::asio::placeholders::bytes_transferred));
 }
+void UDPPoint::close()
+{
+    ffnet::details::ASIOConnection::close();
+	m_oSocket.close();
+}
+
+bool UDPPoint::isFree()
+{
+	if(m_oSendTasks.size() == 0)
+		return true;
+	return false;
+}
+
 }//end namespace ffnet

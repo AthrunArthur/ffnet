@@ -19,12 +19,14 @@ public:
     virtual ~UDPPoint();
 	virtual void			send(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
 	
-    virtual UDPPoint* 	UDPPointPointer(){return this;}
+    virtual UDPPoint* 		UDPPointPointer(){return this;}
+    virtual void 			close();
+	virtual bool			isFree();
 protected:
-	virtual EndpointPtr_t getRemoteEndpointPtr();
-	virtual 	void 		startSend();
+	virtual EndpointPtr_t 	getRemoteEndpointPtr();
+	virtual void 			startSend();
 	virtual void			startRecv();
-	void 	actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
+	void 			actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
 protected:
 	typedef boost::function<void () > Func_t;
 	udp::socket		m_oSocket;

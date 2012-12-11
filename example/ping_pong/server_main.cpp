@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	initialize_log("svr.log");
     
 	
-	ffnet::NetNervureFromFile nnff("/home/athrun/projects/ffnet.git/example/ping_pong/svr_net_conf.ini");
+	ffnet::NetNervureFromFile nnff("../svr_net_conf.ini");
 	nnff.addNeedToRecvPkg<PingMsg>(onRecvPing);
 	
 	

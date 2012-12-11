@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(test_network)
 
 add_definitions(-DPROTO_BUF_SUPPORT)
+add_definitions(-g)
+add_definitions(-DENABLE_LOG_CONSOLE)
 
 ####Specify the path of ffnet/network
 set(FFNET_ROOT_DIR ${PROJECT_SOURCE_DIR}/../../network)

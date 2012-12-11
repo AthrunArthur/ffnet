@@ -52,6 +52,15 @@ void TCPConnectionBase::close()
 {
 	m_oSocket.close();
 }
+bool TCPConnectionBase::isFree()
+{
+	if(m_oSendBuffer.filled() == 0)
+	{
+		return true;
+	}
+	return false;
+}
+
 
 void TCPConnectionBase::startSend()
 {

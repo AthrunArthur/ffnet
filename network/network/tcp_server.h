@@ -44,6 +44,7 @@ public:
         return m_oAcceptor.get_io_service();
     }
     
+    void				close();
     inline NetNervure *		getNervure() const{return m_pNervure;}
 
 protected:

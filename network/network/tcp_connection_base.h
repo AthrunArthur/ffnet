@@ -24,12 +24,14 @@ public:
     }
     
     virtual void			close();
+	virtual bool			isFree();
+	
 	virtual TCPConnectionBase * TCPConnectionBasePointer(){return this;}
 protected:
     TCPConnectionBase(NetNervure * pNervure);
 	
     virtual EndpointPtr_t getRemoteEndpointPtr();
-	virtual 	void 		startSend();
+	virtual void 		startSend();
 	virtual void			startRecv();
 
 protected:

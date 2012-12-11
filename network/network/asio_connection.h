@@ -6,6 +6,9 @@
 #include "middleware/bonder_splitter.h"
 #include "package/package.h"
 #include <boost/noncopyable.hpp>
+#ifdef PROTO_BUF_SUPPORT
+#include <google/protobuf/message.h>
+#endif
 
 namespace ffnet
 {
@@ -31,6 +34,9 @@ public:
         return m_pBonderSplitter;
     }
     virtual void			send(PackagePtr_t pkg, EndpointPtr_t pEndpoint) = 0;
+#ifdef PROTO_BUF_SUPPORT
+    virtual void				send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
+#endif
     virtual void 		close() {};
     virtual TCPConnectionBase *TCPConnectionBasePointer() {
         return NULL;
@@ -39,6 +45,7 @@ public:
         return NULL;
     }
     
+    virtual bool			isFree() = 0;
 protected:
     virtual EndpointPtr_t getRemoteEndpointPtr() = 0;
     virtual 	void 		startSend() = 0;
