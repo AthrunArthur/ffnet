@@ -76,7 +76,6 @@ void UDPPoint::actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
 }
 void UDPPoint::close()
 {
-    ffnet::details::ASIOConnection::close();
 	m_oSocket.close();
 }
 

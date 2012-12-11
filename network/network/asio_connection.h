@@ -15,8 +15,6 @@ namespace ffnet
 class NetNervure;
 class TCPConnectionBase;
 class UDPPoint;
-namespace details
-{
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
@@ -69,6 +67,5 @@ protected:
 };//end class ASIOConnection
 
 typedef boost::shared_ptr<ASIOConnection>		ASIOConnectionPtr_t;
-}//end namespace details
 }//end namespace ffnet
 #endif

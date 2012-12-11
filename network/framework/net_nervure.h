@@ -12,13 +12,8 @@
 
 namespace ffnet
 {
-namespace details
-{
 class ASIOConnection;
 typedef boost::shared_ptr<ASIOConnection> ASIOConnectionPtr_t;
-}
-using ffnet::details::ASIOConnection;
-using ffnet::details::ASIOConnectionPtr_t;
 class TCPServer;
 class TCPConnectionBase;
 
@@ -32,9 +27,9 @@ public:
     NetNervure( BonderSplitterPtr_t pBonderSplitter);
     virtual ~NetNervure();
 
-    static void				send(boost::shared_ptr<Package> pPkg, EndpointPtr_t ep);
+    static ASIOConnection *				send(boost::shared_ptr<Package> pPkg, EndpointPtr_t ep);
 #ifdef PROTO_BUF_SUPPORT
-    static void				send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
+    static ASIOConnection *				send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
 #endif
     void 					run();
 

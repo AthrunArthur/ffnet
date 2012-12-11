@@ -12,7 +12,7 @@ class NetNervure;
 using boost::asio::ip::udp;
 using boost::asio::ip::udp;
 
-class UDPPoint: public ffnet::details::ASIOConnection
+class UDPPoint: public ASIOConnection
 {
 public:
     UDPPoint(NetNervure *pNervure, uint16_t iPort);

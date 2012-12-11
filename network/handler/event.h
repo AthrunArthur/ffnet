@@ -174,7 +174,7 @@ struct tcp_client_conn_error {
     }
 };//end tcp_client_conn_error
 struct connect_sent_stream_succ {
-    typedef ::ffnet::details::ASIOConnection * ASIOConnPtr_t;
+    typedef ::ffnet::ASIOConnection * ASIOConnPtr_t;
     typedef boost::function<void (ASIOConnPtr_t, size_t)> event_handler;
     static void event(ASIOConnPtr_t pConn, size_t len, event_handler h)
     {
@@ -182,7 +182,7 @@ struct connect_sent_stream_succ {
     }
 };//end connect_sent_stream
 struct connect_sent_stream_error {
-    typedef ::ffnet::details::ASIOConnection *ASIOConnPtr_t;
+    typedef ::ffnet::ASIOConnection *ASIOConnPtr_t;
     typedef boost::system::error_code	error_code;
     typedef boost::function<void (ASIOConnPtr_t, error_code)> event_handler;
     static void event(ASIOConnPtr_t pConn, error_code error, event_handler h)
@@ -191,7 +191,7 @@ struct connect_sent_stream_error {
     }
 };//end connect_sent_stream_error
 struct connect_recv_stream_succ {
-    typedef ::ffnet::details::ASIOConnection * ASIOConnPtr_t;
+    typedef ::ffnet::ASIOConnection * ASIOConnPtr_t;
     typedef boost::function<void (ASIOConnPtr_t, size_t)> event_handler;
     static void event(ASIOConnPtr_t pConn, size_t len, event_handler h)
     {
@@ -199,7 +199,7 @@ struct connect_recv_stream_succ {
     }
 };//end connect_recv_stream_succ
 struct connect_recv_stream_error {
-    typedef ::ffnet::details::ASIOConnection *ASIOConnPtr_t;
+    typedef ::ffnet::ASIOConnection *ASIOConnPtr_t;
     typedef boost::system::error_code	error_code;
     typedef boost::function<void (ASIOConnPtr_t, error_code)> event_handler;
     static void event(ASIOConnPtr_t pConn, error_code error, event_handler h)

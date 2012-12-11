@@ -15,6 +15,9 @@ namespace ffnet
 {
 namespace details
 {
+using ffnet::ASIOConnection;
+using ffnet::UDPPoint;
+	
 class GlobalConnections : public boost::noncopyable
 {
 public:

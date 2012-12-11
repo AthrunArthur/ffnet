@@ -3,16 +3,16 @@
 #include "middleware/net_dispatcher.h"
 #include "framework/global_connections.h"
 #include "handler/event.h"
+#include "middleware/net_dispatcher.h"
 #ifdef PROTO_BUF_SUPPORT
 #include "package/proto_buf_wrapper_pkg.h"
 #endif
 
 namespace ffnet
 {
-namespace details
-{
 using namespace ::ffnet::event;
 using namespace ::ffnet::event::more;
+using ::ffnet::details::NetDispatcher;
 
 ASIOConnection::ASIOConnection(NetNervure *pNervure)
     : m_pNervure(pNervure)
@@ -23,8 +23,6 @@ ASIOConnection::ASIOConnection(NetNervure *pNervure)
     , m_oMutex()
     , m_bIsSending(false)
 {
-	//We need this to initialize event register.
-	GlobalConnections::instance();
 }
 
 ASIOConnection::~ASIOConnection()
@@ -83,5 +81,4 @@ void ASIOConnection::send(boost::shared_ptr< google::protobuf::Message > pMsg, E
 
 #endif
 
-}//end namespace details
 }//end namespace ffnet
