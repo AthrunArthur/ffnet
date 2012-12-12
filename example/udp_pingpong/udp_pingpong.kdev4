@@ -1,0 +1,4 @@
+[Project]
+Name=udp_pingpong
+Manager=KDevCMakeManager
+VersionControl=
