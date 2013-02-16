@@ -18,8 +18,6 @@ link_directories(${Boost_DIR}/stage/lib)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-#####Open logs for network
-#add_definitions(-DENABLE_LOG_CONSOLE)
 
 set(src_list 	common/shared_buffer.cpp
 	common/log/logger.cpp
