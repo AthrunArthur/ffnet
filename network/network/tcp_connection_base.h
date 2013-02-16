@@ -27,10 +27,10 @@ public:
 	virtual bool			isFree();
 	
 	virtual TCPConnectionBase * TCPConnectionBasePointer(){return this;}
+	virtual EndpointPtr_t getRemoteEndpointPtr();
 protected:
     TCPConnectionBase(NetNervure * pNervure);
-	
-    virtual EndpointPtr_t getRemoteEndpointPtr();
+    
 	virtual void 		startSend();
 	virtual void			startRecv();
 

@@ -37,7 +37,6 @@ void	onLostConn(ffnet::TCPConnectionBase *pConn, ffnet::NetNervure * pbn)
 }
 
 int main(int argc, char **argv) {
-	
 	initialize_log("clnt.log");
     
 	nnff.addNeedToRecvPkg<PongMsg>(onRecvPong);

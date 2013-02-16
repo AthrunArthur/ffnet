@@ -7,7 +7,7 @@ add_definitions(-DENABLE_LOG_CONSOLE)
 
 
 ####Specify the path of ffnet/network
-set(FFNET_ROOT_DIR ${PROJECT_SOURCE_DIR}/../../../network)
+set(FFNET_ROOT_DIR ${PROJECT_SOURCE_DIR}/../../network)
 
 #####Specify the path of boost
 #set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_trunk/stage/include")

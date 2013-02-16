@@ -1,7 +1,6 @@
 #include <iostream>
 #include "network.h"
 #include "message.pb.h"
-#include "../../../network/handler/event.h"
 #include <log.h>
 
 ffnet::NervureConfigure nc("../clnt_net_conf.ini");
@@ -19,8 +18,7 @@ void	sendPingMsg(ffnet::EndpointPtr_t tp)
 
 void	onRecvPong(boost::shared_ptr<PingPong::Pong>pPong, ffnet::EndpointPtr_t pEP)
 {
-	PingPong::Pong & msg = *(pPong.get());
-	std::cout<<"got pong! "<<msg.msg()<<std::endl;
+	std::cout<<"got pong! "<<pPong->msg()<<std::endl;
 	sendPingMsg(pEP);
 }
 

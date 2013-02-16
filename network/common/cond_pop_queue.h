@@ -2,6 +2,7 @@
 #define _NETWORK_COMMON_COND_POP_QUEUE_H_
 #include "common.h"
 #include <boost/thread/condition_variable.hpp>
+#include <boost/thread.hpp>
 #include <queue>
 namespace ffnet
 {
@@ -9,18 +10,20 @@ namespace ffnet
 	class CondPopQueue
 	{
 	public:
-		CondPopQueue(){}
+		CondPopQueue(){
+			m_iCoreNum = boost::thread::hardware_concurrency();
+		}
 		
 		void							push_back(const Ty & val)
 		{
 			m_oMutex.lock();
-			bool ef = m_oContainer.empty();
 			m_oContainer.push(val);
+			size_t s = m_oContainer.size();
 			m_oMutex.unlock();
 			
-			if(ef)
+			if(s <= m_iCoreNum)
 			{
-				m_oCond.notify_all();
+				m_oCond.notify_one();
 			}
 		}
 		
@@ -51,6 +54,7 @@ namespace ffnet
 		mutable boost::mutex					m_oMutex;
 		mutable boost::condition_variable	m_oCond;
 		std::queue<Ty>				m_oContainer;
+		size_t						m_iCoreNum;
 	};//end class CondPopQueue
 }
 

@@ -4,10 +4,7 @@
 #include <log.h>
 void onRecvPing(boost::shared_ptr<PingPong::Ping> pPing, ffnet::EndpointPtr_t pEP)
 {
-	PingPong::Ping & msg = *(pPing.get());
-	
-	//msg.print();
-	std::cout<<msg.msg()<<std::endl;
+	std::cout<<pPing->msg()<<std::endl;
 
     boost::this_thread::sleep(boost::posix_time::seconds(1));
 

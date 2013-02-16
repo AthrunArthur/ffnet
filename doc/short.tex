@@ -1,24 +1,224 @@
+%% LyX 2.0.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
 \documentclass{article}
+\usepackage[latin9]{inputenc}
+\usepackage{calc}
 
-\newcommand{\ffnet} {\textsf{ffnet}}
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
 
+
+\newcommand{\ffnet}{\textsf{ffnet}}
+\newcommand{\ffnetdir}[1]{\textit{/ffnet/root/dir${#1}$}}
+\newcommand{\pingpong}{\textsf{ping\_pong}}
+\newcommand{\pingpongdir}[1]{\textit{/ffnet/root/dir/example/ping\_pong${#1}$}}
 \author{Athrun Arthur}
 \title{A Quick Start for \ffnet{}}
 
+\makeatother
+
 \begin{document}
-\maketitle
-\tableofcontents
+\maketitle{}\tableofcontents{}\newpage{}
+
+
 \section{Introduction}
+
+
 \subsection{Why \ffnet}
 
-\subsection{\ffnet is ...}
+Network programming is a very complicated thing. Of course it's simple
+to write a simple ping-pong network application using socket. But
+you have to consider many other possible situations in productive
+applications. 
 
-\subsection{An Example}
-\subsection{Build and Run}
+Consider ping-pong as an example. There is a server which replys pong
+message when receives ping message, and a client which replys ping
+message when receives pong message. To make the infinite loop start,
+the client need to send the first ping message when the connection
+is established. Now let's see what you need to consider if ping-pong
+is a product which means avalibility, scalibility, strong and easy
+to extend.
+\begin{itemize}
+\item Connection management. It's obvious as there may be multiple clients.
+When a client is offline, the server need to know that.
+\item Avalibility. Network is complex partly because you may receive any
+possible messages, legal or illegal. You must distinguish those illegal
+messages from raw messages. This means you may need to handle some
+hostile attacks, like DDoS.
+\item Performance. It's a good practice to consider response time in network
+programming although ping-pong is simple. Maybe you know proactor
+pattern, reactor pattern, asynchronized I/O (like boost.asio), parallel
+programming. But you may turn a blind to these solutions because of
+complexity 
+\item Maintainable. Code refactoring is a normal thing in network programming.
+There are many situations recall code refactoring, for example, new
+business requirements, unexpected network behaviors, performance tunes
+and security ensurance. Again, you turn a blind to possible design
+patterns because of complexity.
+\item Configurable. Another burdern to adjust very network enviornments.
+\end{itemize}
+There are many network libraries which aim to bring simple and powerful
+network programming, like boost.asio, protocol buffer from Google,
+ACE and mudo. But \ffnet{} is aim to provide higher level network
+programming enviornment with parallel, asynchronization, security
+, debugging and configurable features.
+
+
+\subsection{\ffnet{} is ...}
+
+\ffnet{} is a opensource framework for network programming in C++.
+It's based on boost.asio and provide network management, package serialization
+and deserialization, asynchronization, security, debugging and configurable
+features. Now \ffnet{} is still under heavy development.
+
+
+\subsection{Build \ffnet{}}
+
+\ffnet{} uses CMake to organize its source code and it depends on
+Boost (1.49 or higher). Suppose you have got the source code of \ffnet{}
+and the directory is \ffnetdir{/}. Here are the steps you need to
+build it.
+\begin{enumerate}
+\item cd \ffnetdir{/build}
+\item cmake ../
+\item make
+\end{enumerate}
+We don't recommend you to use the Boost in your system path, so you need to specify path of your
+Boost in \[\ffnetdir{/CMakeLists.txt}\].
+Now you can find two generated file in \ffnetdir{/lib} now if you have
+built \ffnet{} successfully. One is a static library and the other
+is a shared library.
+
+\ffnet{} also has some examples to show how to use it. Building examples is similar as building \ffnet{},
+that means you need to specify the necessary Boost path in the examples's CMakeLists.txt.
+
 
 \section{Use \ffnet}
+In this section, we will write an example to illustrate how to use \ffnet{}. The example is about ping-pong between 
+a server and a client and it's based on TCP connection. The server is listening until a client launch a TCP connection.
+Once the connection is built, the client sends a \textit{ping} message. The server will send a \textit{pong} message as 
+an response to each \textit{ping} message. Then the client will get the \textit{pong}
+message and re-send another another \texttt{ping} message. The progress will continue and never stop.
+
+The first step to use \ffnet{} is to include necessary header files.
+\begin{verbatim}
+ #include <network.h>
+\end{verbatim}
+The next step should be declaring necessary messages, ping and pong. You can declare message 
+by inheriting \texttt{ffnet::Package} and implementing \texttt{virtual void archive(ffnet::Archive \& ar);}.
+It's not complicated, but boring. So I prefer google's ProtoBuf and you can get more details about it from google.
+Now the messages are declared like this:
+\begin{verbatim}
+package PingPong;
+
+message Ping{
+required string msg = 1;
+required int32 id = 2;
+}
+
+message Pong{
+required string msg = 1;
+required int32 id = 2;
+}
+\end{verbatim}
+
+Now it's time to initialize our network enviornment. In \ffnet{}, network is seen as a group of nervures. Each nervure can have
+a TCP server, several TCP connections, and several UDP connections. Each nervure is a single thread. So the only reason to use
+multiple nervures is for concurrency. To use ProtoBuf in \ffnet{}, we need \texttt{ffnet::ProtoBufNervure}.
+
+\subsection{Server}
+In the server side, the network is initialized like this:
+\begin{verbatim}
+ ffnet::ProtoBufNervure pbn;
+ pbn.initTCPServer(10005);
+\end{verbatim}
+
+Now we need to receive \textit{ping} message and do something. There is no need to handle buffer and deserialization. 
+The message \ffnet{} gives us will be a deserialized \textit{ping}. We just specify a callback handler for it.
+\begin{verbatim}
+ pbn.addNeedToRecvPkg<PingPong::Ping>(onRecvPing);
+\end{verbatim}
+Remind that \texttt{PingPong::Ping} is defined by ProtoBuf. \texttt{addNeedToRecvPkg} has the following prototype:
+\begin{verbatim}
+ template<class MsgTy_>
+ void addNeedToRecvPkg(
+     boost::function<void (
+         boost::shared_ptr<MsgTy_>,  //pMsg
+         ffnet::EndpointPtr_t) > //pEP
+     );
+\end{verbatim}
+, in which \texttt{pMsg} is the received message and \texttt{pEP} is the source endpoint. Now we can implement 
+\texttt{onRecvPing} and response a \textit{pong} message.
+\begin{verbatim}
+ void onRecvPing(boost::shared_ptr<PingPong::Ping> pPing,
+                 ffnet::EndpointPtr_t pEP)
+{
+    std::cout<<pPing->msg()<<std::endl;
+
+    boost::shared_ptr<PingPong::Pong> pkg(new PingPong::Pong());
+    pkg->set_msg("Pong from server!");
+    pkg->set_id(0);
+    ffnet::NetNervure::send(pkg, pEP);
+}
+\end{verbatim}
+Finally the left thing is to run the nervure thread.
+\begin{verbatim}
+ pbn.run();
+\end{verbatim}
+
+\subsection{Client}
+
+
+
+In the client side, the network is initialized like this by specifying remote endpoint.
+\begin{verbatim}
+ ffnet::ProtoBufNervure pbn;
+ ffnet::EndpointPtr_t pEP(
+     new ffnet::Endpoint
+         (ffnet::tcp_v4,
+          boost::asio::ip::address_v4::from_string("127.0.0.1),
+          10005)
+     );
+ pbn.addTCPClient(ep);
+\end{verbatim}
+Similar as server side, we need to specify \texttt{PingPong::Pong}'s callback handler.
+\begin{verbatim}
+ pbn.addNeedToRecvPkg<PingPong::Pong>(onRecvPong);
+ 
+ void	onRecvPong(
+ boost::shared_ptr<PingPong::Pong>pPong, 
+ ffnet::EndpointPtr_t pEP)
+{
+    std::cout<<"got pong! "<<pPong->msg();
+    sendPingMsg(pEP);
+}
+\end{verbatim}
+
+Besides, we also need to send message until connection is built. \ffnet{} provides \texttt{event} to do that. There are three
+basic events, \texttt{tcp\_get\_connection}, \texttt{tcp\_lost\_connection} and \texttt{udp\_send\_recv\_exception}.
+Here we need to response \texttt{tcp\_get\_connection}.
+\begin{verbatim}
+ using namesapce ffnet::event;
+ ...
+ Event<tcp_get_connection>::listen(
+     &pbn, onConnSucc);
+ ...    
+ void	onConnSucc(ffnet::TCPConnectionBase *pConn)
+{
+    std::cout<<"connect success"<<std::endl;
+    ffnet::EndpointPtr_t tpp(
+        new ffnet::Endpoint(pConn->getSocket().remote_endpoint()));
+    sendPingMsg(tpp);
+}
+\end{verbatim}
+
+\subsection{Complete Code of PingPong}
+Please check the example \texttt{pb\_tcp\_pingpong} in \ffnet{}.
+
 
 \section{Inside \ffnet}
-\section{Furthur Help}
 
+
+\section{Furthur Help}
+If you have any problems, please send e-mail to \texttt{athrunarthur@gmail.com}.
 \end{document}
