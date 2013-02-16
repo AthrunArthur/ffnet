@@ -37,8 +37,7 @@ void	onLostConn(ffnet::TCPConnectionBase *pConn, ffnet::NetNervure * pbn)
 }
 
 int main(int argc, char **argv) {
-	initialize_log("clnt.log");
-    
+   	ffnet::Log::init(ffnet::Log::DEBUG, "clnt.log"); 
 	nnff.addNeedToRecvPkg<PongMsg>(onRecvPong);
 	ffnet::event::Event<ffnet::event::tcp_get_connection>::listen(&nnff, onConnSucc);
 	ffnet::event::Event<ffnet::event::tcp_lost_connection>::listen

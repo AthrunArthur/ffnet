@@ -18,8 +18,7 @@ void onLostTCPConnection(ffnet::TCPConnectionBase * pConn)
 	std::cout<<"lost connection!"<<std::endl;
 }
 int main(int argc, char **argv) {
-	initialize_log("svr.log");
-	
+	ffnet::Log::init(ffnet::Log::DEBUG, "svr.log");
 	ffnet::ProtoBufNervure pbn;
 	ffnet::event::Event<ffnet::event::tcp_lost_connection>::listen(&pbn, onLostTCPConnection);
 	

@@ -24,7 +24,7 @@ void	onRecvPong(boost::shared_ptr<PingPong::Pong>pPong, ffnet::EndpointPtr_t pEP
 
 int main(int argc, char **argv) {
 	
-    initialize_log("clnt.log");
+    ffnet::Log::init(ffnet::Log::TRACE, "clnt.log");
 	ffnet::ProtoBufNervure pbn;
 	
     uint16_t port = nc.get<uint16_t>("udp-server.port");

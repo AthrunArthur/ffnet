@@ -64,9 +64,7 @@ void NetDispatcher::run()
 
 void NetDispatcher::dispatch(Func_t f)
 {
-	FFNET_DEBUG(
-    log_frmwk("NetDispatcher", "dispatch(), a pkg is dispatched to pNervure!");
-	)
+	LOG_DEBUG(frmwk)<<"NetDispatcher::dispatch() " << "a pkg is dispatched to pNervure!";
     m_oDispatchTasks.push_back(f);
 }
 

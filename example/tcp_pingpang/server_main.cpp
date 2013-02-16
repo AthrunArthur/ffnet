@@ -21,8 +21,7 @@ void onLostTCPConnection(ffnet::TCPConnectionBase * pConn)
 
 int main(int argc, char **argv) {
 	
-	initialize_log("svr.log");
-    
+   	ffnet::Log::init(ffnet::Log::DEBUG, "svr.log"); 
 	
 	ffnet::NetNervureFromFile nnff("../svr_net_conf.ini");
 	nnff.addNeedToRecvPkg<PingMsg>(onRecvPing);

@@ -7,7 +7,7 @@
 namespace ffnet
 {
 	template<class Ty>
-	class CondPopQueue
+	class CondPopQueue : boost::noncopyable
 	{
 	public:
 		CondPopQueue(){

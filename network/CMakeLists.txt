@@ -22,6 +22,9 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #add_definitions(-DENABLE_LOG_CONSOLE)
 
 set(src_list 	common/shared_buffer.cpp
+	common/log/logger.cpp
+	common/log/logwriter.cpp
+	common/log.cpp
 	configure/nervure_config.cpp
 	framework/global_connections.cpp
 	framework/net_nervure.cpp
@@ -40,7 +43,7 @@ set(src_list 	common/shared_buffer.cpp
 	network/udp_point.cpp
 	package/proto_buf_wrapper_pkg.cpp
 	archive/archive.cpp
-	log.cpp
+	
 )
 	
 add_library(network_dynamic SHARED ${src_list})

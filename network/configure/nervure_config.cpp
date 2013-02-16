@@ -8,7 +8,7 @@ NervureConfigure::NervureConfigure(String conf)
     try {
         boost::property_tree::ini_parser::read_ini(conf, m_oPTree);
     } catch(boost::property_tree::ini_parser_error ipe) {
-		FFNET_DEBUG(log_conf("NervureConfigure", "can't read conf file: %s", conf.c_str());)
+			LOG_ERROR(conf)<<"NervureConfigure "<< "can't read conf file: " << conf;
     }
 }
 }

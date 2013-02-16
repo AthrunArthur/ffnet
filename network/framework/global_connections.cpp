@@ -106,7 +106,7 @@ void GlobalConnections::onConnRecvOrSendError(ASIOConnection* pConn)
     boost::unique_lock<boost::mutex> _l(m_oMutex);
     if(pConn->UDPPointPointer() != NULL)
     {
-        //TODO, need to emit udp error event.
+        //TODO, emit udp error event.
         return ;
     }
     if(pConn->TCPConnectionBasePointer() == NULL)

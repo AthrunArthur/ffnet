@@ -15,9 +15,7 @@ ProtoBufNervure::ProtoBufNervure()
 void ProtoBufNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
 {
     const char *pBuf = ebp->buffer().buffer().get();
-	FFNET_DEBUG(
-		log_frmwk("ProtoBufNervure", "deseralizeAndDispatchHandler(), buf: %s", printBuf(pBuf, ebp->buffer().length()).c_str());
-	)
+	LOG_DEBUG(frmwk)<<"ProtoBufNervure::deseralizeAndDispatchHandler() "<< "buf:"<< printBuf(pBuf, ebp->buffer().length());
 	uint32_t id;
 	String s;
 	//ffnet::deseralize(pBuf, id); //We don't need to deseralize id;

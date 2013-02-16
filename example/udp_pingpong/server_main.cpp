@@ -15,7 +15,7 @@ void onRecvPing(boost::shared_ptr<PingPong::Ping> pPing, ffnet::EndpointPtr_t pE
 }
 
 int main(int argc, char **argv) {
-	initialize_log("svr.log");
+	ffnet::Log::init(ffnet::Log::TRACE, "svr.log");
 	
 	ffnet::ProtoBufNervure pbn;
 	
