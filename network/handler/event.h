@@ -2,6 +2,7 @@
 #define NETWORK_HANDLER_EVENT_H_
 #include "common.h"
 #include <boost/function.hpp>
+#include<boost/static_assert.hpp>
 #include "framework/net_nervure.h"
 #include "network/tcp_connection_base.h"
 #include "network/asio_connection.h"
@@ -15,65 +16,18 @@ namespace ffnet
 {
 namespace event
 {
-
-
-
-template<class ETy_>
-class Event {
+  //Do nothing here! Please check ENABLE_HOOK_EVENT
+  template<class ETy_>
+  class Event{
 public:
     typedef typename ETy_::event_handler event_handler;
     typedef boost::function<void (event_handler) > event_triger;
-	class HandlerAndDispatcher
-	{
-	public:
-		typedef boost::function<void () > Func_t;
-		typedef ffnet::CondPopQueue<Func_t> TQ_t;
-		HandlerAndDispatcher(event_handler h, TQ_t & q)
-		:m_oHandler(h), m_oTaskQueue(q){}
-	public:
-		event_handler 		m_oHandler;
-		TQ_t &	m_oTaskQueue;
-		
-	};//end HandlerAndDispatcher
-	typedef boost::shared_ptr<HandlerAndDispatcher> HandlerAndDispatcherPtr_t;
-	typedef std::vector<HandlerAndDispatcherPtr_t>	Container_t;
-	
     static void listen(::ffnet::NetNervure * nn, event_handler h)
     {
-		HandlerAndDispatcherPtr_t hadp(new HandlerAndDispatcher(h, nn->getTaskQueue()));
-        instance()->m_oContainer.push_back(hadp);
+	//	BOOST_STATIC_ASSERT( false && "Can't listen a disabled event, you must ENABLE_HOOK_EVENT firstly in common/defines.h");
     }
-    static void triger(event_triger t)
-    {
-        if(s_pInstance)
-        {
-            for(typename Container_t::iterator it = instance()->m_oContainer.begin(); 
-				it!=instance()->m_oContainer.end(); ++it)
-            {
-                //t(*it);
-                (*it)->m_oTaskQueue.push_back(boost::bind(t, (*it)->m_oHandler));
-            }
-        }
-    }
-protected:
-    Event() : m_oContainer() {}
-    static Event<ETy_> * 		instance() {
-        if(s_pInstance == NULL)
-        {
-            s_pInstance = new Event<ETy_>();
-        }
-        return s_pInstance;
-    }
-    static Event<ETy_> *		internalUseInstance()
-    {
-        return s_pInstance;
-    }
-protected:
-    Container_t					m_oContainer;
-    static Event<ETy_> *		s_pInstance;
-};//end class Event
-template <class ETy_>
-Event<ETy_> *		Event<ETy_>::s_pInstance = NULL;
+ static void triger(event_triger t){ }
+  };//end class Event
 
 
 
@@ -210,4 +164,62 @@ struct connect_recv_stream_error {
 }//end namespace more
 }//end namespace event
 }//end namespace ffnet
+
+
+#define ENABLE_HOOK_EVENT(ETy_) \
+namespace ffnet{namespace event{ \
+  template <>  class Event<ETy_>{ \
+    public:	\
+    typedef typename ETy_::event_handler event_handler;	\
+    typedef boost::function<void (event_handler) > event_triger; \
+	class HandlerAndDispatcher \
+	{ \
+	public:\
+		typedef boost::function<void () > Func_t;\
+		typedef ffnet::BlockingQueue<Func_t> TQ_t;\
+		HandlerAndDispatcher(event_handler h, TQ_t & q)\
+		:m_oHandler(h), m_oTaskQueue(q){} \
+	public: \
+		event_handler 		m_oHandler; \
+		TQ_t &	m_oTaskQueue; \
+	}; \
+	typedef boost::shared_ptr<HandlerAndDispatcher> HandlerAndDispatcherPtr_t;  \
+	typedef std::vector<HandlerAndDispatcherPtr_t>	Container_t; \
+    static void listen(::ffnet::NetNervure * nn, event_handler h) \
+    {\
+		HandlerAndDispatcherPtr_t hadp(new HandlerAndDispatcher(h, nn->getTaskQueue()));\
+        instance()->m_oContainer.push_back(hadp);\
+    }\
+    static void triger(event_triger t)\
+    {\
+        if(s_pInstance)\
+        {\
+            for(typename Container_t::iterator it = instance()->m_oContainer.begin(); \
+				it!=instance()->m_oContainer.end(); ++it)\
+            {\
+                (*it)->m_oTaskQueue.push_back(boost::bind(t, (*it)->m_oHandler)); \
+            }\
+        }\
+    }\
+protected: \
+    Event() : m_oContainer() {}\
+    static Event<ETy_> * 		instance() {\
+        if(s_pInstance == NULL)\
+        {\
+            s_pInstance = new Event<ETy_>();\
+        }\
+        return s_pInstance;\
+    }\
+    static Event<ETy_> *		internalUseInstance()\
+    {\
+        return s_pInstance;\
+    }\
+protected:\
+    Container_t					m_oContainer;\
+    static Event<ETy_> *		s_pInstance; \
+  };\
+}}
+
+//Event<ETy_> *		Event<ETy_>::s_pInstance = NULL;\
+
 #endif

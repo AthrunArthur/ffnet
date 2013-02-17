@@ -1,7 +1,7 @@
 #ifdef PROTO_BUF_SUPPORT
 #include "nervures/proto_buf_nervure.h"
 #include "middleware/length_bonder_splitter.h"
-#include "log.h"
+#include "common/defines.h"
 #include "common.h"
 #include "package/proto_buf_wrapper_pkg.h"
 namespace ffnet

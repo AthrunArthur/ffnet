@@ -3,7 +3,7 @@
 #include <boost/noncopyable.hpp>
 #include <string.h>
 #include "common/log/logwriter.h"
-#include "utils/singleton.h"
+#include "common/singleton.h"
 #include <boost/date_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -84,7 +84,7 @@ public:
 		boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
 		String s = boost::posix_time::to_simple_string(now) + buffer_.asString();
 		
-		utl::Singleton<LogWriter>::instance_ref().queue().push_back(s);
+		Singleton<LogWriter>::instance_ref().queue().push_back(s);
 	}
 protected:
 	virtual const char * getModuleName() = 0;

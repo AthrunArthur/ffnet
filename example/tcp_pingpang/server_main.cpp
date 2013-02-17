@@ -1,7 +1,6 @@
 #include <iostream>
 #include <network.h>
 #include "message.h"
-#include "log.h"
 
 void onRecvPing(boost::shared_ptr<PingMsg> pPing, ffnet::EndpointPtr_t pEP)
 {

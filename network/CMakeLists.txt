@@ -11,7 +11,7 @@ add_definitions(-DENABLE_LOG_CONSOLE)
 #set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_52_0/stage/include")
 #set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/home/athrun/boost_trunk/stage/lib")
 
-set(Boost_DIR /home/athrun/boost_1_52_0)
+set(Boost_DIR /home/athrun/boost_1_53_0)
 set(CMAKE_MODULE_PATH ${FFNET_ROOT_DIR}/cmake)
 include_directories(${PROJECT_SOURCE_DIR} ${Boost_DIR})
 link_directories(${Boost_DIR}/stage/lib)

@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "archive/archive.h"
-#include "common/cond_pop_queue.h"
+#include "common/blocking_queue.h"
 #include "archive/serializer.h"
 #include "common/shared_buffer.h"
 #include "common/log.h"

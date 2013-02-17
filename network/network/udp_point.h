@@ -3,7 +3,7 @@
 #include "common.h"
 #include "network/asio_connection.h"
 #include "package/package.h"
-#include "utils.h"
+#include "common/sync_queue.h"
 
 
 namespace ffnet
@@ -31,7 +31,7 @@ protected:
 	typedef boost::function<void () > Func_t;
 	udp::socket		m_oSocket;
 	udp::endpoint	m_oRemoteEndPoint;
-	utl::sync_queue<Func_t>		m_oSendTasks;
+	sync_queue<Func_t>		m_oSendTasks;
 };//end class UDPPoint
 typedef boost::shared_ptr<UDPPoint> UDPPointPtr_t;
 }//end namespace ffnet

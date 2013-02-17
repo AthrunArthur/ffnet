@@ -18,7 +18,6 @@
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/bind.hpp>
 
-#include "common/defines.h"
 #include <stddef.h>
 
 typedef std::string		String;

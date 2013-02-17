@@ -1,5 +1,5 @@
-#ifndef _NETWORK_COMMON_COND_POP_QUEUE_H_
-#define _NETWORK_COMMON_COND_POP_QUEUE_H_
+#ifndef _NETWORK_COMMON_BLOCKING_QUEUE_H_
+#define _NETWORK_COMMON_BLOCKING_QUEUE_H_
 #include "common.h"
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread.hpp>
@@ -7,10 +7,10 @@
 namespace ffnet
 {
 	template<class Ty>
-	class CondPopQueue : boost::noncopyable
+	class BlockingQueue : boost::noncopyable
 	{
 	public:
-		CondPopQueue(){
+		BlockingQueue(){
 			m_iCoreNum = boost::thread::hardware_concurrency();
 		}
 		

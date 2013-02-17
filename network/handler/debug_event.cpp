@@ -1,6 +1,5 @@
 #include "handler/debug_event.h"
-#include "log.h"
-#include "utils.h"
+#include "common/defines.h"
 #include "network/end_point.h"
 #include "network/endpoint_data.h"
 namespace ffnet

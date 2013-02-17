@@ -6,7 +6,7 @@
 #include "middleware/net_dispatcher.h"
 #include "framework/global_connections.h"
 #include "network/asio_connection.h"
-#include "log.h"
+#include "common/defines.h"
 #ifdef PROTO_BUF_SUPPORT
 #include "package/proto_buf_wrapper_pkg.h"
 #endif

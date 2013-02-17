@@ -1,7 +1,7 @@
 #ifndef _NETWORK_FRAMEWORK_NET_NERVURE_H_
 #define _NETWORK_FRAMEWORK_NET_NERVURE_H_
 #include "common.h"
-#include "common/cond_pop_queue.h"
+#include "common/blocking_queue.h"
 #include "network/endpoint_data.h"
 #include "middleware/bonder_splitter.h"
 #include <boost/thread/detail/thread.hpp>
@@ -43,7 +43,7 @@ public:
         return m_pBonderSplitter;
     }
 
-    inline CondPopQueue<Func_t>&	getTaskQueue() {
+    inline BlockingQueue<Func_t>&	getTaskQueue() {
         return m_oTasks;
     }
 
@@ -64,7 +64,7 @@ protected:
     typedef std::list<ASIOConnectionPtr_t>	ConnContainer_t;
 
     boost::asio::io_service			m_oIOService;
-    CondPopQueue<Func_t>				m_oTasks;
+    BlockingQueue<Func_t>				m_oTasks;
     boost::shared_ptr<TCPServer>		m_pTCPServer;
     ConnContainer_t					m_oConnections;
     boost::thread					m_oIOThread;
