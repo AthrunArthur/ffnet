@@ -2,7 +2,6 @@
 #define _NETWORK_NETWORK_TCP_SERVER_H_
 #include "common.h"
 #include "network/tcp_connection_base.h"
-#include "utils.h"
 #include <boost/noncopyable.hpp>
 
 namespace ffnet

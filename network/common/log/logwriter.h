@@ -1,7 +1,7 @@
 #ifndef FFNET_COMMON_LOG_LOG_WRITER_H_
 #define FFNET_COMMON_LOG_LOG_WRITER_H_
-#include "utils/singleton.h"
-#include "common/cond_pop_queue.h"
+#include "common/singleton.h"
+#include "common/blocking_queue.h"
 #include <boost/shared_ptr.hpp>
 #include <fstream>
 
@@ -15,12 +15,12 @@ namespace ffnet
 		LogWriter();
 		
 		virtual ~LogWriter();
-		CondPopQueue<String> &	queue(){return m_oQueue;}
+		BlockingQueue<String> &	queue(){return m_oQueue;}
 		void			run(const char * filePath);
 	protected:
 		void			actualRun();
 	protected:
-		CondPopQueue<String>		m_oQueue;
+		BlockingQueue<String>		m_oQueue;
 		boost::shared_ptr<boost::thread>		m_oIOThread;
 		String					m_strFilePath;
 		boost::mutex				m_oMutex;

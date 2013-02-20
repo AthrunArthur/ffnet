@@ -2,7 +2,6 @@
 #define TEST_NETWORK_COMMON_MESSAGE_H_
 
 #include "network.h"
-#include "log.h"
 
 enum MsgType {
     msg_ping = 1,

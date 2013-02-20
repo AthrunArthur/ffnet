@@ -14,7 +14,7 @@
 
 
 
-namespace utl
+namespace ffnet
 {
 #define GUARD_LOCK boost::lock_guard <boost::mutex> _l(m_oMutex)
 template <class Ty_>

@@ -1,7 +1,7 @@
 #ifndef _NETWORK_MIDDLEWARE_NET_DISPATCHER_H_
 #define _NETWORK_MIDDLEWARE_NET_DISPATCHER_H_
 #include "common.h"
-#include "common/cond_pop_queue.h"
+#include "common/blocking_queue.h"
 
 namespace ffnet
 {
@@ -24,7 +24,7 @@ protected:
 
 protected:
     
-    ffnet::CondPopQueue<Func_t>		m_oDispatchTasks;
+    ffnet::BlockingQueue<Func_t>		m_oDispatchTasks;
     boost::thread					m_oDispatchThread;
 
     volatile bool		m_bIsStopped;

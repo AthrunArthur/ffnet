@@ -1,7 +1,6 @@
 #include <iostream>
 #include "network.h"
 #include "message.pb.h"
-#include <log.h>
 
 ffnet::NervureConfigure nc("../clnt_net_conf.ini");
 

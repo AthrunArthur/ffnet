@@ -4,7 +4,7 @@
 #include "archive/length_retriver.h"
 #include "archive/serializer.h"
 #include "package/package.h"
-#include "log.h"
+#include "common/defines.h"
 
 namespace ffnet
 {

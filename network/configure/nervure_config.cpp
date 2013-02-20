@@ -1,5 +1,5 @@
 #include "configure/nervure_config.h"
-#include "log.h"
+#include "common/defines.h"
 
 namespace ffnet
 {

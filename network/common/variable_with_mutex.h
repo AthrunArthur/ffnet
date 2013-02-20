@@ -1,9 +1,9 @@
-#ifndef _UTILS_VARIABLE_WITH_MUTEX_H_
-#define _UTILS_VARIABLE_WITH_MUTEX_H_
+#ifndef FFNET_COMMON_VARIABLE_WITH_MUTEX_H_
+#define FFNET_COMMON_VARIABLE_WITH_MUTEX_H_
 
 #include <boost/thread/mutex.hpp>
 #include <boost/noncopyable.hpp>
-namespace utl
+namespace ffnet
 {
 	template< class Ty_>
 	class DSWMutex : public boost::noncopyable

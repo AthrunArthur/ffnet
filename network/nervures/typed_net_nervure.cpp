@@ -1,7 +1,7 @@
 #include "nervures/typed_net_nervure.h"
 #include "middleware/length_bonder_splitter.h"
 #include "archive/deseralizer.h"
-#include "log.h"
+#include "common/defines.h"
 
 namespace ffnet
 {	

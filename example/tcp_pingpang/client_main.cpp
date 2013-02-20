@@ -1,7 +1,6 @@
 #include <iostream>
 #include "network.h"
 #include "message.h"
-#include "log.h"
 
 ffnet::NetNervureFromFile nnff("../clnt_net_conf.ini");
 

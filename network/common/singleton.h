@@ -1,9 +1,9 @@
-#ifndef UTIL_SINGLETON_H_
-#define UTIL_SINGLETON_H_
+#ifndef FFNET_COMMON_SINGLETON_H_
+#define FFNET_COMMON_SINGLETON_H_
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
-namespace utl{
+namespace ffnet{
 	template<typename T>
 	class Singleton: boost::noncopyable
 	{
@@ -32,5 +32,5 @@ namespace utl{
 	boost::shared_ptr<T> Singleton<T>::s_pInstance;
 	template <typename T>
 	boost::once_flag		Singleton<T>::s_oOnce = BOOST_ONCE_INIT;
-}//end namespace utl
+}//end namespace ffnet
 #endif

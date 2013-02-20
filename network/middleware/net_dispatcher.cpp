@@ -2,7 +2,7 @@
 #include "middleware/net_dispatcher.h"
 #include <boost/thread.hpp>
 #include <cassert>
-#include "log.h"
+#include "common/defines.h"
 
 namespace ffnet
 {
