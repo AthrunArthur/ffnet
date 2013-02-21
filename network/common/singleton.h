@@ -3,6 +3,10 @@
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
+
+//!Useage 
+// class MySingleton : public ffnet::Singleton<MySingleton>
+// { };
 namespace ffnet{
 	template<typename T>
 	class Singleton: boost::noncopyable
@@ -18,6 +22,8 @@ namespace ffnet{
 			boost::call_once(s_oOnce, boost::bind(Singleton<T>::init));
 			return s_pInstance;
 		}
+	protected:
+		Singleton(){}
 	private:
 		static void init()
 		{

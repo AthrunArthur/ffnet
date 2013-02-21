@@ -11,7 +11,6 @@ namespace ffnet
 	{
 	public:
 		BlockingQueue(){
-			m_iCoreNum = boost::thread::hardware_concurrency();
 		}
 		
 		void							push_back(const Ty & val)
@@ -21,9 +20,9 @@ namespace ffnet
 			size_t s = m_oContainer.size();
 			m_oMutex.unlock();
 			
-			if(s <= m_iCoreNum)
+			if(s == 1)
 			{
-				m_oCond.notify_one();
+				m_oCond.notify_all();
 			}
 		}
 		
@@ -31,7 +30,7 @@ namespace ffnet
 		{
 			boost::unique_lock<boost::mutex> ul(m_oMutex);
 
-			if(m_oContainer.empty())
+			while(m_oContainer.empty())
 			{
 				m_oCond.wait(ul);
 			}
@@ -54,7 +53,6 @@ namespace ffnet
 		mutable boost::mutex					m_oMutex;
 		mutable boost::condition_variable	m_oCond;
 		std::queue<Ty>				m_oContainer;
-		size_t						m_iCoreNum;
 	};//end class CondPopQueue
 }
 
