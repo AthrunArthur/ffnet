@@ -25,10 +25,16 @@ void LogWriter::actualRun()
 	m_oMutex.lock();
 	while(m_bRunning || !m_oQueue.empty())
 	{
-		m_oMutex.unlock();
-		m_oQueue.pop(str);
-		m_oFile<<str<<std::endl;
-		m_oMutex.lock();
+		size_t t = m_oQueue.size();
+		while(t!=0)
+		{
+			m_oMutex.unlock();
+			m_oQueue.pop(str);
+			m_oFile<<str<<std::endl;
+			m_oMutex.lock();
+			t--;
+		}
+		m_oFile.flush();
 	}
 	m_oMutex.unlock();
 	m_oFile.close();

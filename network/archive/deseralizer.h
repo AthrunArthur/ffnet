@@ -26,7 +26,7 @@ class Deseralizer : public Archive
 		virtual void			archive(uint64_t & val){archive_impl(val);}
 		virtual void			archive(String & val) {archive_impl(val);}
 		virtual void			archive(int8_t * val, int& len) {archive_impl(val, len);}
-		virtual void			archive(uint8_t * val, int& len) {archive_impl(val, len);}
+		virtual void			archive(uint8_t *val, int& len) {archive_impl(val, len);}
 	protected:
 		template<class Ty_>
 		void				archive_impl(Ty_ & val){
@@ -77,7 +77,7 @@ class Deseralizer : public Archive
 		void				deseralize(Ty_ * &val, BasicType _)
 		{
 			assert( m_iBase +sizeof(Ty_) <= m_iBufLen && "buffer overflow");
-			std::memcpy((const char *)val, m_pBuf + m_iBase, sizeof(Ty_));
+			std::memcpy((char *)(val), m_pBuf + m_iBase, sizeof(Ty_));
 			m_iBase += sizeof(Ty_);
 		}
 
