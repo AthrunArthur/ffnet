@@ -26,11 +26,13 @@ void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, PackagePtr_t pkg)
 	char *pBuf = boost::asio::buffer_cast<char *>(oSendBuffer.writeable());
 	ffnet::seralize(len, pBuf);
 	oSendBuffer.filled() += sizeof(len);
-	
 	pBuf = boost::asio::buffer_cast<char *>(oSendBuffer.writeable());
 	Seralizer s(pBuf, oSendBuffer.idle());
 	pkg->arch(s);
 	oSendBuffer.filled() += len;
+	LOG_TRACE(connection)<<"LengthBonderSplitter::bond(), seralize pkg: "
+	      <<printBuf(boost::asio::buffer_cast<const char *>(oSendBuffer.readable()),
+					 oSendBuffer.filled());
 }
 
 std::list<SharedBuffer> LengthBonderSplitter::split(NetBuffer &oRecvBuffer)

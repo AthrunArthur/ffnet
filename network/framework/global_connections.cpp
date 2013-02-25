@@ -104,6 +104,7 @@ void GlobalConnections::onTCPClntConnect(TCPClient* pClnt)
 }
 void GlobalConnections::onConnRecvOrSendError(ASIOConnection* pConn)
 {
+	LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() enter";
     boost::unique_lock<boost::mutex> _l(m_oMutex);
     if(pConn->UDPPointPointer() != NULL)
     {
@@ -123,6 +124,7 @@ RECHECK:
                 ++it) {
             if(it->get() == pConn) {
                 pConn->close();
+				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() find an existed conn and now loose it, triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(
                     boost::bind(tcp_lost_connection::event, p, _1)
                 );
@@ -142,6 +144,7 @@ RECHECK_CLIENT:
             if((*it) == p)
             {
                 m_oTCPClients.erase(it);
+				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError(), del tcp client and triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(
                     boost::bind(tcp_lost_connection::event, p, _1)
                 );

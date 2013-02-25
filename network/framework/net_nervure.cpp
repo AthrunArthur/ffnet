@@ -34,18 +34,29 @@ NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
             boost::bind(&GlobalConnections::onTCPConnect,
                         GlobalConnections::instance().get(), _1)
                                                );
+	LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging tcp_server_accept_connection: "
+					<<enable_hook_event<tcp_server_accept_connection>::value;
     Event<tcp_client_get_connection_succ>::listen(this,
             boost::bind(&GlobalConnections::onTCPClntConnect,
                         GlobalConnections::instance().get(), _1)
                                                  );
+	LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging tcp_client_get_connection_succ: "
+					<<enable_hook_event<tcp_client_get_connection_succ>::value;
+					
     Event<connect_recv_stream_error>::listen(this,
             boost::bind(&GlobalConnections::onConnRecvOrSendError,
                         GlobalConnections::instance().get(), _1)
                                             );
+	LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging connect_recv_stream_error: "
+					<<enable_hook_event<connect_recv_stream_error>::value;
+					
     Event<connect_sent_stream_error>::listen(this,
             boost::bind(&GlobalConnections::onConnRecvOrSendError,
                         GlobalConnections::instance().get(), _1)
                                             );
+	LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging connect_sent_stream_error: "
+					<<enable_hook_event<connect_sent_stream_error>::value;
+					
     ffnet::details::NetDispatcher::instance();
 }
 
@@ -59,7 +70,7 @@ ASIOConnection * NetNervure::send(boost::shared_ptr< Package > pPkg, EndpointPtr
 {
     ASIOConnection *tcb = GlobalConnections::instance()->findRemoteEndPoint(ep);
     if(tcb == NULL) {
-		LOG_FATAL(app)<<"NetNervure::send "<<"You have to init such a remote endpoint connected to "<<ep->address().to_string();
+		LOG_FATAL(app)<<"NetNervure::send "<<"You have to init such a remote endpoint connected to "<<ep->address().to_string()<<":"<<ep->port();
         assert(0 && "You have to init such a remote endpoint!");
         return tcb;
     }

@@ -2,7 +2,7 @@
 #include "framework/net_nervure.h"
 #include "middleware/net_dispatcher.h"
 #include "framework/global_connections.h"
-#include "handler/event.h"
+#include "common/defines.h"
 #include "middleware/net_dispatcher.h"
 #ifdef PROTO_BUF_SUPPORT
 #include "package/proto_buf_wrapper_pkg.h"
@@ -39,6 +39,7 @@ void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::siz
         m_oSendBuffer.eraseBuffer(bytes_transferred);
         startSend();
     } else {
+		LOG_DEBUG(connection)<<"ASIOConnection::handlePkgSent(), Get error "<<ec.message();
 		Event<connect_sent_stream_error>::triger(
 			boost::bind(connect_sent_stream_error::event,
 						this, ec, _1)
@@ -56,6 +57,7 @@ void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, si
         sliceAndDispatchPkg();
         startRecv();
     } else	{
+		LOG_DEBUG(connection)<<"ASIOConnection::handlReceivedPkg(), Get error "<<error.message();
         Event<connect_recv_stream_error>::triger(
 			boost::bind(connect_recv_stream_error::event,
 						this, error, _1)

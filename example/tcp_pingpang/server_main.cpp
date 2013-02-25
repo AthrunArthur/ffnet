@@ -5,7 +5,7 @@
 void onRecvPing(boost::shared_ptr<PingMsg> pPing, ffnet::EndpointPtr_t pEP)
 {
 	
-	pPing->print();
+//	pPing->print();
 
     boost::this_thread::sleep(boost::posix_time::seconds(1));
 
@@ -20,12 +20,11 @@ void onLostTCPConnection(ffnet::TCPConnectionBase * pConn)
 
 int main(int argc, char **argv) {
 	
-   	ffnet::Log::init(ffnet::Log::DEBUG, "svr.log"); 
+   	ffnet::Log::init(ffnet::Log::TRACE, "svr.log"); 
 	
 	ffnet::NetNervureFromFile nnff("../svr_net_conf.ini");
 	nnff.addNeedToRecvPkg<PingMsg>(onRecvPing);
 	ffnet::event::Event<ffnet::event::tcp_lost_connection>::listen(&nnff, onLostTCPConnection);
-	
 	nnff.run();
 	
 	
