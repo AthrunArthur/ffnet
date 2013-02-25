@@ -11,29 +11,103 @@
 #include "middleware/net_dispatcher.h"
 #include <vector>
 
-
 namespace ffnet
 {
 namespace event
 {
-  //Do nothing here! Please check ENABLE_HOOK_EVENT
-  template<class ETy_>
-  class Event{
+template<class ETy_>
+class Event;
+
+template<bool enable_flag, class ETy_>
+class EventImpl {
+public:
+    typedef typename ETy_::event_handler event_handler;
+    typedef boost::function<void(event_handler) >event_triger;
+	typedef EventImpl<enable_flag, ETy_> self;
+    class HandlerAndDispatcher
+    {
+    public:
+        typedef boost::function<void () > Func_t;
+        typedef ffnet::BlockingQueue<Func_t> TQ_t;
+        HandlerAndDispatcher(event_handler h, TQ_t & q)
+            :m_oHandler(h), m_oTaskQueue(q) {}
+    public:
+        event_handler 		m_oHandler;
+        TQ_t &	m_oTaskQueue;
+    };
+    typedef boost::shared_ptr<HandlerAndDispatcher> HandlerAndDispatcherPtr_t;
+    typedef std::vector<HandlerAndDispatcherPtr_t>	Container_t;
+    static void listen(::ffnet::NetNervure * nn, event_handler h)
+    {
+        HandlerAndDispatcherPtr_t hadp(new HandlerAndDispatcher(h, nn->getTaskQueue()));
+        instance()->m_oContainer.push_back(hadp);
+    }
+    static void triger(event_triger t)
+    {
+        if(s_pInstance)
+        {
+            for(typename Container_t::iterator it = instance()->m_oContainer.begin();
+                    it!=instance()->m_oContainer.end(); ++it)
+            {
+                (*it)->m_oTaskQueue.push_back(boost::bind(t, (*it)->m_oHandler));
+            }
+        }
+    }
+protected:
+    EventImpl() : m_oContainer() {}
+    static self * 		instance() {
+        if(s_pInstance == NULL)
+        {
+            s_pInstance = new EventImpl<enable_flag,ETy_>();
+        }
+        return s_pInstance;
+    }
+    static self *		internalUseInstance()
+    {
+        return s_pInstance;
+    }
+protected:
+    Container_t					m_oContainer;
+    static self *		s_pInstance;
+};//end class EventImpl
+
+template<bool enable_flag, class ETy_>
+typename EventImpl<enable_flag, ETy_>::self *	EventImpl<enable_flag, ETy_>::s_pInstance = NULL;
+
+template<class ETy_>
+class EventImpl<false, ETy_> {
+public:
+	typedef typename ETy_::event_handler event_handler;
+    typedef boost::function<void(event_handler) >event_triger;
+    static void listen(::ffnet::NetNervure *nn, event_handler h)
+    {
+    }
+    static void triger(event_triger t) {	}
+};//end class EventImpl
+
+template <class ETy_>
+struct enable_hook_event{
+	const static bool value = false;
+};//end struct enable_hook_event;
+
+template<class ETy_>
+class Event : public EventImpl<enable_hook_event<ETy_>::value, ETy_>
+{
 public:
     typedef typename ETy_::event_handler event_handler;
     typedef boost::function<void (event_handler) > event_triger;
     static void listen(::ffnet::NetNervure * nn, event_handler h)
     {
-	//	BOOST_STATIC_ASSERT( false && "Can't listen a disabled event, you must ENABLE_HOOK_EVENT firstly in common/defines.h");
+		EventImpl<enable_hook_event<ETy_>::value, ETy_>::listen(nn, h);
     }
- static void triger(event_triger t){ }
-  };//end class Event
-
-
+    static void triger(event_triger t) { 
+		EventImpl<enable_hook_event<ETy_>::value, ETy_>::triger(t);
+	}
+};//end class
 
 struct tcp_get_connection
 {
-	typedef ffnet::TCPConnectionBase TCPConnectionBase;
+    typedef ffnet::TCPConnectionBase TCPConnectionBase;
     typedef boost::function<void (TCPConnectionBase *)> event_handler;
     static void 	event(TCPConnectionBase * pConn, event_handler h)
     {
@@ -42,7 +116,7 @@ struct tcp_get_connection
 };//end tcp_get_connection
 struct tcp_lost_connection
 {
-	typedef ffnet::TCPConnectionBase TCPConnectionBase;
+    typedef ffnet::TCPConnectionBase TCPConnectionBase;
     typedef boost::function<void (TCPConnectionBase *)> event_handler;
     static void event(TCPConnectionBase * pConn, event_handler h)
     {
@@ -168,58 +242,10 @@ struct connect_recv_stream_error {
 
 #define ENABLE_HOOK_EVENT(ETy_) \
 namespace ffnet{namespace event{ \
-  template <>  class Event<ETy_>{ \
-    public:	\
-    typedef typename ETy_::event_handler event_handler;	\
-    typedef boost::function<void (event_handler) > event_triger; \
-	class HandlerAndDispatcher \
-	{ \
-	public:\
-		typedef boost::function<void () > Func_t;\
-		typedef ffnet::BlockingQueue<Func_t> TQ_t;\
-		HandlerAndDispatcher(event_handler h, TQ_t & q)\
-		:m_oHandler(h), m_oTaskQueue(q){} \
-	public: \
-		event_handler 		m_oHandler; \
-		TQ_t &	m_oTaskQueue; \
-	}; \
-	typedef boost::shared_ptr<HandlerAndDispatcher> HandlerAndDispatcherPtr_t;  \
-	typedef std::vector<HandlerAndDispatcherPtr_t>	Container_t; \
-    static void listen(::ffnet::NetNervure * nn, event_handler h) \
-    {\
-		HandlerAndDispatcherPtr_t hadp(new HandlerAndDispatcher(h, nn->getTaskQueue()));\
-        instance()->m_oContainer.push_back(hadp);\
-    }\
-    static void triger(event_triger t)\
-    {\
-        if(s_pInstance)\
-        {\
-            for(typename Container_t::iterator it = instance()->m_oContainer.begin(); \
-				it!=instance()->m_oContainer.end(); ++it)\
-            {\
-                (*it)->m_oTaskQueue.push_back(boost::bind(t, (*it)->m_oHandler)); \
-            }\
-        }\
-    }\
-protected: \
-    Event() : m_oContainer() {}\
-    static Event<ETy_> * 		instance() {\
-        if(s_pInstance == NULL)\
-        {\
-            s_pInstance = new Event<ETy_>();\
-        }\
-        return s_pInstance;\
-    }\
-    static Event<ETy_> *		internalUseInstance()\
-    {\
-        return s_pInstance;\
-    }\
-protected:\
-    Container_t					m_oContainer;\
-    static Event<ETy_> *		s_pInstance; \
-  };\
+  template<> struct enable_hook_event<ETy_>{const static bool value = true;}; \
 }}
 
+#include "common/event_hook.h"
 //Event<ETy_> *		Event<ETy_>::s_pInstance = NULL;\
 
 #endif

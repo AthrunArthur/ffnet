@@ -2,6 +2,7 @@
 #include "network/endpoint_data.h"
 #include "framework/net_nervure.h"
 #include "handler/event.h"
+#include "common/defines.h"
 
 namespace ffnet
 {
@@ -24,12 +25,14 @@ TCPClient::TCPClient(NetNervure *pNervure, Endpoint &ep)
 void TCPClient::handleConnected(const boost::system::error_code &ec)
 {
     if(!ec) {
+		LOG_TRACE(tcp_client)<<"Get connection succ!";
 		Event<tcp_client_get_connection_succ>::triger(
 			boost::bind(tcp_client_get_connection_succ::event,
 						this, _1)
 		);
         startRecv();
     } else {
+		LOG_DEBUG(tcp_client) <<"Get connection error!";
 		Event<tcp_client_conn_error>::triger(
 			boost::bind(tcp_client_conn_error::event,
 						this, ec, _1)

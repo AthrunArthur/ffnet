@@ -33,7 +33,7 @@ void	onLostConn(ffnet::TCPConnectionBase *pConn, ffnet::ProtoBufNervure * pbn)
 	pbn->stop();
 }
 int main(int argc, char **argv) {
-	ffnet::Log::init(ffnet::Log::DEBUG, "clnt.log");	
+	ffnet::Log::init(ffnet::Log::ERROR, "clnt.log");	
 	ffnet::ProtoBufNervure pbn;
 	
 	String ip = nc.get<String>("tcp-client.target-svr-ip-addr");

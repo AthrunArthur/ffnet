@@ -1,6 +1,6 @@
 #include "framework/global_connections.h"
 #include "handler/event.h"
-
+#include "common/defines.h"
 namespace ffnet
 {
 namespace details
@@ -87,6 +87,7 @@ void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
     m_oMutex.lock();
     m_oConnHolder.push_back(pConn);
 	m_oMutex.unlock();
+	LOG_TRACE(frmwk)<<"Get a TCP Connection!";
     Event<tcp_get_connection>::triger(
         boost::bind(tcp_get_connection::event,pConn.get(), _1)
     );

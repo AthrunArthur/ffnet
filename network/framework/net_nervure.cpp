@@ -78,6 +78,7 @@ ASIOConnection * NetNervure::send(boost::shared_ptr< google::protobuf::Message >
 
 void NetNervure::initTCPServer(uint16_t iTCPPort)
 {
+	LOG_TRACE(frmwk)<<"NetNervure::initTCPServer() "<<"initializing tcp server at port "<<iTCPPort;
     if(m_pTCPServer == NULL)
     {
         m_pTCPServer = boost::shared_ptr<TCPServer>(new TCPServer(this, iTCPPort));
