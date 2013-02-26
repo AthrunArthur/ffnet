@@ -1,11 +1,9 @@
 #include "middleware/length_bonder_splitter.h"
 #include "archive/archive.h"
-#include "archive/deseralizer.h"
-#include "archive/length_retriver.h"
-#include "archive/serializer.h"
 #include "package/package.h"
 #include "common/defines.h"
 
+using namespace ffnet::archive;
 namespace ffnet
 {
 void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, const char *pBuf, size_t len)
@@ -17,17 +15,17 @@ void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, const char *pBuf, size_t
 
 void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, PackagePtr_t pkg)
 {
-	LengthRetriver lr;
+	Archive lr(Archive::length_retriver);
 	
 	pkg->arch(lr);
 	uint32_t len = lr.getLength();
 	
 	oSendBuffer.reserveIdle(static_cast<size_t>(len + sizeof(len)));
 	char *pBuf = boost::asio::buffer_cast<char *>(oSendBuffer.writeable());
-	ffnet::seralize(len, pBuf);
+	seralize(len, pBuf);
 	oSendBuffer.filled() += sizeof(len);
 	pBuf = boost::asio::buffer_cast<char *>(oSendBuffer.writeable());
-	Seralizer s(pBuf, oSendBuffer.idle());
+	Archive s(pBuf, oSendBuffer.idle(), Archive::seralizer);
 	pkg->arch(s);
 	oSendBuffer.filled() += len;
 	LOG_TRACE(connection)<<"LengthBonderSplitter::bond(), seralize pkg: "
@@ -44,7 +42,7 @@ std::list<SharedBuffer> LengthBonderSplitter::split(NetBuffer &oRecvBuffer)
 	uint32_t len;
 	const char * pBuf = boost::asio::buffer_cast<const char *>(oRecvBuffer.readable());
 	size_t bi = 0;
-	ffnet::deseralize(pBuf + bi, len);
+	deseralize(pBuf + bi, len);
 	
 	while(oRecvBuffer.filled() - bi >= sizeof(len) &&
 		oRecvBuffer.filled() -bi - sizeof(len) >=len)
@@ -57,7 +55,7 @@ std::list<SharedBuffer> LengthBonderSplitter::split(NetBuffer &oRecvBuffer)
 		resPkgs.push_back(sb);
 		bi += len;
 		
-		ffnet::deseralize(pBuf + bi, len);
+		deseralize(pBuf + bi, len);
 	}
 	oRecvBuffer.eraseBuffer(bi);
 	return resPkgs;

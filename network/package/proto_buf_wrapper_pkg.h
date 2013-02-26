@@ -1,11 +1,10 @@
+
 #ifdef PROTO_BUF_SUPPORT
 #ifndef FFNET_PACKAGE_PROTO_BUF_WRAPPER_PKG_H_
 #define FFNET_PACKAGE_PROTO_BUF_WRAPPER_PKG_H_
 
 #include "package/package.h"
-#include "archive/deseralizer.h"
-#include "archive/serializer.h"
-#include "archive/length_retriver.h"
+#include "archive/archive.h"
 #include "common.h"
 
 #include <google/protobuf/message.h>
@@ -30,12 +29,6 @@ public:
 	
     virtual void			archive(Archive &ar);
 protected:
-	
-    void			archiveS(Seralizer & ar);
-
-    void			archiveD(Deseralizer & ar);
-    
-    void			archiveL(LengthRetriver & ar);
 	
     MessagePtr_t 	createMessage(const std::string& typeName);
 	

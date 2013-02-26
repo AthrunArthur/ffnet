@@ -1,6 +1,5 @@
 #include "nervures/typed_net_nervure.h"
 #include "middleware/length_bonder_splitter.h"
-#include "archive/deseralizer.h"
 #include "common/defines.h"
 
 namespace ffnet
@@ -18,7 +17,7 @@ void TypedNetNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
     const char *pBuf = ebp->buffer().buffer().get();
 	LOG_INFO(frmwk)<<"TypedNetNervure::deseralizeAndDispatchHandler()" <<"buf: "<<printBuf(pBuf, ebp->buffer().length());
     uint32_t iTypeID;
-    ffnet::deseralize(pBuf, iTypeID);
+    ffnet::archive::deseralize(pBuf, iTypeID);
 
     if(m_oPkgCreatorContainer.find(iTypeID)  == m_oPkgCreatorContainer.end()) {
 		LOG_ERROR(frmwk)<<"NetNervure::deseralizeAndDispatchHandler() "<< "can't find the type id:"<<iTypeID;
@@ -30,7 +29,7 @@ void TypedNetNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
 	PkgRecvHandler_t handler = m_oPkgHandlers[iTypeID];
 
 	//pPkg->m_oBuffer = ebp->buffer().buffer();
-	Deseralizer d(const_cast<const char *>(ebp->buffer().buffer().get()), ebp->buffer().length());
+	Archive d(const_cast<const char *>(ebp->buffer().buffer().get()), ebp->buffer().length(), Archive::deseralizer);
 	pPkg->arch(d);
 	
 	m_oTasks.push_back(boost::bind(handler, pPkg, ebp->Endpoint()));

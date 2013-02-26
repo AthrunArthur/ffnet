@@ -5,7 +5,7 @@
 void onRecvPing(boost::shared_ptr<PingMsg> pPing, ffnet::EndpointPtr_t pEP)
 {
 	
-//	pPing->print();
+	pPing->print();
 
     boost::this_thread::sleep(boost::posix_time::seconds(1));
 

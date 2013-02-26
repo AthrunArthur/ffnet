@@ -17,7 +17,7 @@ public:
         , m_iContentLen(0)
         , m_pContent(NULL) {}
 
-    PingMsg(int8_t *pContent, int iLen)
+    PingMsg(char *pContent, int iLen)
         : Package(msg_ping)
         , m_iContentLen(iLen)
         , m_pContent(pContent) {}
@@ -25,6 +25,9 @@ public:
 
 	virtual void			archive(ffnet::Archive &ar) 
 	{
+		ar.archive(m_iContentLen);
+		if(ar.getArTy()== ffnet::Archive::deseralizer)
+			m_pContent = (char *)malloc(m_iContentLen);
 		ar.archive(m_pContent, m_iContentLen);
 	}
 	void			print()
@@ -34,7 +37,7 @@ public:
 protected:
 
     int 			m_iContentLen;
-    int8_t	 		*m_pContent;
+    char	 		*m_pContent;
 };
 
 class PongMsg: public ffnet::Package

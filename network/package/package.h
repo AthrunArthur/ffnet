@@ -30,9 +30,11 @@ public:
 
     virtual ~Package() {};
 
-    virtual uint32_t		getTypeID() const {
+    uint32_t		getTypeID() const {
         return m_iTypeID;
     }
+    uint32_t	 &	getTypeID() {return m_iTypeID;}
+    
     void		arch(Archive &ar) {
         ar.archive(m_iTypeID);
         archive(ar);
@@ -41,7 +43,9 @@ public:
 protected:
     uint32_t							m_iTypeID;
 };//end class Package
+
 typedef boost::shared_ptr<Package>	PackagePtr_t;
+
 }//end namespace ffnet
 
 #endif
