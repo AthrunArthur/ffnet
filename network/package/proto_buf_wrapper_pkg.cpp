@@ -1,4 +1,6 @@
+#ifndef PROTO_BUF_SUPPORT
 #define PROTO_BUF_SUPPORT
+#endif
 #ifdef PROTO_BUF_SUPPORT
 #include "package/proto_buf_wrapper_pkg.h"
 #include "common.h"
