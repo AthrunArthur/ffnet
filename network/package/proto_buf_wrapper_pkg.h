@@ -4,7 +4,7 @@
 #define FFNET_PACKAGE_PROTO_BUF_WRAPPER_PKG_H_
 
 #include "package/package.h"
-#include "archive/archive.h"
+#include "common/archive.h"
 #include "common.h"
 
 #include <google/protobuf/message.h>

@@ -1,5 +1,5 @@
 #include "middleware/length_bonder_splitter.h"
-#include "archive/archive.h"
+#include "common/archive.h"
 #include "package/package.h"
 #include "common/defines.h"
 

@@ -2,16 +2,15 @@
 #define _NETWORK_NETWORK_H_
 
 #include "common.h"
-#include "archive/archive.h"
+#include "common/archive.h"
 #include "common/blocking_queue.h"
 #include "common/shared_buffer.h"
 #include "common/log.h"
 
-#include "configure/nervure_config.h"
+#include "framework/nervure_config.h"
 #include "framework/global_connections.h"
 #include "framework/net_nervure.h"
-#include "handler/event.h"
-#include "handler/debug_event.h"
+#include "framework/event.h"
 #include "middleware/bonder_splitter.h"
 #include "middleware/length_bonder_splitter.h"
 #include "middleware/net_dispatcher.h"

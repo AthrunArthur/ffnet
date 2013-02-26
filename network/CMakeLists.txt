@@ -23,10 +23,9 @@ set(src_list 	common/shared_buffer.cpp
 	common/log/logger.cpp
 	common/log/logwriter.cpp
 	common/log.cpp
-	configure/nervure_config.cpp
+	framework/nervure_config.cpp
 	framework/global_connections.cpp
 	framework/net_nervure.cpp
-	handler/debug_event.cpp
 	middleware/net_dispatcher.cpp
 	middleware/length_bonder_splitter.cpp
 	nervures/typed_net_nervure.cpp
@@ -40,7 +39,7 @@ set(src_list 	common/shared_buffer.cpp
 	network/tcp_server.cpp
 	network/udp_point.cpp
 	package/proto_buf_wrapper_pkg.cpp
-	archive/archive.cpp
+	common/archive.cpp
 	
 )
 	

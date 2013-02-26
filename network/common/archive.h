@@ -88,6 +88,13 @@ size_t length(const Ty_ * val, size_t count,
 
 }//end namespace archive
 
+//!Note, we can not use a base class and sub-classes to handle this, because we 
+//have to use template method archive for different types. Remind that a template 
+//method can't be a virtual method.
+//Also, we can't make Archive as a template class, because the calling point of
+//Archive as parameter is a virtual method. So we can't involve any template parameter
+//for Archive.
+//Finally, our only choice is to use arch_type and switch-case to gain polymorphism.
 class Archive
 {
 public:

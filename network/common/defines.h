@@ -1,7 +1,7 @@
 #ifndef NETWORK_COMMON_DEFINES_H_
 #define NETWORK_COMMON_DEFINES_H_
 
-#include "handler/event.h"
+#include "framework/event.h"
 #include "common/log.h"
 
 DEF_LOG_MODULE(app)

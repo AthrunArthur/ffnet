@@ -1,4 +1,4 @@
-#include "configure/nervure_config.h"
+#include "framework/nervure_config.h"
 #include "common/defines.h"
 
 namespace ffnet

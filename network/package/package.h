@@ -1,7 +1,7 @@
 #ifndef _NETWORK_PACKAGE_PACKAGE_H_
 #define _NETWORK_PACKAGE_PACKAGE_H_
 #include "common.h"
-#include "archive/archive.h"
+#include "common/archive.h"
 
 
 namespace ffnet

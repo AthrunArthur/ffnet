@@ -5,7 +5,7 @@
 #include "common.h"
 #include "framework/net_nervure.h"
 #include "package/package.h"
-#include "archive/archive.h"
+#include "common/archive.h"
 #include "network/endpoint_data.h"
 #include "network/end_point.h"
 #include "package/pkg_callback.h"
