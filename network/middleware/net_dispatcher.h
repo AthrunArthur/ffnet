@@ -28,7 +28,7 @@ protected:
     boost::thread					m_oDispatchThread;
 
     volatile bool		m_bIsStopped;
-	boost::mutex		m_oMutex;
+    boost::mutex		m_oMutex;
     static boost::shared_ptr<NetDispatcher>	s_pInstance;
 };//end class PkgDispatcher
 }//end namespace details

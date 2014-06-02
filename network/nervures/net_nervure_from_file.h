@@ -6,14 +6,14 @@
 
 namespace ffnet
 {
-	class NetNervureFromFile : public ffnet::details::TypedNetNervure
-	{
-	public:
-		NetNervureFromFile(String conf);
+    class NetNervureFromFile : public ffnet::details::TypedNetNervure
+    {
+    public:
+        NetNervureFromFile(String conf);
 		
-		inline NervureConfigurePtr_t &		NervureConf(){return m_pConfigure;}
-	protected:
-		NervureConfigurePtr_t		m_pConfigure; 
-	};//end class NetNervureFromFile
+        inline NervureConfigurePtr_t &		NervureConf(){return m_pConfigure;}
+    protected:
+        NervureConfigurePtr_t		m_pConfigure; 
+    };//end class NetNervureFromFile
 }//end namespace ffnet
 #endif

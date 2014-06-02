@@ -13,7 +13,6 @@ namespace ffnet
 	public:
 		virtual std::list<SharedBuffer>		split(NetBuffer &oRecvBuffer) = 0;
 		virtual void					bond(NetBuffer & oSendBuffer, const char *pBuf, size_t len) = 0;
-		//template<typename Pkg_t>
 		virtual void					bond(NetBuffer & oSendBuffer, PackagePtr_t pkg) = 0;
 	};//end class BonderSplitter
 	typedef boost::shared_ptr<BonderSplitter> BonderSplitterPtr_t;
