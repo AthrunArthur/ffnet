@@ -12,13 +12,13 @@ class NetDispatcher
 private:
     NetDispatcher();
 public:
-	typedef boost::function<void ()>	Func_t;
+    typedef boost::function<void ()>	Func_t;
     static boost::shared_ptr<NetDispatcher> 	instance();
 
-	~NetDispatcher();
+    ~NetDispatcher();
     void				dispatch(Func_t  f);
 
-	void				stop();
+    void				stop();
 protected:
     void				run();
 

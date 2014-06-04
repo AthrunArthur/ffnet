@@ -12,6 +12,7 @@
 \newcommand{\ffnetdir}[1]{\textit{/ffnet/root/dir${#1}$}}
 \newcommand{\pingpong}{\textsf{ping\_pong}}
 \newcommand{\pingpongdir}[1]{\textit{/ffnet/root/dir/example/ping\_pong${#1}$}}
+\newcommand{\ffnetcomp}[1]{\texttt{#1}}
 \author{Athrun Arthur}
 \title{A Quick Start for \ffnet{}}
 
@@ -215,9 +216,37 @@ Here we need to response \texttt{tcp\_get\_connection}.
 \subsection{Complete Code of PingPong}
 Please check the example \texttt{pb\_tcp\_pingpong} in \ffnet{}.
 
-
 \section{Inside \ffnet}
+\subsection{Perspective from {\ffnet}}
+The authors of {\ffnet} had awful experiences on network programming, including native socket programming, boost.asio, and some other 3rd party network libraries. To let readers know the awful points clearly, we'd like to list some of them randomly instead of sorting them and listing them all here.
+\begin{itemize}
+  \item Defining network packages is quite error prone. There are several aspects when I say error-prone, 1), inherit from package base class and implement too much methods (like serialize and deserialize); it's really difficult to make sure all code you are writing are consistent and correct; 2), need to decide how to serialize a package, or you loose the flexibility. In native socket programming or boost.asio, you definitely need to define all packages yourself. In 3rd party, it's not always flexible enough to define your own packages.
+  \item Exploiting parallelism. In most network programming practice, it's developer's responsibility to do threading. Actually, that's quite stupid as it's well known about how to exploit parallelism and there is no reason to do it again and again.
+  \item Event handling is anti-intuitive. Although receiving-handling-sending is quite easy to program, event handling is quite weired in some libraries.
+  \item Type converting or type safe. We are crazy C++ fans, and we like type safe as that can make sure our programs are strong. However, we have to do type converting in many libraries, like converting a base class pointer to a concrete class pointer (this happens when handling a received package pointer). 
+\end{itemize}
+In our experience, even a line of converting type in C++ may cause stupid bugs. After encountering too many stupid bugs, we realize we need another library to make ourself happy. Thus we start rethinking what a network programming library actually do. It will be very interesting to share our thoughts with you readers.
+In our perspective, a network programming library should
+\begin{itemize}
+  \item enable users to handle receiving and send packages,
+  \item enable users to handle any events they want with least overhead,
+  \item enable users to exploit parallelism easily,
+  \item easy to extend on both features and packages,
+  \item static type-checking,
+  \item really clean and intuitive programming interface,
+  \item a logging subsystem with low overhead,
+  \item portable on mainstream systems.
+\end{itemize}
 
+Finally, we have {\ffnet}, another network programming library in the world. The most exciting thing is that {\ffnet} satisfies all requirements in our mind. We hope you have found that in Section 2, and we're happy that you are still eager to know how {\ffnet} achieve that.
+
+\subsection{Architure of {\ffnet}}
+
+\subsection{\ffnetcomp{NetNervure} --- The Core of {\ffnet}}
+\subsection{\ffnetcomp{Package}s --- Extend {\ffnet}}
+\subsection{\ffnetcomp{BondAndSplitter} --- How to Serialize and Deserialize}
+\subsection{\ffnetcomp{Event} --- Being Active}
+\subsection{\ffnetcomp{Log} --- Recording and Debuging}
 
 \section{Furthur Help}
 If you have any problems, please send e-mail to \texttt{athrunarthur@gmail.com}.

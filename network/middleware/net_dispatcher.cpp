@@ -19,10 +19,10 @@ NetDispatcher::NetDispatcher()
 
 NetDispatcher::~NetDispatcher()
 {
-	if(m_bIsStopped == false)
-	{
-		stop();
-	}
+    if(m_bIsStopped == false)
+    {
+        stop();
+    }
 }
 
 boost::shared_ptr< NetDispatcher > NetDispatcher::instance()
@@ -42,29 +42,29 @@ static void usedToTrigerStop()
 }
 void NetDispatcher::stop()
 {
-	m_oMutex.lock();
-	m_bIsStopped = true;
-	m_oMutex.unlock();
-	m_oDispatchTasks.push_back(usedToTrigerStop);
-	m_oDispatchThread.join();
+    m_oMutex.lock();
+    m_bIsStopped = true;
+    m_oMutex.unlock();
+    m_oDispatchTasks.push_back(usedToTrigerStop);
+    m_oDispatchThread.join();
 }
 
 void NetDispatcher::run()
 {
     Func_t f;
-	m_oMutex.lock();
+    m_oMutex.lock();
     while(!m_bIsStopped) {
-		m_oMutex.unlock();
+        m_oMutex.unlock();
         m_oDispatchTasks.pop(f);
         f();
-		m_oMutex.lock();
+        m_oMutex.lock();
     }
     m_oMutex.unlock();
 }
 
 void NetDispatcher::dispatch(Func_t f)
 {
-	LOG_DEBUG(frmwk)<<"NetDispatcher::dispatch() " << "a pkg is dispatched to pNervure!";
+    LOG_DEBUG(frmwk)<<"NetDispatcher::dispatch() " << "a pkg is dispatched to pNervure!";
     m_oDispatchTasks.push_back(f);
 }
 
