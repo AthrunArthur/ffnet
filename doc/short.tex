@@ -3,6 +3,7 @@
 \documentclass{article}
 \usepackage[latin9]{inputenc}
 \usepackage{calc}
+\usepackage{hyperref}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
@@ -247,7 +248,29 @@ Finally, we have {\ffnet}, another network programming library in the world. The
 \subsection{\ffnetcomp{BondAndSplitter} --- How to Serialize and Deserialize}
 \subsection{\ffnetcomp{Event} --- Being Active}
 \subsection{\ffnetcomp{Log} --- Recording and Debuging}
+\section{Known Issues}
+In these section, we'd like to record some issues which are mainly caused by 3rd party softwares.
+\subsection*{Boost1.55 on Mac OS}
+This is a compile error. Typically, the error looks like this
+\begin{verbatim}
+/usr/local/include/boost/atomic/detail/gcc-atomic.hpp:983:22: error: no viable conversion from 'int' to 'storage_type' (aka 'boost::atomics::detail::storage128_type')
+        storage_type tmp = 0;
+                     ^     ~
+/usr/local/include/boost/atomic/detail/gcc-atomic.hpp:932:28: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'int' to 'const boost::atomics::detail::storage128_type &' for 1st
+      argument
+struct BOOST_ALIGNMENT(16) storage128_type
+                           ^
+/usr/local/include/boost/atomic/detail/gcc-atomic.hpp:932:28: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'int' to 'boost::atomics::detail::storage128_type &&' for 1st
+      argument
+struct BOOST_ALIGNMENT(16) storage128_type
+                           ^
+\end{verbatim}
+Basically, you need to patch the boost header file. Please check \url{https://github.com/Homebrew/homebrew/issues/27396}.
 
+\subsection*{Using Clang on Mac}
+If you are using Clang on Mac, you can build everything. But the problem is getting "Segment fault 11" when you execute the binary.
+
+The solution is just using GCC.
 \section{Furthur Help}
 If you have any problems, please send e-mail to \texttt{athrunarthur@gmail.com}.
 \end{document}
