@@ -15,7 +15,7 @@ TCPClient::TCPClient(NetNervure *pNervure, Endpoint &ep)
     boost::system::error_code ec;
 	tcp::endpoint tep;
 	ep.generateTypedEndpoint(tep);
-	Event<tcp_client_start_connection>::triger(
+	Event<tcp_client_start_connection>::triger(nervure(),
 		boost::bind(tcp_client_start_connection::event, tep, _1)
 	);
     m_oSocket.async_connect(tep, boost::bind(&TCPClient::handleConnected,
@@ -26,14 +26,14 @@ void TCPClient::handleConnected(const boost::system::error_code &ec)
 {
     if(!ec) {
 		LOG_TRACE(tcp_client)<<"Get connection succ!";
-		Event<tcp_client_get_connection_succ>::triger(
+		Event<tcp_client_get_connection_succ>::triger(nervure(),
 			boost::bind(tcp_client_get_connection_succ::event,
 						this, _1)
 		);
         startRecv();
     } else {
 		LOG_DEBUG(tcp_client) <<"Get connection error!";
-		Event<tcp_client_conn_error>::triger(
+		Event<tcp_client_conn_error>::triger(nervure(),
 			boost::bind(tcp_client_conn_error::event,
 						this, ec, _1)
 		);

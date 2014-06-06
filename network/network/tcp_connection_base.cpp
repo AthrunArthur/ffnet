@@ -17,7 +17,7 @@ EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 
 void TCPConnectionBase::startRecv()
 {
-	Event<tcp_start_recv_stream>::triger(
+	Event<tcp_start_recv_stream>::triger(nervure(),
 		boost::bind(tcp_start_recv_stream::event, 
 					m_oSocket.local_endpoint(), 
 					m_oSocket.remote_endpoint(), _1)
@@ -66,7 +66,7 @@ void TCPConnectionBase::startSend()
 {
     m_oMutex.lock();
     if(m_oSendBuffer.filled() != 0) {
-		Event<tcp_start_send_stream>::triger(
+		Event<tcp_start_send_stream>::triger(nervure(),
 			boost::bind(tcp_start_send_stream::event, 
 						this, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
 						boost::asio::buffer_size(m_oSendBuffer.readable()), _1)

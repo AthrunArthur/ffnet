@@ -1,3 +1,4 @@
+#ifndef USING_MOCK_NET
 #include "framework/net_nervure.h"
 #include "framework/event.h"
 #include "network/tcp_server.h"
@@ -166,3 +167,4 @@ void NetNervure::stopInThisThread()
 
 
 }
+#endif //end USING_MOCK_NET

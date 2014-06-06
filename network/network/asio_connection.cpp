@@ -32,14 +32,14 @@ ASIOConnection::~ASIOConnection()
 void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::size_t bytes_transferred)
 {
     if(!ec) {
-        Event<connect_sent_stream_succ>::triger(
+        Event<connect_sent_stream_succ>::triger(nervure(),
                 boost::bind(connect_sent_stream_succ::event, 
 			    this, bytes_transferred, _1));
         m_oSendBuffer.eraseBuffer(bytes_transferred);
         startSend();
     } else {
         LOG_DEBUG(connection)<<"ASIOConnection::handlePkgSent(), Get error "<<ec.message();
-        Event<connect_sent_stream_error>::triger(
+        Event<connect_sent_stream_error>::triger(nervure(),
                 boost::bind(connect_sent_stream_error::event,
                                 this, ec, _1));
     }
@@ -47,7 +47,7 @@ void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::siz
 void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, size_t bytes_transferred)
 {
     if(!error) {
-        Event<connect_recv_stream_succ>::triger(
+        Event<connect_recv_stream_succ>::triger(nervure(),
 			boost::bind(connect_recv_stream_succ::event,
 						this, bytes_transferred, _1));
         m_oRecvBuffer.filled() += bytes_transferred;
@@ -55,7 +55,7 @@ void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, si
         startRecv();
     } else	{
         LOG_DEBUG(connection)<<"ASIOConnection::handlReceivedPkg(), Get error "<<error.message();
-        Event<connect_recv_stream_error>::triger(
+        Event<connect_recv_stream_error>::triger(nervure(),
                         boost::bind(connect_recv_stream_error::event,
                                 this, error, _1));
     }

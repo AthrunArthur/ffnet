@@ -1,3 +1,6 @@
+#ifdef USING_MOCK_NET
+#include "mock/mock_network.h"
+#else
 #ifndef _NETWORK_FRAMEWORK_NET_NERVURE_H_
 #define _NETWORK_FRAMEWORK_NET_NERVURE_H_
 #include "common.h"
@@ -69,8 +72,8 @@ protected:
     ConnContainer_t					m_oConnections;
     boost::thread					m_oIOThread;
     BonderSplitterPtr_t				m_pBonderSplitter;
-    bool								m_bIsStopped;
+    bool					m_bIsStopped;
 };//end class NetNervure
 }//end namespace ffnet
 #endif
-
+#endif //end USING_MOCK_NET

@@ -89,7 +89,7 @@ void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
     m_oConnHolder.push_back(pConn);
     m_oMutex.unlock();
     LOG_TRACE(frmwk)<<"Get a TCP Connection!";
-    Event<tcp_get_connection>::triger(
+    Event<tcp_get_connection>::triger(pConn->nervure(),
         boost::bind(tcp_get_connection::event,pConn.get(), _1)
     );
 
@@ -99,7 +99,7 @@ void GlobalConnections::onTCPClntConnect(TCPClient* pClnt)
     m_oMutex.lock();
     m_oTCPClients.push_back(pClnt);
     m_oMutex.unlock();
-    Event<tcp_get_connection>::triger(
+    Event<tcp_get_connection>::triger(pClnt->nervure(),
         boost::bind(tcp_get_connection::event, pClnt, _1)
     );
 }
@@ -126,7 +126,7 @@ RECHECK:
             if(it->get() == pConn) {
                 pConn->close();
 				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() find an existed conn and now loose it, triger tcp_lost_connection";
-                Event<tcp_lost_connection>::triger(
+                Event<tcp_lost_connection>::triger(pConn->nervure(),
                     boost::bind(tcp_lost_connection::event, p, _1)
                 );
                 m_oConnHolder.erase(it);
@@ -146,7 +146,7 @@ RECHECK_CLIENT:
             {
                 m_oTCPClients.erase(it);
 				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError(), del tcp client and triger tcp_lost_connection";
-                Event<tcp_lost_connection>::triger(
+                Event<tcp_lost_connection>::triger(pConn->nervure(),
                     boost::bind(tcp_lost_connection::event, p, _1)
                 );
                 pConn->close();

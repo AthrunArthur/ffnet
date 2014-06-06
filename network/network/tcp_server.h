@@ -44,7 +44,7 @@ public:
     }
     
     void				close();
-    inline NetNervure *		getNervure() const{return m_pNervure;}
+    inline NetNervure *		nervure() const{return m_pNervure;}
 
 protected:
     void				startAccept();
