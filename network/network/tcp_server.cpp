@@ -37,7 +37,7 @@ void TCPServer::startAccept()
             tcp_server_start_listen::event, m_oAcceptor.local_endpoint(), _1
                                            ));
 
-    m_oAcceptor.async_accept(pNewConn->getSocket(),
+    m_oAcceptor.async_accept(pNewConn->m_oSocket,
                              boost::bind(&TCPServer::handleAccept, this, pNewConn,
                                          boost::asio::placeholders::error)
                             );

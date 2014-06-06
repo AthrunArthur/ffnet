@@ -30,17 +30,17 @@ void GlobalConnections::delUDPPoint(UDPPoint* pPoint)
 {
     boost::unique_lock<boost::mutex> _l(m_oMutex);
 	
-	RECHECK_DEL:
-	for(std::list<UDPPoint *>::iterator it = m_oUDPPoints.begin();
-		it != m_oUDPPoints.end();
-		it ++)
-		{
-			if(pPoint == (*it))
-			{
-				m_oUDPPoints.erase(it);
-				goto RECHECK_DEL;
-			}
-		}
+    RECHECK_DEL:
+    for(std::list<UDPPoint *>::iterator it = m_oUDPPoints.begin();
+        it != m_oUDPPoints.end();
+        it ++)
+    {
+        if(pPoint == (*it))
+        {
+            m_oUDPPoints.erase(it);
+            goto RECHECK_DEL;
+        }
+    }
 }
 
 ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
@@ -52,7 +52,11 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
                 it != m_oUDPPoints.end();
                 it ++)
         {
-            return *it;
+            Endpoint ep(*(*it)->getRemoteEndpointPtr());
+            if(ep == *(pEndpoint.get()))
+            {
+                return *it;
+            }
         }
     }
     else
@@ -61,7 +65,7 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
                 it != m_oConnHolder.end();
                 it ++)
         {
-            Endpoint ep((*it)->getSocket().remote_endpoint());
+            Endpoint ep(*(*it)->getRemoteEndpointPtr());
             if(ep == *(pEndpoint.get()))
             {
                 return it->get();
@@ -72,7 +76,7 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
                 it != m_oTCPClients.end();
                 it ++)
         {
-			Endpoint ep((*it)->getSocket().remote_endpoint());
+            Endpoint ep(*(*it)->getRemoteEndpointPtr());
             if(ep == *(pEndpoint.get()))
             {
                 return *it;
@@ -86,8 +90,8 @@ void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
 {
     m_oMutex.lock();
     m_oConnHolder.push_back(pConn);
-	m_oMutex.unlock();
-	LOG_TRACE(frmwk)<<"Get a TCP Connection!";
+    m_oMutex.unlock();
+    LOG_TRACE(frmwk)<<"Get a TCP Connection!";
     Event<tcp_get_connection>::triger(
         boost::bind(tcp_get_connection::event,pConn.get(), _1)
     );
@@ -97,14 +101,14 @@ void GlobalConnections::onTCPClntConnect(TCPClient* pClnt)
 {
     m_oMutex.lock();
     m_oTCPClients.push_back(pClnt);
-	m_oMutex.unlock();
+    m_oMutex.unlock();
     Event<tcp_get_connection>::triger(
         boost::bind(tcp_get_connection::event, pClnt, _1)
     );
 }
 void GlobalConnections::onConnRecvOrSendError(ASIOConnection* pConn)
 {
-	LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() enter";
+    LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() enter";
     boost::unique_lock<boost::mutex> _l(m_oMutex);
     if(pConn->UDPPointPointer() != NULL)
     {

@@ -36,13 +36,13 @@ protected:
     GlobalConnections();
 	
 protected:
-	typedef std::list<TCPConnectionBasePtr_t>	ConnHolder_t;
-	ConnHolder_t		m_oConnHolder;
-	
-	std::list<TCPClient *>			m_oTCPClients;
-	std::list<UDPPoint *>			m_oUDPPoints;
-	boost::mutex						m_oMutex;
-	static boost::shared_ptr< GlobalConnections> 	s_pInstance;
+    typedef std::list<TCPConnectionBasePtr_t>	ConnHolder_t;
+    ConnHolder_t		m_oConnHolder;
+
+    std::list<TCPClient *>			m_oTCPClients;
+    std::list<UDPPoint *>			m_oUDPPoints;
+    boost::mutex						m_oMutex;
+    static boost::shared_ptr< GlobalConnections> 	s_pInstance;
 };//end class GlobalConnections
 }//end namespace details
 }//end namespace ffnet

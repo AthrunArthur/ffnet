@@ -44,7 +44,7 @@ public:
     }
     
     virtual bool		isFree() = 0;
-	virtual EndpointPtr_t getRemoteEndpointPtr() = 0;
+    virtual EndpointPtr_t getRemoteEndpointPtr() = 0;
 	
 protected:
     virtual 	void 	       	startSend() = 0;

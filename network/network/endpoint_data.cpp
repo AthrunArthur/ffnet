@@ -36,6 +36,11 @@ String printBuf(const char *pBuf, size_t len)
 	}
 	return res;
 }
+#else
+String printBuf(const char *pBuf, size_t len)
+{
+  return "";
+}
 #endif
 
 

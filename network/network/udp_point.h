@@ -22,8 +22,8 @@ public:
     virtual UDPPoint* 		UDPPointPointer(){return this;}
     virtual void 		close();
     virtual bool		isFree();
-protected:
     virtual EndpointPtr_t 	getRemoteEndpointPtr();
+protected:
     virtual void 		startSend();
     virtual void		startRecv();
     void 			actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint);

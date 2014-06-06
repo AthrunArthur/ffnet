@@ -6,7 +6,7 @@ namespace ffnet
 {
 enum ProtocolType {
     tcp_v4 = 1,
-	tcp_v6 = 2,
+    tcp_v6 = 2,
     udp_v4 = 3,
     udp_v6 = 4
 };
@@ -17,36 +17,36 @@ public:
 
     typedef boost::asio::detail::socket_addr_type data_type;
 
-	Endpoint(boost::asio::ip::tcp::endpoint ep)
-	: m_oImpl(ep.address(), ep.port())
-	{
-		if(ep.address().is_v4())
-			m_iProtocol = tcp_v4;
-		else
-			m_iProtocol = tcp_v6;
-	}
-	Endpoint(boost::asio::ip::udp::endpoint ep)
-	: m_oImpl(ep.address(), ep.port()){
-		if(ep.address().is_v4())
-			m_iProtocol = udp_v4;
-		else
-			m_iProtocol = udp_v6;
-	}
-	bool			generateTypedEndpoint(boost::asio::ip::tcp::endpoint & ep)
-	{
-		if(is_udp())
-			return false;
-		
-		ep = boost::asio::ip::tcp::endpoint(address(), port());
-		return true;
-	}
-	bool			generateTypedEndpoint(boost::asio::ip::udp::endpoint & ep)
-	{
-		if(is_tcp())
-			return false;
-		ep = boost::asio::ip::udp::endpoint(address(), port());
-		return true;
-	}
+    Endpoint(boost::asio::ip::tcp::endpoint ep)
+    : m_oImpl(ep.address(), ep.port())
+    {
+        if(ep.address().is_v4())
+            m_iProtocol = tcp_v4;
+	else
+            m_iProtocol = tcp_v6;
+    }
+    Endpoint(boost::asio::ip::udp::endpoint ep)
+    : m_oImpl(ep.address(), ep.port()){
+        if(ep.address().is_v4())
+            m_iProtocol = udp_v4;
+        else
+            m_iProtocol = udp_v6;
+    }
+    bool			generateTypedEndpoint(boost::asio::ip::tcp::endpoint & ep)
+    {
+        if(is_udp())
+            return false;
+	
+        ep = boost::asio::ip::tcp::endpoint(address(), port());
+        return true;
+    }
+    bool			generateTypedEndpoint(boost::asio::ip::udp::endpoint & ep)
+    {
+        if(is_tcp())
+            return false;
+        ep = boost::asio::ip::udp::endpoint(address(), port());
+            return true;
+    }
 	
 
     /// Default constructor.
@@ -71,22 +71,22 @@ public:
      * @endcode
      */
     Endpoint(ProtocolType protocol, unsigned short port_num)
-        : m_iProtocol(protocol) {
-			switch(protocol)
-			{
-				case tcp_v4:
-					m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::tcp::v4().family(), port_num);
-					break;
-				case tcp_v6:
-					m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::tcp::v6().family(), port_num);
-					break;
-				case udp_v4:
-					m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::udp::v4().family(), port_num);
-					break;
-				case udp_v6:
-					m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::udp::v6().family(), port_num);
-					break;
-			}
+    : m_iProtocol(protocol) {
+        switch(protocol)
+        {
+        case tcp_v4:
+            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::tcp::v4().family(), port_num);
+            break;
+        case tcp_v6:
+            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::tcp::v6().family(), port_num);
+            break;
+        case udp_v4:
+            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::udp::v4().family(), port_num);
+            break;
+        case udp_v6:
+            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::udp::v6().family(), port_num);
+            break;
+        }
     }
 
     Endpoint(ProtocolType protocol, const boost::asio::ip::address &addr, unsigned short port_num)
@@ -109,20 +109,20 @@ public:
 
     bool			is_tcp() const
     {
-		return m_iProtocol == tcp_v4 || m_iProtocol == tcp_v6;
-	}
-	bool			is_udp() const
-	{
-		return m_iProtocol == udp_v4 || m_iProtocol == udp_v6;
-	}
-	bool			is_v4() const
-	{
-		return m_iProtocol == tcp_v4 || m_iProtocol == udp_v4;
-	}
-	bool			is_v6() const
-	{
-		return m_iProtocol == tcp_v6 || m_iProtocol == udp_v6;
-	}
+        return m_iProtocol == tcp_v4 || m_iProtocol == tcp_v6;
+    }
+    bool			is_udp() const
+    {
+        return m_iProtocol == udp_v4 || m_iProtocol == udp_v6;
+    }
+    bool			is_v4() const
+    {
+        return m_iProtocol == tcp_v4 || m_iProtocol == udp_v4;
+    }
+    bool			is_v6() const
+    {
+        return m_iProtocol == tcp_v6 || m_iProtocol == udp_v6;
+    }
 	
     /// The protocol associated with the endpoint.
     ProtocolType protocol() const {
@@ -213,7 +213,7 @@ public:
     }
 */
 private:
-	ProtocolType 		m_iProtocol;
+    ProtocolType 		m_iProtocol;
     // The underlying IP endpoint.
     boost::asio::ip::detail::endpoint m_oImpl;
 

@@ -1,4 +1,4 @@
-//!this file is included by handler/event.h
+//!this file is included by framework/event.h
 ENABLE_HOOK_EVENT(::ffnet::event::tcp_get_connection)
 ENABLE_HOOK_EVENT(::ffnet::event::tcp_lost_connection)
 ENABLE_HOOK_EVENT(::ffnet::event::more::tcp_server_accept_connection)

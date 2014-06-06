@@ -24,7 +24,7 @@ void	onRecvPong(boost::shared_ptr<PingPong::Pong>pPong, ffnet::EndpointPtr_t pEP
 void	onConnSucc(ffnet::TCPConnectionBase *pConn)
 {
 	std::cout<<"connect success"<<std::endl;
-	ffnet::EndpointPtr_t tpp(new ffnet::Endpoint(pConn->getSocket().remote_endpoint()));
+	ffnet::EndpointPtr_t tpp = pConn->getRemoteEndpointPtr();
 	sendPingMsg(tpp);
 }
 void	onLostConn(ffnet::TCPConnectionBase *pConn, ffnet::ProtoBufNervure * pbn)

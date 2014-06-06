@@ -28,9 +28,9 @@ void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, PackagePtr_t pkg)
 	Archive s(pBuf, oSendBuffer.idle(), Archive::seralizer);
 	pkg->arch(s);
 	oSendBuffer.filled() += len;
-	LOG_TRACE(connection)<<"LengthBonderSplitter::bond(), seralize pkg: "
-	      <<printBuf(boost::asio::buffer_cast<const char *>(oSendBuffer.readable()),
-					 oSendBuffer.filled());
+	LOG_TRACE(connection)<<"LengthBonderSplitter::bond(), seralize pkg: ";
+	     // <<printBuf(boost::asio::buffer_cast<const char *>(oSendBuffer.readable()),
+//					 oSendBuffer.filled());
 }
 
 std::list<SharedBuffer> LengthBonderSplitter::split(NetBuffer &oRecvBuffer)

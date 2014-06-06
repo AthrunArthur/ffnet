@@ -26,8 +26,9 @@ protected:
 
 #ifdef ENABLE_LOG_CONSOLE
 String	toString(Endpoint  ep);
-String	printBuf(const char *pBuf, size_t len);
 #endif
+
+String	printBuf(const char *pBuf, size_t len);
 
 typedef boost::shared_ptr<EndPointWithData>	EndPointBufferPtr_t;
 

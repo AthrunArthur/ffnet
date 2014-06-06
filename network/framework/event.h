@@ -98,11 +98,11 @@ public:
     typedef boost::function<void (event_handler) > event_triger;
     static void listen(::ffnet::NetNervure * nn, event_handler h)
     {
-		EventImpl<enable_hook_event<ETy_>::value, ETy_>::listen(nn, h);
+        EventImpl<enable_hook_event<ETy_>::value, ETy_>::listen(nn, h);
     }
     static void triger(event_triger t) { 
-		EventImpl<enable_hook_event<ETy_>::value, ETy_>::triger(t);
-	}
+        EventImpl<enable_hook_event<ETy_>::value, ETy_>::triger(t);
+    }
 };//end class
 
 struct tcp_get_connection
@@ -247,5 +247,7 @@ namespace ffnet{namespace event{ \
 
 #include "common/event_hook.h"
 //Event<ETy_> *		Event<ETy_>::s_pInstance = NULL;\
+
+#undef ENABLE_HOOK_EVENT
 
 #endif
