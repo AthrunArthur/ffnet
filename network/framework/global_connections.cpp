@@ -52,11 +52,8 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
                 it != m_oUDPPoints.end();
                 it ++)
         {
-            Endpoint ep(*(*it)->getRemoteEndpointPtr());
-            if(ep == *(pEndpoint.get()))
-            {
+          //We just use a random UDP point to send it!
                 return *it;
-            }
         }
     }
     else

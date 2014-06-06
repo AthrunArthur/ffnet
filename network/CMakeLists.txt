@@ -3,18 +3,12 @@ project(network)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-#add_definitions(-DPROTO_BUF_SUPPORT)
+add_definitions(-DPROTO_BUF_SUPPORT)
 add_definitions(-g)
 #add_definitions(-DENABLE_LOG_CONSOLE)
 
-#####Specify the path of boost
-#set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/athrun/boost_1_52_0/stage/include")
-#set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/home/athrun/boost_trunk/stage/lib")
 
-set(Boost_DIR /home/athrun/boost_1_53_0)
-set(CMAKE_MODULE_PATH ${FFNET_ROOT_DIR}/cmake)
-include_directories(${PROJECT_SOURCE_DIR} ${Boost_DIR})
-link_directories(${Boost_DIR}/stage/lib)
+include_directories(${PROJECT_SOURCE_DIR})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
@@ -40,13 +34,12 @@ set(src_list 	common/shared_buffer.cpp
 	network/udp_point.cpp
 	package/proto_buf_wrapper_pkg.cpp
 	common/archive.cpp
-	
 )
 	
 add_library(network_dynamic SHARED ${src_list})
 add_library(network_static STATIC ${src_list})
-target_link_libraries(network_dynamic boost_system boost_date_time boost_thread)
-target_link_libraries(network_static boost_system boost_date_time boost_thread)
+target_link_libraries(network_dynamic protobuf boost_system boost_date_time boost_thread)
+target_link_libraries(network_static protobuf boost_system boost_date_time boost_thread)
 
 
 set_target_properties(network_dynamic PROPERTIES OUTPUT_NAME "network")
