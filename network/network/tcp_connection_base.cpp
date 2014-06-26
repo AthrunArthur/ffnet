@@ -12,7 +12,7 @@ using namespace ::ffnet::event::more;
 	
 EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 {
-	return EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
+	return m_oRemoteEndpoint;
 }
 
 void TCPConnectionBase::startRecv()

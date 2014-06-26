@@ -98,12 +98,12 @@ size_t length(const Ty_ * val, size_t count,
 class Archive
 {
 public:
-	enum arch_tye{
+	enum arch_type{
 		seralizer,
 		deseralizer,
 		length_retriver
 	};
-	Archive(const char *buf,size_t len, arch_tye at)
+	Archive(const char *buf,size_t len, arch_type at)
 	: m_pReadBuf(NULL)
 	, m_iBufLen(len)
 	, m_iAT(at)
@@ -119,7 +119,7 @@ public:
 			assert(0);
 		}
 	}
-	Archive(char *buf, size_t len, arch_tye at)
+	Archive(char *buf, size_t len, arch_type at)
 	: m_pReadBuf(NULL)
 	, m_iBufLen(len)
 	, m_iAT(at)
@@ -135,7 +135,7 @@ public:
 			m_pWriteBuf = buf;
 		}
 	}
-	Archive(arch_tye at)
+	Archive(arch_type at)
 	: m_pReadBuf(NULL)
 	, m_iBufLen(0)
 	, m_iAT(at)
@@ -198,11 +198,15 @@ public:
 		ARCH_TWO(val, count)
 	}
 	size_t 	getLength(){return m_iBase;}
-	arch_tye		getArTy(){return m_iAT;}
+	arch_type		getArTy(){return m_iAT;}
+        bool            is_serializer() const {
+          return m_iAT == seralizer;}
+        bool            is_deserializer() const{return m_iAT == deseralizer;}
+        bool            is_lengther()  const{return m_iAT == length_retriver;}
 #undef ARCH_ONE
 #undef ARCH_TWO
 protected:
-		arch_tye			m_iAT;
+		arch_type			m_iAT;
 		size_t 			m_iBase;
 		char *			m_pWriteBuf;
 		const char *		m_pReadBuf;

@@ -123,11 +123,11 @@ struct tcp_get_connection
 };//end tcp_get_connection
 struct tcp_lost_connection
 {
-    typedef ffnet::TCPConnectionBase TCPConnectionBase;
-    typedef boost::function<void (TCPConnectionBase *)> event_handler;
-    static void event(TCPConnectionBase * pConn, event_handler h)
+    typedef ffnet::EndpointPtr_t EndpointPtr_t;
+    typedef boost::function<void (EndpointPtr_t)> event_handler;
+    static void event(EndpointPtr_t remote, event_handler h)
     {
-        h(pConn);
+        h(remote);
     }
 };//end tcp_get_connection
 struct udp_send_recv_exception

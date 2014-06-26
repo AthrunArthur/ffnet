@@ -127,7 +127,7 @@ RECHECK:
                 pConn->close();
 				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() find an existed conn and now loose it, triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(pConn->nervure(),
-                    boost::bind(tcp_lost_connection::event, p, _1)
+                    boost::bind(tcp_lost_connection::event, p->getRemoteEndpointPtr(), _1)
                 );
                 m_oConnHolder.erase(it);
                 goto RECHECK;
@@ -147,7 +147,7 @@ RECHECK_CLIENT:
                 m_oTCPClients.erase(it);
 				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError(), del tcp client and triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(pConn->nervure(),
-                    boost::bind(tcp_lost_connection::event, p, _1)
+                    boost::bind(tcp_lost_connection::event, p->getRemoteEndpointPtr(), _1)
                 );
                 pConn->close();
                 goto RECHECK_CLIENT;

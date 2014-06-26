@@ -13,8 +13,6 @@ using namespace boost::asio::ip;
 class TCPConnectionBase : public ASIOConnection, public boost::enable_shared_from_this<TCPConnectionBase>
 {
 public:
-
-public:
     virtual ~TCPConnectionBase();
     //This may be called in another thread, and it's thread safe.
     virtual void			send(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
@@ -37,6 +35,7 @@ protected:
 
 protected:
     tcp::socket 		m_oSocket;
+    EndpointPtr_t               m_oRemoteEndpoint;
 };//class TCPConnectionBase
 typedef boost::shared_ptr<TCPConnectionBase> TCPConnectionBasePtr_t;
 }//end namespace ffnet

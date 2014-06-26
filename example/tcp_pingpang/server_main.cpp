@@ -13,7 +13,7 @@ void onRecvPing(boost::shared_ptr<PingMsg> pPing, ffnet::EndpointPtr_t pEP)
     ffnet::NetNervure::send(pkg, pEP);
 }
 
-void onLostTCPConnection(ffnet::TCPConnectionBase * pConn)
+void onLostTCPConnection(ffnet::EndpointPtr_t pEP)
 {
     std::cout<<"lost connection!"<<std::endl;
 }

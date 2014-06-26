@@ -18,6 +18,7 @@ TCPConnection::TCPConnection(NetNervure *pNervure, TCPServer *pSvr)
 
 void TCPConnection::start()
 {
+  m_oRemoteEndpoint = EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
     startRecv();
 }
 

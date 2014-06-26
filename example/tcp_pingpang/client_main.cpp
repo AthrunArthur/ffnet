@@ -29,7 +29,7 @@ void	onConnSucc(ffnet::TCPConnectionBase *pConn)
 	ffnet::EndpointPtr_t tpp = pConn->getRemoteEndpointPtr();
 	sendPingMsg(tpp);
 }
-void	onLostConn(ffnet::TCPConnectionBase *pConn, ffnet::NetNervure * pbn)
+void	onLostConn(ffnet::EndpointPtr_t pEP, ffnet::NetNervure * pbn)
 {
 	std::cout<<"Server lost!"<<std::endl;
 	pbn->stop();

@@ -30,6 +30,7 @@ void TCPClient::handleConnected(const boost::system::error_code &ec)
 			boost::bind(tcp_client_get_connection_succ::event,
 						this, _1)
 		);
+        m_oRemoteEndpoint = EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
         startRecv();
     } else {
 		LOG_DEBUG(tcp_client) <<"Get connection error!";
