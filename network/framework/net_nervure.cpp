@@ -88,12 +88,12 @@ ASIOConnection * NetNervure::send(boost::shared_ptr< google::protobuf::Message >
 
 #endif
 
-void NetNervure::initTCPServer(uint16_t iTCPPort)
+void NetNervure::initTCPServer(const std::string & ip, uint16_t iTCPPort)
 {
     LOG_TRACE(frmwk)<<"NetNervure::initTCPServer() "<<"initializing tcp server at port "<<iTCPPort;
     if(m_pTCPServer == NULL)
     {
-        m_pTCPServer = boost::shared_ptr<TCPServer>(new TCPServer(this, iTCPPort));
+        m_pTCPServer = boost::shared_ptr<TCPServer>(new TCPServer(this,ip, iTCPPort));
         LOG_TRACE(frmwk)<<"NetNervure::initTCPServer() "<< "tcp server is initialized on port:"<<iTCPPort <<" with Nervure:"<<this;
     }
     else
@@ -101,9 +101,9 @@ void NetNervure::initTCPServer(uint16_t iTCPPort)
         LOG_ERROR(frmwk)<<"NetNervure::initTCPServer() "<< "error: tcp server has been initialized!";
     }
 }
-void NetNervure::initUDPServer(uint16_t iUDPPort)
+void NetNervure::initUDPServer(const std::string & ip, uint16_t iUDPPort)
 {
-    UDPPointPtr_t upp = UDPPointPtr_t(new UDPPoint(this, iUDPPort));
+    UDPPointPtr_t upp = UDPPointPtr_t(new UDPPoint(this, ip, iUDPPort));
     m_oConnections.push_back(upp);
     LOG_TRACE(frmwk)<<"NetNervure::initUDPServer() "<<"udp server is initialized on port:"<<iUDPPort;
 }

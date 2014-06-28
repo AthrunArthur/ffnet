@@ -15,7 +15,7 @@ using boost::asio::ip::udp;
 class UDPPoint: public ASIOConnection
 {
 public:
-    UDPPoint(NetNervure *pNervure, uint16_t iPort);
+    UDPPoint(NetNervure *pNervure, const std::string & ip, uint16_t iPort);
     virtual ~UDPPoint();
     virtual void		send(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
 	

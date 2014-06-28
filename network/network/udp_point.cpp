@@ -6,9 +6,9 @@ namespace ffnet
 {
 using namespace ffnet::details;
 
-UDPPoint::UDPPoint(ffnet::NetNervure *pNervure, uint16_t iPort)
+UDPPoint::UDPPoint(ffnet::NetNervure *pNervure, const std::string & ip, uint16_t iPort)
 : ffnet::details::ASIOConnection(pNervure)
-, m_oSocket(pNervure->getIOService(), udp::endpoint(udp::v4(), iPort))
+, m_oSocket(pNervure->getIOService(), udp::endpoint(ip::address::from_string(ip.c_str()), iPort))
 {
     GlobalConnections::instance()->addUDPPoint(this);
     startRecv();

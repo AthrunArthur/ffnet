@@ -34,7 +34,7 @@ typedef boost::shared_ptr<TCPConnection> TCPConnectionPtr_t;
 class TCPServer : public boost::noncopyable
 {
 public:
-    TCPServer(NetNervure *pNervure, uint16_t iPort);
+    TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPort);
 
     inline tcp::acceptor &	getAcceptor() {
         return m_oAcceptor;

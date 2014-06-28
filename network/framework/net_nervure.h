@@ -50,8 +50,8 @@ public:
         return m_oTasks;
     }
 
-    void						initTCPServer(uint16_t iTCPPort);
-    void						initUDPServer(uint16_t iUDPPort);
+    void						initTCPServer(const std::string & ip, uint16_t iTCPPort);
+    void						initUDPServer(const std::string & ip, uint16_t iUDPPort);
     void						addTCPClient(EndpointPtr_t remoteEndPoint);
 
 protected:

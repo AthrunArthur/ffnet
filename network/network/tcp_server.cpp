@@ -22,8 +22,8 @@ void TCPConnection::start()
     startRecv();
 }
 
-TCPServer::TCPServer(NetNervure *pNervure, uint16_t iPort)
-    : m_oAcceptor(pNervure->getIOService(), tcp::endpoint(tcp::v4(), iPort))
+TCPServer::TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPort)
+    : m_oAcceptor(pNervure->getIOService(), tcp::endpoint(ip::address::from_string(ip.c_str()), iPort))
     , m_pNervure(pNervure)
 {
     startAccept();
