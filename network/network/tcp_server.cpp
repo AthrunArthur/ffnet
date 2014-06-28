@@ -47,10 +47,10 @@ void TCPServer::startAccept()
 void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::error_code &error)
 {
     if(!error) {
+        pNewConn->start();
         Event<tcp_server_accept_connection>::triger(nervure(),
             boost::bind(tcp_server_accept_connection::event,
                         pNewConn, _1));
-        pNewConn->start();
     } else {
         Event<tcp_server_accept_error>::triger(nervure(),
             boost::bind(tcp_server_accept_error::event, m_oAcceptor.local_endpoint(), error, _1)
