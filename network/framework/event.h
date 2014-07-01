@@ -172,10 +172,10 @@ struct tcp_server_accept_connection
 };//end struct tcp_server_accept_connection
 struct tcp_server_accept_error
 {
-    typedef boost::asio::ip::tcp::endpoint endpoint;
+    typedef ffnet::EndpointPtr_t EndpointPtr_t;
     typedef boost::system::error_code error_code;
-    typedef boost::function<void (endpoint, error_code)> event_handler;
-    static void		event(endpoint svr, error_code error, event_handler h)
+    typedef boost::function<void (EndpointPtr_t, error_code)> event_handler;
+    static void		event(EndpointPtr_t svr, error_code error, event_handler h)
     {
         h(svr, error);
     }

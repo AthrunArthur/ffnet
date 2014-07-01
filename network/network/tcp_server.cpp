@@ -26,6 +26,7 @@ void TCPConnection::start()
 TCPServer::TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPort)
     : m_oAcceptor(pNervure->getIOService(), tcp::endpoint(ip::address::from_string(ip.c_str()), iPort))
     , m_pNervure(pNervure)
+    , m_pAcceptEP(new Endpoint(tcp::endpoint(ip::address::from_string(ip.c_str()), iPort)))
 {
     startAccept();
 }
@@ -52,12 +53,12 @@ void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::e
         Event<tcp_server_accept_connection>::triger(nervure(),
             boost::bind(tcp_server_accept_connection::event,
                         pNewConn, _1));
+        startAccept();
     } else {
         Event<tcp_server_accept_error>::triger(nervure(),
-            boost::bind(tcp_server_accept_error::event, m_oAcceptor.local_endpoint(), error, _1)
+            boost::bind(tcp_server_accept_error::event, m_pAcceptEP, error, _1)
         );
     }
-    startAccept();
 }
 void TCPServer::close()
 {

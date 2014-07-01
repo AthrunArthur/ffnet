@@ -63,8 +63,6 @@ NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
 
 NetNervure::~NetNervure()
 {
-    stop();
-    m_oIOThread.join();
 }
 
 void NetNervure::send(boost::shared_ptr< Package > pPkg, EndpointPtr_t ep)
@@ -114,10 +112,12 @@ void NetNervure::run()
     m_oIOThread = boost::thread(boost::bind(&io_service::run, &m_oIOService));
 
     Func_t f;
-    while(!m_bIsStopped) {
+    while(!m_bIsStopped || !m_oTasks.empty()) {
         m_oTasks.pop(f);
         f();
     }
+    m_oIOService.stop();
+    m_oIOThread.join();
 }
 
 void NetNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t epb)

@@ -2,6 +2,7 @@
 #define _NETWORK_NETWORK_TCP_SERVER_H_
 #include "common.h"
 #include "network/tcp_connection_base.h"
+#include "network/end_point.h"
 #include <boost/noncopyable.hpp>
 
 namespace ffnet
@@ -36,24 +37,25 @@ class TCPServer : public boost::noncopyable
 public:
     TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPort);
 
-    inline tcp::acceptor &	getAcceptor() {
+    inline tcp::acceptor &      getAcceptor() {
         return m_oAcceptor;
     }
-    inline io_service 	&getIOService() {
+    inline io_service &         getIOService() {
         return m_oAcceptor.get_io_service();
     }
     
-    void				close();
-    inline NetNervure *		nervure() const{return m_pNervure;}
+    void                        close();
+    inline NetNervure *         nervure() const{return m_pNervure;}
 
 protected:
-    void				startAccept();
+    void        startAccept();
 
-    void 			handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::error_code &error);
+    void        handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::error_code &error);
 
 protected:
-	NetNervure *			m_pNervure;
-    tcp::acceptor		m_oAcceptor;
+    NetNervure *                m_pNervure;
+    tcp::acceptor               m_oAcceptor;
+    EndpointPtr_t               m_pAcceptEP;
 };//end class TCPServer
 typedef boost::shared_ptr<TCPServer> TCPServerPtr_t;
 }//end namespace ffnet
