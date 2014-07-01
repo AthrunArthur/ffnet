@@ -22,6 +22,7 @@ ASIOConnection::ASIOConnection(NetNervure *pNervure)
     , m_oSendBuffer()
     , m_oMutex()
     , m_bIsSending(false)
+    , m_iConnectionState(s_init)
 {
 }
 
@@ -38,6 +39,7 @@ void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::siz
         m_oSendBuffer.eraseBuffer(bytes_transferred);
         startSend();
     } else {
+      m_iConnectionState.store(s_error);
         LOG_DEBUG(connection)<<"ASIOConnection::handlePkgSent(), Get error "<<ec.message();
         Event<connect_sent_stream_error>::triger(nervure(),
                 boost::bind(connect_sent_stream_error::event,
@@ -54,6 +56,7 @@ void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, si
         sliceAndDispatchPkg();
         startRecv();
     } else	{
+        m_iConnectionState.store(s_error);
         LOG_DEBUG(connection)<<"ASIOConnection::handlReceivedPkg(), Get error "<<error.message();
         Event<connect_recv_stream_error>::triger(nervure(),
                         boost::bind(connect_recv_stream_error::event,

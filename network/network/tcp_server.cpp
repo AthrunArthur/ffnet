@@ -12,13 +12,14 @@ TCPConnection::TCPConnection(NetNervure *pNervure, TCPServer *pSvr)
     : TCPConnectionBase(pNervure)
     , m_pTCPServer(pSvr)
 {
+    m_iConnectionState.store(s_valid);
 }
 
 
 
 void TCPConnection::start()
 {
-  m_oRemoteEndpoint = EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
+    m_oRemoteEndpoint = EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
     startRecv();
 }
 

@@ -1,6 +1,9 @@
 //!this file is included by framework/event.h
+
+//Users should definitely hook these critical events!!!
 ENABLE_HOOK_EVENT(::ffnet::event::tcp_get_connection)
 ENABLE_HOOK_EVENT(::ffnet::event::tcp_lost_connection)
+ENABLE_HOOK_EVENT(::ffnet::event::pkg_send_failed)
 
 //internal use  
 ENABLE_HOOK_EVENT(::ffnet::event::more::tcp_server_accept_connection)

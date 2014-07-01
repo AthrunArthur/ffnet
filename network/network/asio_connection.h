@@ -6,6 +6,7 @@
 #include "middleware/bonder_splitter.h"
 #include "package/package.h"
 #include <boost/noncopyable.hpp>
+#include <boost/atomic.hpp> 
 #ifdef PROTO_BUF_SUPPORT
 #include <google/protobuf/message.h>
 #endif
@@ -22,6 +23,13 @@ using namespace boost::asio::ip;
 class ASIOConnection : public boost::noncopyable
 {
 public:
+    enum ConnState{
+      s_init,
+      s_valid,
+      s_closed,
+      s_error,
+    };
+
     ASIOConnection(NetNervure *pNervure);
     virtual ~ASIOConnection();
 
@@ -35,7 +43,7 @@ public:
 #ifdef PROTO_BUF_SUPPORT
     virtual void		send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
 #endif
-    virtual void 		close() {};
+    virtual void 		close() {m_iConnectionState.store(s_closed);};
     virtual TCPConnectionBase *TCPConnectionBasePointer() {
         return NULL;
     }
@@ -64,6 +72,7 @@ protected:
     NetBuffer		        m_oSendBuffer;
     boost::mutex		m_oMutex;
     bool			m_bIsSending;
+    boost::atomic<ConnState>    m_iConnectionState;
 
 };//end class ASIOConnection
 

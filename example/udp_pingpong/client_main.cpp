@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 	
     uint16_t port = nc.get<uint16_t>("udp-server.port");
 
-    pbn.initUDPServer(port);
+    pbn.initUDPServer("127.0.0.1", port);
 	
     pbn.addNeedToRecvPkg<PingPong::Pong>(onRecvPong);
 	

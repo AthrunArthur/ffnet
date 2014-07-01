@@ -9,6 +9,7 @@
 #include "network/tcp_client.h"
 #include "network/tcp_server.h"
 #include "middleware/net_dispatcher.h"
+#include "package/package.h"
 #include <vector>
 
 namespace ffnet
@@ -130,6 +131,18 @@ struct tcp_lost_connection
         h(remote);
     }
 };//end tcp_get_connection
+
+//! This happens because the socked is invalid due to lost connection or errors
+struct pkg_send_failed
+{
+    typedef ffnet::EndpointPtr_t EndpointPtr_t;
+    typedef ffnet::PackagePtr_t PackagePtr_t;
+    typedef boost::function<void (PackagePtr_t , EndpointPtr_t) > event_handler;
+    static void event(PackagePtr_t pkg, EndpointPtr_t remote, event_handler h)
+    {
+      h(pkg, remote);
+    }
+};//end pkg_send_failed
 struct udp_send_recv_exception
 {
     typedef ffnet::Endpoint endpoint;

@@ -67,20 +67,14 @@ NetNervure::~NetNervure()
     m_oIOThread.join();
 }
 
-ASIOConnection * NetNervure::send(boost::shared_ptr< Package > pPkg, EndpointPtr_t ep)
+void NetNervure::send(boost::shared_ptr< Package > pPkg, EndpointPtr_t ep)
 {
-    ASIOConnection *tcb = GlobalConnections::instance()->findRemoteEndPoint(ep);
-    if(tcb == NULL) {
-        LOG_FATAL(app)<<"NetNervure::send "<<"You have to init such a remote endpoint connected to "<<ep->address().to_string()<<":"<<ep->port();
-        assert(0 && "You have to init such a remote endpoint!");
-        return tcb;
-    }
-    tcb->send(pPkg, ep);
-    return tcb;
+    GlobalConnections::instance()->findConnectionAndDo(ep,
+       boost::bind(&GlobalConnections::send, _1, pPkg, ep));
 }
 
 #ifdef PROTO_BUF_SUPPORT
-ASIOConnection * NetNervure::send(boost::shared_ptr< google::protobuf::Message > pMsg, EndpointPtr_t ep)
+void NetNervure::send(boost::shared_ptr< google::protobuf::Message > pMsg, EndpointPtr_t ep)
 {
     boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
     return send(pPkg, ep);

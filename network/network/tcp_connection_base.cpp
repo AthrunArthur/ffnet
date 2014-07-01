@@ -37,8 +37,15 @@ TCPConnectionBase::~TCPConnectionBase()
 
 void TCPConnectionBase::send(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
 {
+    if (m_iConnectionState.load() != s_valid)
+    {
+      Event<pkg_send_failed>::triger(nervure(),
+          boost::bind(pkg_send_failed::event, pkg, pEndpoint, _1));
+      return ;
+    }
+
     m_oMutex.lock();
-	m_pBonderSplitter->bond(m_oSendBuffer, pkg);
+    m_pBonderSplitter->bond(m_oSendBuffer, pkg);
 
     if(!m_bIsSending) {
         m_bIsSending = true;
@@ -51,6 +58,7 @@ void TCPConnectionBase::send(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
 void TCPConnectionBase::close()
 {
 	m_oSocket.close();
+        m_iConnectionState.store(s_closed);
 }
 bool TCPConnectionBase::isFree()
 {
@@ -66,16 +74,16 @@ void TCPConnectionBase::startSend()
 {
     m_oMutex.lock();
     if(m_oSendBuffer.filled() != 0) {
-		Event<tcp_start_send_stream>::triger(nervure(),
-			boost::bind(tcp_start_send_stream::event, 
-						this, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
-						boost::asio::buffer_size(m_oSendBuffer.readable()), _1)
-		);
+        Event<tcp_start_send_stream>::triger(nervure(),
+            boost::bind(tcp_start_send_stream::event, 
+                this, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
+                boost::asio::buffer_size(m_oSendBuffer.readable()), _1)
+            );
 	
-		m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
-                                   boost::bind(&TCPConnectionBase::handlePkgSent, shared_from_this(),
-                                               boost::asio::placeholders::error,
-                                               boost::asio::placeholders::bytes_transferred));
+        m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
+             boost::bind(&TCPConnectionBase::handlePkgSent, shared_from_this(),
+                 boost::asio::placeholders::error,
+                 boost::asio::placeholders::bytes_transferred));
     } else {
         m_bIsSending = false;
     }

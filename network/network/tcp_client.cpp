@@ -13,11 +13,11 @@ TCPClient::TCPClient(NetNervure *pNervure, Endpoint &ep)
 : TCPConnectionBase(pNervure)
 {
     boost::system::error_code ec;
-	tcp::endpoint tep;
-	ep.generateTypedEndpoint(tep);
-	Event<tcp_client_start_connection>::triger(nervure(),
-		boost::bind(tcp_client_start_connection::event, tep, _1)
-	);
+    tcp::endpoint tep;
+    ep.generateTypedEndpoint(tep);
+    Event<tcp_client_start_connection>::triger(nervure(),
+        boost::bind(tcp_client_start_connection::event, tep, _1)
+    );
     m_oSocket.async_connect(tep, boost::bind(&TCPClient::handleConnected,
                                             this, boost::asio::placeholders::error()));
 }
@@ -25,19 +25,21 @@ TCPClient::TCPClient(NetNervure *pNervure, Endpoint &ep)
 void TCPClient::handleConnected(const boost::system::error_code &ec)
 {
     if(!ec) {
-		LOG_TRACE(tcp_client)<<"Get connection succ!";
-                m_oRemoteEndpoint = EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
-		Event<tcp_client_get_connection_succ>::triger(nervure(),
+        LOG_TRACE(tcp_client)<<"Get connection succ!";
+        m_iConnectionState.store(s_valid);
+        m_oRemoteEndpoint = EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
+        Event<tcp_client_get_connection_succ>::triger(nervure(),
 			boost::bind(tcp_client_get_connection_succ::event,
 						this, _1)
-		);
+        );
         startRecv();
     } else {
-		LOG_DEBUG(tcp_client) <<"Get connection error!";
-		Event<tcp_client_conn_error>::triger(nervure(),
-			boost::bind(tcp_client_conn_error::event,
-						this, ec, _1)
-		);
+      m_iConnectionState.store(s_error);
+      LOG_DEBUG(tcp_client) <<"Get connection error!";
+      Event<tcp_client_conn_error>::triger(nervure(),
+          boost::bind(tcp_client_conn_error::event,
+          this, ec, _1)
+        );
     }
 }
 }//end namespace ffnet

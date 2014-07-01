@@ -30,9 +30,9 @@ public:
     NetNervure( BonderSplitterPtr_t pBonderSplitter);
     virtual ~NetNervure();
 
-    static ASIOConnection *				send(boost::shared_ptr<Package> pPkg, EndpointPtr_t ep);
+    static void				send(boost::shared_ptr<Package> pPkg, EndpointPtr_t ep);
 #ifdef PROTO_BUF_SUPPORT
-    static ASIOConnection *				send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
+    static void 			send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
 #endif
     void 					run();
 

@@ -43,7 +43,12 @@ void GlobalConnections::delUDPPoint(UDPPoint* pPoint)
     }
 }
 
-ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
+void GlobalConnections::send(ASIOConnection * pConn, PackagePtr_t pkg, EndpointPtr_t ep)
+{
+  pConn->send(pkg, ep);
+}
+
+void GlobalConnections::findConnectionAndDo(EndpointPtr_t pEndpoint, FuncOnConn_t func)
 {
     boost::unique_lock<boost::mutex> _l(m_oMutex);
     if(pEndpoint->is_udp())
@@ -53,7 +58,8 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
                 it ++)
         {
           //We just use a random UDP point to send it!
-                return *it;
+          func(*it);
+          return ;
         }
     }
     else
@@ -65,7 +71,8 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
             Endpoint ep(*(*it)->getRemoteEndpointPtr());
             if(ep == *(pEndpoint.get()))
             {
-                return it->get();
+              func(it->get());
+              return ;
             }
         }
 
@@ -76,11 +83,13 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
             Endpoint ep(*(*it)->getRemoteEndpointPtr());
             if(ep == *(pEndpoint.get()))
             {
-                return *it;
+              func(*it);
+              return ;
             }
         }
     }
-    return NULL;
+    throw FindConnectionException(pEndpoint);
+    return ;
 }
 
 void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
@@ -92,7 +101,6 @@ void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
     Event<tcp_get_connection>::triger(pConn->nervure(),
         boost::bind(tcp_get_connection::event,pConn.get(), _1)
     );
-
 }
 void GlobalConnections::onTCPClntConnect(TCPClient* pClnt)
 {

@@ -7,12 +7,34 @@
 #include "network/tcp_server.h"
 #include "network/tcp_connection_base.h"
 #include "network/udp_point.h"
+#include "package/package.h"
 #include <boost/noncopyable.hpp>
 #include <list>
+#include <exception>
 
 
 namespace ffnet
 {
+  using ffnet::PackagePtr_t;
+  class FindConnectionException : public std::exception
+  {
+   public:
+     FindConnectionException(EndpointPtr_t point)
+       : m_pPoint(point){
+      std::stringstream ss;
+      ss<<"cannot find endpoint "<< m_pPoint->address().to_string() <<" in connected endpoints!"<<std::endl;
+      m_strMsg = ss.str();
+    }
+     virtual ~FindConnectionException() throw(){}
+
+    virtual const char* what() const throw()
+    {
+        return m_strMsg.c_str(); 
+    }
+   protected:
+    EndpointPtr_t       m_pPoint;
+    std::string         m_strMsg;
+  };
 namespace details
 {
 using ffnet::ASIOConnection;
@@ -22,16 +44,21 @@ class GlobalConnections : public boost::noncopyable
 {
 public:
     static boost::shared_ptr< GlobalConnections> 		instance();
+    typedef boost::function<void (ASIOConnection * p)> FuncOnConn_t;
 
-	void 				addUDPPoint(UDPPoint * pPoint);
-	void				delUDPPoint(UDPPoint *pPoint);
+	void            addUDPPoint(UDPPoint * pPoint);
+	void            delUDPPoint(UDPPoint *pPoint);
 	
-	ASIOConnection *		findRemoteEndPoint( EndpointPtr_t pEndpoint);
+	void            findConnectionAndDo( EndpointPtr_t pEndpoint, FuncOnConn_t func);
 	
 	//event
 	void				onTCPConnect(TCPConnectionPtr_t pConn);
 	void				onTCPClntConnect(TCPClient * pClnt);
 	void				onConnRecvOrSendError(ASIOConnection *pConn);
+        
+
+        //A helper function!
+        static void  send(ASIOConnection * pConn, PackagePtr_t pkg, EndpointPtr_t ep);
 protected:
     GlobalConnections();
 	
