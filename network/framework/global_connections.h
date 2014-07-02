@@ -15,53 +15,57 @@
 
 namespace ffnet
 {
-  using ffnet::PackagePtr_t;
-  class FindConnectionException : public std::exception
-  {
-   public:
-     FindConnectionException(EndpointPtr_t point)
-       : m_pPoint(point){
-      std::stringstream ss;
-      ss<<"cannot find endpoint "<< m_pPoint->address().to_string() <<" in connected endpoints!"<<std::endl;
-      m_strMsg = ss.str();
+using ffnet::PackagePtr_t;
+class FindConnectionException : public std::exception
+{
+public:
+    FindConnectionException(EndpointPtr_t point)
+        : m_pPoint(point) {
+        std::stringstream ss;
+        ss<<"cannot find endpoint "<< m_pPoint->address().to_string() <<" in connected endpoints!"<<std::endl;
+        m_strMsg = ss.str();
     }
-     virtual ~FindConnectionException() throw(){}
+    virtual ~FindConnectionException() throw() {}
 
     virtual const char* what() const throw()
     {
-        return m_strMsg.c_str(); 
+        return m_strMsg.c_str();
     }
-   protected:
+protected:
     EndpointPtr_t       m_pPoint;
     std::string         m_strMsg;
-  };
+};
 namespace details
 {
 using ffnet::ASIOConnection;
 using ffnet::UDPPoint;
-	
+
+
+//TODO(athrunarthur@gmail.com) We need to understand if there are performance issue!
+//! Tis data structure is thread safe and we use lock are query for each send().
+//! Maybe we need to redesign this, but we need some insights as our guidance.
 class GlobalConnections : public boost::noncopyable
 {
 public:
     static boost::shared_ptr< GlobalConnections> 		instance();
     typedef boost::function<void (ASIOConnection * p)> FuncOnConn_t;
 
-	void            addUDPPoint(UDPPoint * pPoint);
-	void            delUDPPoint(UDPPoint *pPoint);
-	
-	void            findConnectionAndDo( EndpointPtr_t pEndpoint, FuncOnConn_t func);
-	
-	//event
-	void				onTCPConnect(TCPConnectionPtr_t pConn);
-	void				onTCPClntConnect(TCPClient * pClnt);
-	void				onConnRecvOrSendError(ASIOConnection *pConn);
-        
+    void            addUDPPoint(UDPPoint * pPoint);
+    void            delUDPPoint(UDPPoint *pPoint);
 
-        //A helper function!
-        static void  send(ASIOConnection * pConn, PackagePtr_t pkg, EndpointPtr_t ep);
+    void            findConnectionAndDo( const EndpointPtr_t & pEndpoint, const FuncOnConn_t & func);
+
+    //event
+    void				onTCPConnect(TCPConnectionPtr_t pConn);
+    void				onTCPClntConnect(TCPClient * pClnt);
+    void				onConnRecvOrSendError(ASIOConnection *pConn);
+
+
+    //A helper function!
+    static void  send(ASIOConnection * pConn, const PackagePtr_t & pkg, const EndpointPtr_t & ep);
 protected:
     GlobalConnections();
-	
+
 protected:
     typedef std::list<TCPConnectionBasePtr_t>	ConnHolder_t;
     ConnHolder_t		m_oConnHolder;

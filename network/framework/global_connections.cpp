@@ -43,12 +43,12 @@ void GlobalConnections::delUDPPoint(UDPPoint* pPoint)
     }
 }
 
-void GlobalConnections::send(ASIOConnection * pConn, PackagePtr_t pkg, EndpointPtr_t ep)
+void GlobalConnections::send(ASIOConnection * pConn, const PackagePtr_t & pkg, const EndpointPtr_t & ep)
 {
   pConn->send(pkg, ep);
 }
 
-void GlobalConnections::findConnectionAndDo(EndpointPtr_t pEndpoint, FuncOnConn_t func)
+void GlobalConnections::findConnectionAndDo(const EndpointPtr_t & pEndpoint, const FuncOnConn_t & func)
 {
     boost::unique_lock<boost::mutex> _l(m_oMutex);
     if(pEndpoint->is_udp())
@@ -133,7 +133,7 @@ RECHECK:
                 ++it) {
             if(it->get() == pConn) {
                 pConn->close();
-				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() find an existed conn and now loose it, triger tcp_lost_connection";
+                LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() find an existed conn and now loose it, triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(pConn->nervure(),
                     boost::bind(tcp_lost_connection::event, p->getRemoteEndpointPtr(), _1)
                 );
@@ -153,7 +153,7 @@ RECHECK_CLIENT:
             if((*it) == p)
             {
                 m_oTCPClients.erase(it);
-				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError(), del tcp client and triger tcp_lost_connection";
+                LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError(), del tcp client and triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(pConn->nervure(),
                     boost::bind(tcp_lost_connection::event, p->getRemoteEndpointPtr(), _1)
                 );
