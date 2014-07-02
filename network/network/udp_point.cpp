@@ -52,7 +52,7 @@ void UDPPoint::startSend()
         m_oMutex.unlock();
     }
 }
-void UDPPoint::send(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
+void UDPPoint::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
 {
     if (m_iConnectionState.load() != s_valid)
     {
@@ -72,7 +72,7 @@ void UDPPoint::send(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
         m_oMutex.unlock();
 }
 
-void UDPPoint::actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
+void UDPPoint::actualSendPkg(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
 {
     //m_pHandler->onUDPStartSend(this);
     m_pBonderSplitter->bond(m_oSendBuffer, pkg);

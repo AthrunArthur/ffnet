@@ -30,7 +30,7 @@ public:
     public:
         typedef boost::function<void () > Func_t;
         typedef ffnet::BlockingQueue<Func_t> TQ_t;
-        HandlerAndDispatcher(event_handler h, TQ_t & q)
+        HandlerAndDispatcher(const event_handler & h, TQ_t & q)
             :m_oHandler(h), m_oTaskQueue(q) {}
     public:
         event_handler 		m_oHandler;
@@ -38,12 +38,12 @@ public:
     };
     typedef boost::shared_ptr<HandlerAndDispatcher> HandlerAndDispatcherPtr_t;
     typedef std::map< ::ffnet::NetNervure *, std::vector<HandlerAndDispatcherPtr_t> >	Container_t;
-    static void listen(::ffnet::NetNervure * nn, event_handler h)
+    static void listen(::ffnet::NetNervure * nn, const event_handler & h)
     {
         HandlerAndDispatcherPtr_t hadp(new HandlerAndDispatcher(h, nn->getTaskQueue()));
         instance()->m_oContainer[nn].push_back(hadp);
     }
-    static void triger(::ffnet::NetNervure * nn, event_triger t)
+    static void triger(::ffnet::NetNervure * nn, const event_triger & t)
     {
         if(s_pInstance)
         {
@@ -87,10 +87,10 @@ class EventImpl<false, ETy_> {
 public:
 	typedef typename ETy_::event_handler event_handler;
     typedef boost::function<void(event_handler) >event_triger;
-    static void listen(::ffnet::NetNervure *nn, event_handler h)
+    static void listen(::ffnet::NetNervure *nn, const event_handler & h)
     {
     }
-    static void triger(::ffnet::NetNervure * nn, event_triger t) {	}
+    static void triger(::ffnet::NetNervure * nn, const event_triger & t) {	}
 };//end class EventImpl
 
 template <class ETy_>
@@ -104,11 +104,11 @@ class Event : public EventImpl<enable_hook_event<ETy_>::value, ETy_>
 public:
     typedef typename ETy_::event_handler event_handler;
     typedef boost::function<void (event_handler) > event_triger;
-    static void listen(::ffnet::NetNervure * nn, event_handler h)
+    static void listen(::ffnet::NetNervure * nn, const event_handler & h)
     {
         EventImpl<enable_hook_event<ETy_>::value, ETy_>::listen(nn, h);
     }
-    static void triger(::ffnet::NetNervure * nn, event_triger t) { 
+    static void triger(::ffnet::NetNervure * nn, const event_triger & t) { 
         EventImpl<enable_hook_event<ETy_>::value, ETy_>::triger(nn, t);
     }
 };//end class

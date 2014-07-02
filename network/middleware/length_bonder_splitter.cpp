@@ -13,7 +13,7 @@ void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, const char *pBuf, size_t
 	oSendBuffer.writeBuffer(pBuf, buflen);
 }
 
-void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, PackagePtr_t pkg)
+void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, const PackagePtr_t & pkg)
 {
 	Archive lr(Archive::length_retriver);
 	

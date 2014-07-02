@@ -65,14 +65,14 @@ NetNervure::~NetNervure()
 {
 }
 
-void NetNervure::send(boost::shared_ptr< Package > pPkg, EndpointPtr_t ep)
+void NetNervure::send(const boost::shared_ptr< Package > & pPkg, const EndpointPtr_t & ep)
 {
     GlobalConnections::instance()->findConnectionAndDo(ep,
        boost::bind(&GlobalConnections::send, _1, pPkg, ep));
 }
 
 #ifdef PROTO_BUF_SUPPORT
-void NetNervure::send(boost::shared_ptr< google::protobuf::Message > pMsg, EndpointPtr_t ep)
+void NetNervure::send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep)
 {
     boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
     return send(pPkg, ep);
@@ -100,7 +100,7 @@ void NetNervure::initUDPServer(const std::string & ip, uint16_t iUDPPort)
     LOG_TRACE(frmwk)<<"NetNervure::initUDPServer() "<<"udp server is initialized on port:"<<iUDPPort;
 }
 
-void NetNervure::addTCPClient(EndpointPtr_t remoteEndPoint)
+void NetNervure::addTCPClient(const ffnet::EndpointPtr_t& remoteEndPoint)
 {
     ASIOConnectionPtr_t acp = ASIOConnectionPtr_t(new TCPClient(this, *(remoteEndPoint.get())));
     m_oConnections.push_back(acp);
@@ -120,7 +120,7 @@ void NetNervure::run()
     m_oIOThread.join();
 }
 
-void NetNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t epb)
+void NetNervure::deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb)
 {
 }
 

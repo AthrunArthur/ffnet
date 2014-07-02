@@ -35,7 +35,7 @@ TCPConnectionBase::~TCPConnectionBase()
 {
 }
 
-void TCPConnectionBase::send(PackagePtr_t pkg, EndpointPtr_t pEndpoint)
+void TCPConnectionBase::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
 {
     if (m_iConnectionState.load() != s_valid)
     {

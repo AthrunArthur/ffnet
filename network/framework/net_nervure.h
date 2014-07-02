@@ -30,9 +30,9 @@ public:
     NetNervure( BonderSplitterPtr_t pBonderSplitter);
     virtual ~NetNervure();
 
-    static void				send(boost::shared_ptr<Package> pPkg, EndpointPtr_t ep);
+    static void				send(const boost::shared_ptr<Package> & pPkg, const EndpointPtr_t & ep);
 #ifdef PROTO_BUF_SUPPORT
-    static void 			send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
+    static void 			send(const boost::shared_ptr<google::protobuf::Message> & pMsg, const EndpointPtr_t & ep);
 #endif
     void 					run();
 
@@ -52,7 +52,7 @@ public:
 
     void						initTCPServer(const std::string & ip, uint16_t iTCPPort);
     void						initUDPServer(const std::string & ip, uint16_t iUDPPort);
-    void						addTCPClient(EndpointPtr_t remoteEndPoint);
+    void						addTCPClient(const EndpointPtr_t & remoteEndPoint);
 
 protected:
     friend class ASIOConnection;
@@ -61,7 +61,7 @@ protected:
     void						stopInThisThread();
 
 
-    virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);
+    virtual void				deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb);
 
 protected:
     typedef std::list<ASIOConnectionPtr_t>	ConnContainer_t;

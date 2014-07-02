@@ -74,7 +74,7 @@ void ASIOConnection::sliceAndDispatchPkg()
     }
 }
 #ifdef PROTO_BUF_SUPPORT
-void ASIOConnection::send(boost::shared_ptr< google::protobuf::Message > pMsg, EndpointPtr_t ep)
+void ASIOConnection::send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep)
 {
     boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
     send(pPkg, ep);

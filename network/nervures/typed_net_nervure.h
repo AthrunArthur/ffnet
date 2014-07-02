@@ -32,15 +32,15 @@ public:
         m_oPkgHandlers.insert(std::make_pair(pPkg->getTypeID(), rh));
     }
 protected:
-    virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);
+    virtual void				deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb);
 
 protected:
     typedef boost::function<void (PackagePtr_t, EndpointPtr_t)> PkgRecvHandler_t;
     typedef std::map<uint32_t, PkgCreator_t> PkgCreatorContainer_t;
     typedef std::map<uint32_t, PkgRecvHandler_t> PkgHandlers_t;
 
-    PkgCreatorContainer_t		m_oPkgCreatorContainer;
-    PkgHandlers_t				m_oPkgHandlers;
+    PkgCreatorContainer_t       m_oPkgCreatorContainer;
+    PkgHandlers_t       m_oPkgHandlers;
 };//end class TypedNetNervure;
 }//end namespace details
 }//end namespace ffnet

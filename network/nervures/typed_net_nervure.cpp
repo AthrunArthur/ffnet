@@ -12,7 +12,7 @@ TypedNetNervure::TypedNetNervure()
 {
 }
 
-void TypedNetNervure::deseralizeAndDispatchHandler(EndPointBufferPtr_t ebp)
+void TypedNetNervure::deseralizeAndDispatchHandler(const EndPointBufferPtr_t & ebp)
 {
     const char *pBuf = ebp->buffer().buffer().get();
     LOG_INFO(frmwk)<<"TypedNetNervure::deseralizeAndDispatchHandler()" <<"buf: "<<printBuf(pBuf, ebp->buffer().length());

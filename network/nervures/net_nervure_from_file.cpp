@@ -27,7 +27,7 @@ NetNervureFromFile::NetNervureFromFile(String conf)
         String ip = nc.get<String>("tcp-client.target-svr-ip-addr");
         uint16_t port = nc.get<uint16_t>("tcp-client.target-svr-port");
 
-        EndpointPtr_t ep(new Endpoint(ffnet::tcp_v4, boost::asio::ip::address_v4::from_string(ip), port));
+        EndpointPtr_t ep(new Endpoint(boost::asio::ip::address_v4::from_string(ip), port, ffnet::proto_tcp));
         
         addTCPClient(ep);
     }

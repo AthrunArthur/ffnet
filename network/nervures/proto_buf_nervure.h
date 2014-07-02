@@ -34,7 +34,7 @@ public:
 		m_oPkgHandlers.insert(std::make_pair(name, h));
     }
 protected:
-    virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);
+    virtual void				deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb);
 	
 	template <class PkgTy_>
 	static void handlerToAvoidTypeErrorFromCompiler

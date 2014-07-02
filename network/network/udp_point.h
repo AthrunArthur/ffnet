@@ -17,7 +17,7 @@ class UDPPoint: public ASIOConnection
 public:
     UDPPoint(NetNervure *pNervure, const std::string & ip, uint16_t iPort);
     virtual ~UDPPoint();
-    virtual void		send(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
+    virtual void		send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
 	
     virtual UDPPoint* 		UDPPointPointer(){return this;}
     virtual void 		close();
@@ -26,7 +26,7 @@ public:
 protected:
     virtual void 		startSend();
     virtual void		startRecv();
-    void 			actualSendPkg(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
+    void 			actualSendPkg(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
 protected:
     typedef boost::function<void () > Func_t;
     udp::socket		m_oSocket;

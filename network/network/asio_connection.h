@@ -39,9 +39,9 @@ public:
     BonderSplitter 		*bonderSplitter() const {
         return m_pBonderSplitter;
     }
-    virtual void		send(PackagePtr_t pkg, EndpointPtr_t pEndpoint) = 0;
+    virtual void		send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint) = 0;
 #ifdef PROTO_BUF_SUPPORT
-    virtual void		send(boost::shared_ptr<google::protobuf::Message> pMsg, EndpointPtr_t ep);
+    virtual void		send(const boost::shared_ptr<google::protobuf::Message> & pMsg, const EndpointPtr_t & ep);
 #endif
     virtual void 		close() {m_iConnectionState.store(s_closed);};
     virtual TCPConnectionBase *TCPConnectionBasePointer() {
