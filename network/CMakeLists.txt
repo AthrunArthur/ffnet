@@ -5,6 +5,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 #add_definitions(-DPROTO_BUF_SUPPORT)
 add_definitions(-g)
+add_definitions(-O2)
 add_definitions(-DENABLE_LOG_CONSOLE)
 
 
@@ -37,13 +38,13 @@ set(src_list 	common/shared_buffer.cpp
 )
 	
 add_library(network_dynamic SHARED ${src_list})
-add_library(network_static STATIC ${src_list})
+#add_library(network_static STATIC ${src_list})
 target_link_libraries(network_dynamic protobuf boost_system boost_date_time boost_thread)
-target_link_libraries(network_static protobuf boost_system boost_date_time boost_thread)
+#target_link_libraries(network_static protobuf boost_system boost_date_time boost_thread)
 
 
 set_target_properties(network_dynamic PROPERTIES OUTPUT_NAME "network")
-set_target_properties(network_static PROPERTIES OUTPUT_NAME "network")
+#set_target_properties(network_static PROPERTIES OUTPUT_NAME "network")
 set_target_properties(network_dynamic PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-set_target_properties(network_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+#set_target_properties(network_static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 

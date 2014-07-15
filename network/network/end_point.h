@@ -155,6 +155,12 @@ public:
                            const Endpoint& e2) {
         return !(e1 < e2);
     }
+    
+    std::string to_str() const{
+        std::stringstream ss;
+        ss<<m_oIPAddr<<":"<<m_iPort;
+        return ss.str();
+    }
 
 private:
     ProtocolType 		m_iProtocol;

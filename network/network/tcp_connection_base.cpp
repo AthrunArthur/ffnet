@@ -1,6 +1,7 @@
 #include "network/tcp_connection_base.h"
 #include "middleware/net_dispatcher.h"
 #include "common/archive.h"
+#include "common/defines.h"
 #include "framework/global_connections.h"
 #include "framework/net_nervure.h"
 #include "framework/event.h"
@@ -22,6 +23,7 @@ void TCPConnectionBase::startRecv()
 					m_oSocket.local_endpoint(), 
 					m_oSocket.remote_endpoint(), _1)
 	);
+    LOG_DEBUG(connection)<<"TCPConnectionBase::startRecv() on "<<getRemoteEndpointPtr()->to_str();
     m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
                               boost::bind(&TCPConnectionBase::handlReceivedPkg, shared_from_this(), boost::asio::placeholders::error(),
                                           boost::asio::placeholders::bytes_transferred()));
@@ -72,6 +74,7 @@ bool TCPConnectionBase::isFree()
 
 void TCPConnectionBase::startSend()
 {
+    LOG_DEBUG(connection)<<"TCPConnectionBase  enter startSend";
     m_oMutex.lock();
     if(m_oSendBuffer.filled() != 0) {
         Event<tcp_start_send_stream>::triger(nervure(),
@@ -88,5 +91,7 @@ void TCPConnectionBase::startSend()
         m_bIsSending = false;
     }
     m_oMutex.unlock();
+    startRecv();
+    LOG_DEBUG(connection)<<"TCPConnectionBase exit startSend";
 }
 }//end namespace ffnet

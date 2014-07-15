@@ -26,8 +26,9 @@ void TCPConnection::start()
 TCPServer::TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPort)
     : m_oAcceptor(pNervure->getIOService(), tcp::endpoint(ip::address::from_string(ip.c_str()), iPort))
     , m_pNervure(pNervure)
-    , m_pAcceptEP(new Endpoint(tcp::endpoint(ip::address::from_string(ip.c_str()), iPort)))
+    , m_pAcceptEP()
 {
+    m_pAcceptEP = EndpointPtr_t(new Endpoint(m_oAcceptor.local_endpoint()));
     startAccept();
 }
 
@@ -62,6 +63,8 @@ void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::e
 }
 void TCPServer::close()
 {
-	m_oAcceptor.close();
+    //m_oAcceptor.local_endpoint().shutdown();
+    m_oAcceptor.cancel();
+    m_oAcceptor.close();
 }
 }//end namespace ffnet

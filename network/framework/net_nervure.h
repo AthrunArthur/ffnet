@@ -68,7 +68,7 @@ protected:
 
     boost::asio::io_service			m_oIOService;
     BlockingQueue<Func_t>				m_oTasks;
-    boost::shared_ptr<TCPServer>		m_pTCPServer;
+    TCPServer*                                  m_pTCPServer;
     ConnContainer_t					m_oConnections;
     boost::thread					m_oIOThread;
     BonderSplitterPtr_t				m_pBonderSplitter;

@@ -60,6 +60,7 @@ public:
     void				onTCPClntConnect(TCPClient * pClnt);
     void				onConnRecvOrSendError(ASIOConnection *pConn);
 
+    void            onPkgSendFailed(PackagePtr_t pkg, EndpointPtr_t remote);
 
     //A helper function!
     static void  send(ASIOConnection * pConn, const PackagePtr_t & pkg, const EndpointPtr_t & ep);

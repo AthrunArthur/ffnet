@@ -55,6 +55,9 @@ NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
             boost::bind(&GlobalConnections::onConnRecvOrSendError,
                         GlobalConnections::instance().get(), _1)
                                             );
+    Event<pkg_send_failed>::listen(this, boost::bind(&GlobalConnections::onPkgSendFailed,
+        GlobalConnections::instance().get(), _1, _2));
+
     LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging connect_sent_stream_error: "
 					<<enable_hook_event<connect_sent_stream_error>::value;
 					
@@ -85,7 +88,7 @@ void NetNervure::initTCPServer(const std::string & ip, uint16_t iTCPPort)
     LOG_TRACE(frmwk)<<"NetNervure::initTCPServer() "<<"initializing tcp server at port "<<iTCPPort;
     if(m_pTCPServer == NULL)
     {
-        m_pTCPServer = boost::shared_ptr<TCPServer>(new TCPServer(this,ip, iTCPPort));
+        m_pTCPServer = new TCPServer(this,ip, iTCPPort);
         LOG_TRACE(frmwk)<<"NetNervure::initTCPServer() "<< "tcp server is initialized on port:"<<iTCPPort <<" with Nervure:"<<this;
     }
     else
@@ -107,17 +110,28 @@ void NetNervure::addTCPClient(const ffnet::EndpointPtr_t& remoteEndPoint)
     LOG_DEBUG(frmwk)<<"NetNervure::addTCPClient() "<<"tcp client has been initialized on port!";
 }
 
+void io_thread_func(TCPServer *p, boost::asio::io_service * ios)
+{
+    ios->run();
+    if (p)
+        delete p;
+}
 void NetNervure::run()
 {
-    m_oIOThread = boost::thread(boost::bind(&io_service::run, &m_oIOService));
-
+    //m_oIOThread = boost::thread(boost::bind(&io_service::run, &m_oIOService));
+    m_oIOThread = boost::thread(boost::bind(&io_thread_func, m_pTCPServer, &m_oIOService));;
     Func_t f;
     while(!m_bIsStopped || !m_oTasks.empty()) {
         m_oTasks.pop(f);
         f();
     }
+    //if(m_pTCPServer)
+    //{
+    //    m_pTCPServer->close();
+    //}
     m_oIOService.stop();
     m_oIOThread.join();
+
 }
 
 void NetNervure::deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb)
@@ -126,10 +140,6 @@ void NetNervure::deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb)
 
 void NetNervure::stop()
 {
-    if(m_pTCPServer)
-    {
-        m_pTCPServer->close();
-    }
     //still need to check each connections is free and close it.
     m_oTasks.push_back(boost::bind(&NetNervure::stopInThisThread, this));
 }
