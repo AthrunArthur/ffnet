@@ -33,11 +33,11 @@ public:
         HandlerAndDispatcher(const event_handler & h, TQ_t & q)
             :m_oHandler(h), m_oTaskQueue(q) {}
     public:
-        event_handler 		m_oHandler;
-        TQ_t &	m_oTaskQueue;
+        event_handler         m_oHandler;
+        TQ_t &    m_oTaskQueue;
     };
     typedef boost::shared_ptr<HandlerAndDispatcher> HandlerAndDispatcherPtr_t;
-    typedef std::map< ::ffnet::NetNervure *, std::vector<HandlerAndDispatcherPtr_t> >	Container_t;
+    typedef std::map< ::ffnet::NetNervure *, std::vector<HandlerAndDispatcherPtr_t> >    Container_t;
     static void listen(::ffnet::NetNervure * nn, const event_handler & h)
     {
         HandlerAndDispatcherPtr_t hadp(new HandlerAndDispatcher(h, nn->getTaskQueue()));
@@ -63,39 +63,39 @@ public:
     }
 protected:
     EventImpl() : m_oContainer() {}
-    static self * 		instance() {
+    static self *         instance() {
         if(s_pInstance == NULL)
         {
             s_pInstance = new EventImpl<enable_flag,ETy_>();
         }
         return s_pInstance;
     }
-    static self *		internalUseInstance()
+    static self *        internalUseInstance()
     {
         return s_pInstance;
     }
 protected:
-    Container_t			m_oContainer;
-    static self *		s_pInstance;
+    Container_t            m_oContainer;
+    static self *        s_pInstance;
 };//end class EventImpl
 
 template<bool enable_flag, class ETy_>
-typename EventImpl<enable_flag, ETy_>::self *	EventImpl<enable_flag, ETy_>::s_pInstance = NULL;
+typename EventImpl<enable_flag, ETy_>::self *    EventImpl<enable_flag, ETy_>::s_pInstance = NULL;
 
 template<class ETy_>
 class EventImpl<false, ETy_> {
 public:
-	typedef typename ETy_::event_handler event_handler;
+    typedef typename ETy_::event_handler event_handler;
     typedef boost::function<void(event_handler) >event_triger;
     static void listen(::ffnet::NetNervure *nn, const event_handler & h)
     {
     }
-    static void triger(::ffnet::NetNervure * nn, const event_triger & t) {	}
+    static void triger(::ffnet::NetNervure * nn, const event_triger & t) {    }
 };//end class EventImpl
 
 template <class ETy_>
 struct enable_hook_event{
-	const static bool value = false;
+    const static bool value = false;
 };//end struct enable_hook_event;
 
 template<class ETy_>
@@ -117,7 +117,7 @@ struct tcp_get_connection
 {
     typedef ffnet::TCPConnectionBase TCPConnectionBase;
     typedef boost::function<void (TCPConnectionBase *)> event_handler;
-    static void 	event(TCPConnectionBase * pConn, event_handler h)
+    static void     event(TCPConnectionBase * pConn, event_handler h)
     {
         h(pConn);
     }
@@ -154,8 +154,8 @@ namespace more
 struct tcp_server_start_listen
 {
     typedef boost::asio::ip::tcp::endpoint endpoint;
-    typedef boost::function<void (endpoint) > 	event_handler;
-    static void 	event(endpoint tcp, event_handler h)
+    typedef boost::function<void (endpoint) >     event_handler;
+    static void     event(endpoint tcp, event_handler h)
     {
         h(tcp);
     }
@@ -165,7 +165,7 @@ struct tcp_server_accept_connection
 {
     typedef boost::shared_ptr<ffnet::TCPConnection> TCPConnectionPtr_t;
     typedef boost::function<void (TCPConnectionPtr_t) > event_handler;
-    static void 	event(TCPConnectionPtr_t conn, event_handler h)
+    static void     event(TCPConnectionPtr_t conn, event_handler h)
     {
         h(conn);
     }
@@ -175,7 +175,7 @@ struct tcp_server_accept_error
     typedef ffnet::EndpointPtr_t EndpointPtr_t;
     typedef boost::system::error_code error_code;
     typedef boost::function<void (EndpointPtr_t, error_code)> event_handler;
-    static void		event(EndpointPtr_t svr, error_code error, event_handler h)
+    static void        event(EndpointPtr_t svr, error_code error, event_handler h)
     {
         h(svr, error);
     }
@@ -231,7 +231,7 @@ struct connect_sent_stream_succ {
 };//end connect_sent_stream
 struct connect_sent_stream_error {
     typedef ::ffnet::ASIOConnection *ASIOConnPtr_t;
-    typedef boost::system::error_code	error_code;
+    typedef boost::system::error_code    error_code;
     typedef boost::function<void (ASIOConnPtr_t, error_code)> event_handler;
     static void event(ASIOConnPtr_t pConn, error_code error, event_handler h)
     {
@@ -248,7 +248,7 @@ struct connect_recv_stream_succ {
 };//end connect_recv_stream_succ
 struct connect_recv_stream_error {
     typedef ::ffnet::ASIOConnection *ASIOConnPtr_t;
-    typedef boost::system::error_code	error_code;
+    typedef boost::system::error_code    error_code;
     typedef boost::function<void (ASIOConnPtr_t, error_code)> event_handler;
     static void event(ASIOConnPtr_t pConn, error_code error, event_handler h)
     {
@@ -266,7 +266,7 @@ namespace ffnet{namespace event{ \
 }}
 
 #include "common/event_hook.h"
-//Event<ETy_> *		Event<ETy_>::s_pInstance = NULL;\
+//Event<ETy_> *        Event<ETy_>::s_pInstance = NULL;\
 
 #undef ENABLE_HOOK_EVENT
 

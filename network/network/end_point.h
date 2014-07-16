@@ -32,22 +32,22 @@ public:
     , m_oIPAddr(ep.address())
     , m_iPort(ep.port()){}
     
-    bool			generateTypedEndpoint(boost::asio::ip::tcp::endpoint & ep)
+    bool            generateTypedEndpoint(boost::asio::ip::tcp::endpoint & ep)
     {
         if(is_udp())
             return false;
-	
+    
         ep = boost::asio::ip::tcp::endpoint(address(), port());
         return true;
     }
-    bool			generateTypedEndpoint(boost::asio::ip::udp::endpoint & ep)
+    bool            generateTypedEndpoint(boost::asio::ip::udp::endpoint & ep)
     {
         if(is_tcp())
             return false;
         ep = boost::asio::ip::udp::endpoint(address(), port());
             return true;
     }
-	
+    
 
     /// Default constructor.
     Endpoint()
@@ -75,23 +75,23 @@ public:
         return *this;
     }
 
-    bool			is_tcp() const
+    bool            is_tcp() const
     {
         return m_iProtocol == proto_tcp;
     }
-    bool			is_udp() const
+    bool            is_udp() const
     {
         return m_iProtocol == proto_udp;
     }
-    bool			is_v4() const
+    bool            is_v4() const
     {
         return m_oIPAddr.is_v4();
     }
-    bool			is_v6() const
+    bool            is_v6() const
     {
         return m_oIPAddr.is_v6();
     }
-	
+    
     /// The protocol associated with the endpoint.
     ProtocolType protocol() const {
         return m_iProtocol;
@@ -163,7 +163,7 @@ public:
     }
 
 private:
-    ProtocolType 		m_iProtocol;
+    ProtocolType         m_iProtocol;
     // The underlying IP endpoint.
     boost::asio::ip::address m_oIPAddr;
     uint16_t    m_iPort;

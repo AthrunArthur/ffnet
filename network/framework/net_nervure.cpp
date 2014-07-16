@@ -36,21 +36,21 @@ NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
                         GlobalConnections::instance().get(), _1)
                                                );
     LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging tcp_server_accept_connection: "
-					<<enable_hook_event<tcp_server_accept_connection>::value;
+                    <<enable_hook_event<tcp_server_accept_connection>::value;
     Event<tcp_client_get_connection_succ>::listen(this,
             boost::bind(&GlobalConnections::onTCPClntConnect,
                         GlobalConnections::instance().get(), _1)
                                                  );
     LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging tcp_client_get_connection_succ: "
-					<<enable_hook_event<tcp_client_get_connection_succ>::value;
-					
+                    <<enable_hook_event<tcp_client_get_connection_succ>::value;
+                    
     Event<connect_recv_stream_error>::listen(this,
             boost::bind(&GlobalConnections::onConnRecvOrSendError,
                         GlobalConnections::instance().get(), _1)
                                             );
     LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging connect_recv_stream_error: "
-					<<enable_hook_event<connect_recv_stream_error>::value;
-					
+                    <<enable_hook_event<connect_recv_stream_error>::value;
+                    
     Event<connect_sent_stream_error>::listen(this,
             boost::bind(&GlobalConnections::onConnRecvOrSendError,
                         GlobalConnections::instance().get(), _1)
@@ -59,8 +59,8 @@ NetNervure::NetNervure(BonderSplitterPtr_t pBonderSplitter)
         GlobalConnections::instance().get(), _1, _2));
 
     LOG_TRACE(frmwk)<<"NetNervure::ctor(), Enable logging connect_sent_stream_error: "
-					<<enable_hook_event<connect_sent_stream_error>::value;
-					
+                    <<enable_hook_event<connect_sent_stream_error>::value;
+                    
     ffnet::details::NetDispatcher::instance();
 }
 

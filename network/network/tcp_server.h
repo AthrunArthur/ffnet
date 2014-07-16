@@ -22,12 +22,12 @@ class TCPConnection : public TCPConnectionBase
 public:
     TCPConnection(NetNervure *pNervure, TCPServer *pSvr);
 
-    void 					start();
-    inline TCPServer 	 	*	getTCPServer() { return m_pTCPServer;}
+    void                     start();
+    inline TCPServer          *    getTCPServer() { return m_pTCPServer;}
 
 protected:
     friend class TCPServer;
-    TCPServer 		*m_pTCPServer;
+    TCPServer         *m_pTCPServer;
 };//end class TCPConnection
 typedef boost::shared_ptr<TCPConnection> TCPConnectionPtr_t;
 

@@ -13,7 +13,7 @@ public:
     size_t &    length();
 
 protected:
-    boost::shared_array<char>	m_oBuffer;
+    boost::shared_array<char>    m_oBuffer;
     size_t      m_iLength;
 
 };//end class SharedBuffer

@@ -19,7 +19,7 @@ class TypedPkgRecvCallback : public PkgRecvCallback
 {
 public:
     typedef boost::function<void (boost::shared_ptr<Ty_>, EndpointPtr_t)> PkgRecvHandler_t;
-    static void			recvHandler(PackagePtr_t pPkg, EndpointPtr_t pEP, PkgRecvHandler_t handler)
+    static void            recvHandler(PackagePtr_t pPkg, EndpointPtr_t pEP, PkgRecvHandler_t handler)
     {
         boost::shared_ptr<Ty_> pConcretPkg= boost::dynamic_pointer_cast<Ty_, Package>(pPkg);
         handler(pConcretPkg, pEP);

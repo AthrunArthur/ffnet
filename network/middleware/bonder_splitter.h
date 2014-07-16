@@ -7,14 +7,14 @@
 #include <list>
 namespace ffnet
 {
-	using ffnet::details::NetBuffer;
-	class BonderSplitter
-	{
-	public:
-		virtual std::list<SharedBuffer>		split(NetBuffer &oRecvBuffer) = 0;
-		virtual void					bond(NetBuffer & oSendBuffer, const char *pBuf, size_t len) = 0;
-		virtual void					bond(NetBuffer & oSendBuffer, const PackagePtr_t & pkg) = 0;
-	};//end class BonderSplitter
-	typedef boost::shared_ptr<BonderSplitter> BonderSplitterPtr_t;
+    using ffnet::details::NetBuffer;
+    class BonderSplitter
+    {
+    public:
+        virtual std::list<SharedBuffer>        split(NetBuffer &oRecvBuffer) = 0;
+        virtual void                    bond(NetBuffer & oSendBuffer, const char *pBuf, size_t len) = 0;
+        virtual void                    bond(NetBuffer & oSendBuffer, const PackagePtr_t & pkg) = 0;
+    };//end class BonderSplitter
+    typedef boost::shared_ptr<BonderSplitter> BonderSplitterPtr_t;
 }//end namespace ffnet
 #endif
