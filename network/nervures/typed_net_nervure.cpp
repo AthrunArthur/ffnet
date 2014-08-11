@@ -31,7 +31,7 @@ void TypedNetNervure::deseralizeAndDispatchHandler(const EndPointBufferPtr_t & e
     //pPkg->m_oBuffer = ebp->buffer().buffer();
     Archive d(const_cast<const char *>(ebp->buffer().buffer().get()), ebp->buffer().length(), Archive::deseralizer);
     pPkg->arch(d);
-    
+    LOG_INFO(frmwk)<<"TypedNetNervure::deseralizeAndDispatchHandler(), a pkg with id:"<<pPkg->getTypeID()<<" is forward to user";
     m_oTasks.push_back(boost::bind(handler, pPkg, ebp->Endpoint()));
 }
 }
