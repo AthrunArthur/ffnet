@@ -22,6 +22,7 @@ ASIOConnection::ASIOConnection(NetNervure *pNervure)
     , m_oSendBuffer()
     , m_oMutex()
     , m_bIsSending(false)
+    , m_iConnectionState(s_init)
 {
 }
 
@@ -34,10 +35,12 @@ void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::siz
     if(!ec) {
         Event<connect_sent_stream_succ>::triger(nervure(),
                 boost::bind(connect_sent_stream_succ::event, 
-			    this, bytes_transferred, _1));
+                this, bytes_transferred, _1));
         m_oSendBuffer.eraseBuffer(bytes_transferred);
+        LOG_DEBUG(connection)<<"pkg sent "<< bytes_transferred<<" bytes, to "<<getRemoteEndpointPtr()->to_str();
         startSend();
     } else {
+      m_iConnectionState.store(s_error);
         LOG_DEBUG(connection)<<"ASIOConnection::handlePkgSent(), Get error "<<ec.message();
         Event<connect_sent_stream_error>::triger(nervure(),
                 boost::bind(connect_sent_stream_error::event,
@@ -48,13 +51,15 @@ void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, si
 {
     if(!error) {
         Event<connect_recv_stream_succ>::triger(nervure(),
-			boost::bind(connect_recv_stream_succ::event,
-						this, bytes_transferred, _1));
+            boost::bind(connect_recv_stream_succ::event,
+                        this, bytes_transferred, _1));
+        LOG_DEBUG(connection)<<"recv pkg: "<<bytes_transferred<<" bytes, from "<< getRemoteEndpointPtr()->to_str();
         m_oRecvBuffer.filled() += bytes_transferred;
         sliceAndDispatchPkg();
         startRecv();
-    } else	{
-        LOG_DEBUG(connection)<<"ASIOConnection::handlReceivedPkg(), Get error "<<error.message();
+    } else    {
+        m_iConnectionState.store(s_error);
+        LOG_DEBUG(connection)<<"ASIOConnection::handlReceivedPkg(), Get error "<<error.message() <<" from "<< getRemoteEndpointPtr()->to_str();
         Event<connect_recv_stream_error>::triger(nervure(),
                         boost::bind(connect_recv_stream_error::event,
                                 this, error, _1));
@@ -71,7 +76,7 @@ void ASIOConnection::sliceAndDispatchPkg()
     }
 }
 #ifdef PROTO_BUF_SUPPORT
-void ASIOConnection::send(boost::shared_ptr< google::protobuf::Message > pMsg, EndpointPtr_t ep)
+void ASIOConnection::send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep)
 {
     boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
     send(pPkg, ep);

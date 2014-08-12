@@ -9,32 +9,32 @@ namespace ffnet
 {
 using namespace boost::asio;
 using namespace boost::asio::ip;
-	
+    
 class TCPConnectionBase : public ASIOConnection, public boost::enable_shared_from_this<TCPConnectionBase>
 {
 public:
     virtual ~TCPConnectionBase();
     //This may be called in another thread, and it's thread safe.
-    virtual void			send(PackagePtr_t pkg, EndpointPtr_t pEndpoint);
+    virtual void            send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
 /*
-    inline tcp::socket 	&getSocket() {
+    inline tcp::socket     &getSocket() {
         return m_oSocket;
     }
     */
     
-    virtual void			close();
-    virtual bool			isFree();
-	
+    virtual void            close();
+    virtual bool            isFree();
+    
     virtual TCPConnectionBase * TCPConnectionBasePointer(){return this;}
     virtual EndpointPtr_t getRemoteEndpointPtr();
 protected:
     TCPConnectionBase(NetNervure * pNervure);
     
-    virtual void 		startSend();
-    virtual void		startRecv();
+    virtual void         startSend();
+    virtual void        startRecv();
 
 protected:
-    tcp::socket 		m_oSocket;
+    tcp::socket         m_oSocket;
     EndpointPtr_t               m_oRemoteEndpoint;
 };//class TCPConnectionBase
 typedef boost::shared_ptr<TCPConnectionBase> TCPConnectionBasePtr_t;

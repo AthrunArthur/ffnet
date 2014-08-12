@@ -61,10 +61,10 @@ void NetBuffer::reserve(size_t r)
 
 void NetBuffer::reserveIdle(size_t r)
 {
-	if(idle() < r)
-	{
-		m_oBuffer.resize(filled() + r);
-	}
+    if(idle() < r)
+    {
+        m_oBuffer.resize(filled() + r);
+    }
 }
 
 }//end namespace details

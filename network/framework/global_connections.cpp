@@ -11,7 +11,7 @@ using namespace ::ffnet::event::more;
 boost::shared_ptr<GlobalConnections> GlobalConnections::s_pInstance;
 GlobalConnections::GlobalConnections()
 {
-	
+    
 }
 
 boost::shared_ptr< GlobalConnections> GlobalConnections::instance()
@@ -29,7 +29,7 @@ void GlobalConnections::addUDPPoint(UDPPoint* pPoint)
 void GlobalConnections::delUDPPoint(UDPPoint* pPoint)
 {
     boost::unique_lock<boost::mutex> _l(m_oMutex);
-	
+    
     RECHECK_DEL:
     for(std::list<UDPPoint *>::iterator it = m_oUDPPoints.begin();
         it != m_oUDPPoints.end();
@@ -43,7 +43,12 @@ void GlobalConnections::delUDPPoint(UDPPoint* pPoint)
     }
 }
 
-ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
+void GlobalConnections::send(ASIOConnection * pConn, const PackagePtr_t & pkg, const EndpointPtr_t & ep)
+{
+  pConn->send(pkg, ep);
+}
+
+void GlobalConnections::findConnectionAndDo(const EndpointPtr_t & pEndpoint, const FuncOnConn_t & func)
 {
     boost::unique_lock<boost::mutex> _l(m_oMutex);
     if(pEndpoint->is_udp())
@@ -53,7 +58,8 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
                 it ++)
         {
           //We just use a random UDP point to send it!
-                return *it;
+          func(*it);
+          return ;
         }
     }
     else
@@ -65,7 +71,8 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
             Endpoint ep(*(*it)->getRemoteEndpointPtr());
             if(ep == *(pEndpoint.get()))
             {
-                return it->get();
+              func(it->get());
+              return ;
             }
         }
 
@@ -76,11 +83,13 @@ ASIOConnection * GlobalConnections::findRemoteEndPoint(EndpointPtr_t pEndpoint)
             Endpoint ep(*(*it)->getRemoteEndpointPtr());
             if(ep == *(pEndpoint.get()))
             {
-                return *it;
+              func(*it);
+              return ;
             }
         }
     }
-    return NULL;
+    throw FindConnectionException(pEndpoint);
+    return ;
 }
 
 void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
@@ -88,11 +97,10 @@ void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
     m_oMutex.lock();
     m_oConnHolder.push_back(pConn);
     m_oMutex.unlock();
-    LOG_TRACE(frmwk)<<"Get a TCP Connection!";
+    LOG_TRACE(frmwk)<<"Get a TCP Connection from " <<pConn->getRemoteEndpointPtr()->to_str();
     Event<tcp_get_connection>::triger(pConn->nervure(),
         boost::bind(tcp_get_connection::event,pConn.get(), _1)
     );
-
 }
 void GlobalConnections::onTCPClntConnect(TCPClient* pClnt)
 {
@@ -125,7 +133,7 @@ RECHECK:
                 ++it) {
             if(it->get() == pConn) {
                 pConn->close();
-				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() find an existed conn and now loose it, triger tcp_lost_connection";
+                LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError() find an existed conn and now loose it, triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(pConn->nervure(),
                     boost::bind(tcp_lost_connection::event, p->getRemoteEndpointPtr(), _1)
                 );
@@ -145,7 +153,7 @@ RECHECK_CLIENT:
             if((*it) == p)
             {
                 m_oTCPClients.erase(it);
-				LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError(), del tcp client and triger tcp_lost_connection";
+                LOG_TRACE(connection)<<"GlobalConnections::onConnRecvOrSendError(), del tcp client and triger tcp_lost_connection";
                 Event<tcp_lost_connection>::triger(pConn->nervure(),
                     boost::bind(tcp_lost_connection::event, p->getRemoteEndpointPtr(), _1)
                 );
@@ -154,6 +162,11 @@ RECHECK_CLIENT:
             }
         }
     }
+}
+
+void GlobalConnections::onPkgSendFailed(PackagePtr_t pkg, EndpointPtr_t remote)
+{
+    std::cout<<"pkg send failed, to "<<remote->address();
 }
 
 }//end namespace details

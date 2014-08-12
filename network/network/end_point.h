@@ -1,203 +1,147 @@
 #ifndef _NETWORK_NETWORK_END_POINT_H_
 #define _NETWORK_NETWORK_END_POINT_H_
 #include "common.h"
+#include <boost/concept_check.hpp>
 
 namespace ffnet
 {
 enum ProtocolType {
-    tcp_v4 = 1,
-    tcp_v6 = 2,
-    udp_v4 = 3,
-    udp_v6 = 4
+    proto_invalid = 0,
+    proto_tcp = 1,
+    proto_udp = 3,
 };
 
+//! This is a key class to represent an endpoint in ffnet.
+//! It contains 3 things, protocol (tcp or udp), ip address, and port.
 class Endpoint
 {
 public:
-
-    typedef boost::asio::detail::socket_addr_type data_type;
-
-    Endpoint(boost::asio::ip::tcp::endpoint ep)
-    : m_oImpl(ep.address(), ep.port())
-    {
-        if(ep.address().is_v4())
-            m_iProtocol = tcp_v4;
-	else
-            m_iProtocol = tcp_v6;
-    }
-    Endpoint(boost::asio::ip::udp::endpoint ep)
-    : m_oImpl(ep.address(), ep.port()){
-        if(ep.address().is_v4())
-            m_iProtocol = udp_v4;
-        else
-            m_iProtocol = udp_v6;
-    }
-    bool			generateTypedEndpoint(boost::asio::ip::tcp::endpoint & ep)
+    Endpoint(const boost::asio::ip::address & addr, uint16_t port, ProtocolType proto)
+    : m_iProtocol(proto)
+    , m_oIPAddr(addr)
+    , m_iPort(port){}
+    
+    Endpoint(const boost::asio::ip::tcp::endpoint & ep)
+    : m_iProtocol(proto_tcp)
+    , m_oIPAddr(ep.address())
+    , m_iPort(ep.port())
+    {}
+    
+    Endpoint(const boost::asio::ip::udp::endpoint & ep)
+    : m_iProtocol(proto_udp)
+    , m_oIPAddr(ep.address())
+    , m_iPort(ep.port()){}
+    
+    bool            generateTypedEndpoint(boost::asio::ip::tcp::endpoint & ep)
     {
         if(is_udp())
             return false;
-	
+    
         ep = boost::asio::ip::tcp::endpoint(address(), port());
         return true;
     }
-    bool			generateTypedEndpoint(boost::asio::ip::udp::endpoint & ep)
+    bool            generateTypedEndpoint(boost::asio::ip::udp::endpoint & ep)
     {
         if(is_tcp())
             return false;
         ep = boost::asio::ip::udp::endpoint(address(), port());
             return true;
     }
-	
+    
 
     /// Default constructor.
     Endpoint()
-        : m_oImpl() {
+        : m_iProtocol(proto_invalid)
+        , m_oIPAddr()
+        , m_iPort(0){
     }
 
-    /// Construct an endpoint using a port number, specified in the host's byte
-    /// order. The IP address will be the any address (i.e. INADDR_ANY or
-    /// in6addr_any). This constructor would typically be used for accepting new
-    /// connections.
-    /**
-     * @par Examples
-     * To initialise an IPv4 TCP endpoint for port 1234, use:
-     * @code
-     * boost::asio::ip::tcp::endpoint ep(boost::asio::ip::tcp::v4(), 1234);
-     * @endcode
-     *
-     * To specify an IPv6 UDP endpoint for port 9876, use:
-     * @code
-     * boost::asio::ip::udp::endpoint ep(boost::asio::ip::udp::v6(), 9876);
-     * @endcode
-     */
-    Endpoint(ProtocolType protocol, unsigned short port_num)
-    : m_iProtocol(protocol) {
-        switch(protocol)
-        {
-        case tcp_v4:
-            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::tcp::v4().family(), port_num);
-            break;
-        case tcp_v6:
-            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::tcp::v6().family(), port_num);
-            break;
-        case udp_v4:
-            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::udp::v4().family(), port_num);
-            break;
-        case udp_v6:
-            m_oImpl = boost::asio::ip::detail::endpoint(boost::asio::ip::udp::v6().family(), port_num);
-            break;
-        }
-    }
-
-    Endpoint(ProtocolType protocol, const boost::asio::ip::address &addr, unsigned short port_num)
-		: m_iProtocol(protocol)
-		,  m_oImpl(addr, port_num) {
-    }
+    
 
     /// Copy constructor.
     Endpoint(const Endpoint &other)
         : m_iProtocol(other.m_iProtocol)
-        , m_oImpl(other.m_oImpl) {
+        , m_oIPAddr(other.m_oIPAddr)
+        , m_iPort(other.m_iPort){
     }
 
     /// Assign from another endpoint.
     Endpoint &operator=(const Endpoint &other) {
-        m_oImpl = other.m_oImpl;
-		m_iProtocol = other.m_iProtocol;
+        if (&other == this)
+            return *this;
+        m_iProtocol = other.m_iProtocol;
+        m_oIPAddr = other.m_oIPAddr;
+        m_iPort = other.m_iPort;
         return *this;
     }
 
-    bool			is_tcp() const
+    bool            is_tcp() const
     {
-        return m_iProtocol == tcp_v4 || m_iProtocol == tcp_v6;
+        return m_iProtocol == proto_tcp;
     }
-    bool			is_udp() const
+    bool            is_udp() const
     {
-        return m_iProtocol == udp_v4 || m_iProtocol == udp_v6;
+        return m_iProtocol == proto_udp;
     }
-    bool			is_v4() const
+    bool            is_v4() const
     {
-        return m_iProtocol == tcp_v4 || m_iProtocol == udp_v4;
+        return m_oIPAddr.is_v4();
     }
-    bool			is_v6() const
+    bool            is_v6() const
     {
-        return m_iProtocol == tcp_v6 || m_iProtocol == udp_v6;
+        return m_oIPAddr.is_v6();
     }
-	
+    
     /// The protocol associated with the endpoint.
     ProtocolType protocol() const {
         return m_iProtocol;
     }
-
-    /// Get the underlying endpoint in the native type.
-    data_type *data() {
-        return m_oImpl.data();
-    }
-
-    /// Get the underlying endpoint in the native type.
-    const data_type *data() const {
-        return m_oImpl.data();
-    }
-
-    /// Get the underlying size of the endpoint in the native type.
-    std::size_t size() const {
-        return m_oImpl.size();
-    }
-
-    /// Set the underlying size of the endpoint in the native type.
-    void resize(std::size_t size) {
-        m_oImpl.resize(size);
-    }
-
-    /// Get the capacity of the endpoint in the native type.
-    std::size_t capacity() const {
-        return m_oImpl.capacity();
+    void        protocol(ProtocolType pt){
+        m_iProtocol = pt;
     }
 
     /// Get the port associated with the endpoint. The port number is always in
     /// the host's byte order.
     unsigned short port() const {
-        return m_oImpl.port();
+        return m_iPort;
     }
 
     /// Set the port associated with the endpoint. The port number is always in
     /// the host's byte order.
     void port(unsigned short port_num) {
-        m_oImpl.port(port_num);
+        m_iPort = port_num;
     }
 
     /// Get the IP address associated with the endpoint.
     boost::asio::ip::address address() const {
-        return m_oImpl.address();
+        return m_oIPAddr;
     }
 
     /// Set the IP address associated with the endpoint.
     void address(const boost::asio::ip::address &addr) {
-        m_oImpl.address(addr);
+        m_oIPAddr = addr;
     }
 
     /// Compare two endpoints for equality.
-    friend bool operator==(const Endpoint& e1,
-                           const Endpoint& e2) {
-        return e1.m_oImpl == e2.m_oImpl && e1.m_iProtocol == e2.m_iProtocol;
+    bool operator==(const Endpoint& e) {
+        return e.m_iPort == m_iPort && e.m_oIPAddr == m_oIPAddr;
     }
 
     /// Compare two endpoints for inequality.
-    friend bool operator!=(const Endpoint& e1,
-                           const Endpoint& e2) {
-        return !(e1 == e2);
+    bool operator!=(const Endpoint& e) {
+        return !(operator==(e));
     }
-/*
+
     /// Compare endpoints for ordering.
     friend bool operator<(const Endpoint& e1,
                           const Endpoint& e2) {
-        return e1.m_iProtocol< e2.m_iProtocol && e1.m_oImpl < e2.m_oImpl;
+        return e1.m_iProtocol< e2.m_iProtocol && e1.m_oIPAddr < e2.m_oIPAddr;
     }
 
     /// Compare endpoints for ordering.
     friend bool operator>(const Endpoint& e1,
                           const Endpoint& e2) {
-        return e1.m_iProtocol> e2.m_iProtocol && e1.m_oImpl > e2.m_oImpl;
+        return e1.m_iProtocol> e2.m_iProtocol && e1.m_oIPAddr > e2.m_oIPAddr;
     }
 
     /// Compare endpoints for ordering.
@@ -211,12 +155,18 @@ public:
                            const Endpoint& e2) {
         return !(e1 < e2);
     }
-*/
-private:
-    ProtocolType 		m_iProtocol;
-    // The underlying IP endpoint.
-    boost::asio::ip::detail::endpoint m_oImpl;
+    
+    std::string to_str() const{
+        std::stringstream ss;
+        ss<<m_oIPAddr<<":"<<m_iPort;
+        return ss.str();
+    }
 
+private:
+    ProtocolType         m_iProtocol;
+    // The underlying IP endpoint.
+    boost::asio::ip::address m_oIPAddr;
+    uint16_t    m_iPort;
 };//end class Endpoint
 
 typedef boost::shared_ptr<Endpoint> EndpointPtr_t;

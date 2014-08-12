@@ -4,13 +4,13 @@
 #include "network/tcp_connection_base.h"
 namespace ffnet
 {
-	
+    
 class TCPClient : public TCPConnectionBase
 {
 public:
     TCPClient(NetNervure *pNervure, Endpoint &ep);
 
-    void 	handleConnected(const boost::system::error_code &ec);
+    void     handleConnected(const boost::system::error_code &ec);
 
 protected:
 };//end class TCPClient

@@ -2,8 +2,8 @@
 #include <boost/static_assert.hpp>
 namespace ffnet
 {
-	namespace details{
-	
+    namespace details{
+    
 template<int SIZE>
 const char* FixedBuffer<SIZE>::debugString()
 {
@@ -24,5 +24,5 @@ void FixedBuffer<SIZE>::cookieEnd()
 template class FixedBuffer<kSmallBuffer>;
 template class FixedBuffer<kLargeBuffer>;
 
-	}//end namespace details
+    }//end namespace details
 }//end namespace ffnet

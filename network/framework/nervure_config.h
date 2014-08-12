@@ -12,11 +12,11 @@ public:
     NervureConfigure(String conf);
 
     template< class Ty_>
-    Ty_		get(String str) const {
+    Ty_        get(String str) const {
         return m_oPTree.get<Ty_>(str);
     }
 protected:
-    boost::property_tree::ptree		m_oPTree;
+    boost::property_tree::ptree        m_oPTree;
 
 };//end class NervureConfigure
 typedef boost::shared_ptr<NervureConfigure> NervureConfigurePtr_t;

@@ -24,7 +24,7 @@ public:
     virtual ~TypedNetNervure() {};
 
     template<class PkgTy_>
-    void						addNeedToRecvPkg(typename TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
+    void                        addNeedToRecvPkg(typename TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
     {
         boost::shared_ptr<PkgTy_> pPkg(new PkgTy_());
         m_oPkgCreatorContainer.insert(std::make_pair(pPkg->getTypeID(), boost::bind(PackageNewWrapper<PkgTy_>::New)));
@@ -32,15 +32,15 @@ public:
         m_oPkgHandlers.insert(std::make_pair(pPkg->getTypeID(), rh));
     }
 protected:
-    virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);
+    virtual void                deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb);
 
 protected:
     typedef boost::function<void (PackagePtr_t, EndpointPtr_t)> PkgRecvHandler_t;
     typedef std::map<uint32_t, PkgCreator_t> PkgCreatorContainer_t;
     typedef std::map<uint32_t, PkgRecvHandler_t> PkgHandlers_t;
 
-    PkgCreatorContainer_t		m_oPkgCreatorContainer;
-    PkgHandlers_t				m_oPkgHandlers;
+    PkgCreatorContainer_t       m_oPkgCreatorContainer;
+    PkgHandlers_t       m_oPkgHandlers;
 };//end class TypedNetNervure;
 }//end namespace details
 }//end namespace ffnet

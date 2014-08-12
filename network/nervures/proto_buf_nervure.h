@@ -25,28 +25,28 @@ public:
 
     virtual ~ProtoBufNervure() {};
 
-	//! Not thread-safe
+    //! Not thread-safe
     template<class PkgTy_>
-    void						addNeedToRecvPkg(typename details::TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
+    void                        addNeedToRecvPkg(typename details::TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
     {
         String name(PkgTy_::default_instance().GetDescriptor()->full_name());
-		PkgRecvHandler_t h = boost::bind(ProtoBufNervure::handlerToAvoidTypeErrorFromCompiler<PkgTy_>,  _1, _2, handler);
-		m_oPkgHandlers.insert(std::make_pair(name, h));
+        PkgRecvHandler_t h = boost::bind(ProtoBufNervure::handlerToAvoidTypeErrorFromCompiler<PkgTy_>,  _1, _2, handler);
+        m_oPkgHandlers.insert(std::make_pair(name, h));
     }
 protected:
-    virtual void				deseralizeAndDispatchHandler(EndPointBufferPtr_t epb);
-	
-	template <class PkgTy_>
-	static void handlerToAvoidTypeErrorFromCompiler
-		( MessagePtr_t pMsg, EndpointPtr_t ep,  typename details::TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
-	{
-		boost::shared_ptr<PkgTy_> pConcretPkg= boost::dynamic_pointer_cast<PkgTy_, ::google::protobuf::Message>(pMsg);
-		handler(pConcretPkg, ep);
-	}
+    virtual void                deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb);
+    
+    template <class PkgTy_>
+    static void handlerToAvoidTypeErrorFromCompiler
+        ( MessagePtr_t pMsg, EndpointPtr_t ep,  typename details::TypedPkgRecvCallback<PkgTy_>::PkgRecvHandler_t handler)
+    {
+        boost::shared_ptr<PkgTy_> pConcretPkg= boost::dynamic_pointer_cast<PkgTy_, ::google::protobuf::Message>(pMsg);
+        handler(pConcretPkg, ep);
+    }
 protected:
     typedef std::map<String, PkgRecvHandler_t> PkgHandlers_t;
 
-    PkgHandlers_t				m_oPkgHandlers;
+    PkgHandlers_t                m_oPkgHandlers;
 };//end class ProtoBufNervure
 }//end namespace ffnet
 

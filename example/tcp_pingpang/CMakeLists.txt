@@ -11,6 +11,7 @@ set(FFNET_ROOT_DIR ${PROJECT_SOURCE_DIR}/../../network)
 
 include_directories(${PROJECT_SOURCE_DIR} ${FFNET_ROOT_DIR})
 link_directories(${FFNET_ROOT_DIR}/lib)
+message(${FFNET_ROOT_DIR}/lib)
 
 
 set(svr_src server_main.cpp)
