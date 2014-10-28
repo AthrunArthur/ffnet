@@ -13,24 +13,24 @@ public:
     EndPointWithData(EndpointPtr_t ep, SharedBuffer &buffer);
 
 
-    inline EndpointPtr_t		&Endpoint() {
+    inline EndpointPtr_t        &Endpoint() {
         return m_pEndpoint;
     }
-    inline SharedBuffer 	&buffer() {
+    inline SharedBuffer     &buffer() {
         return m_oBuffer;
     }
 protected:
-    EndpointPtr_t			m_pEndpoint;
-    SharedBuffer 			m_oBuffer;
+    EndpointPtr_t            m_pEndpoint;
+    SharedBuffer             m_oBuffer;
 };//end class EndPointWithData
 
 #ifdef ENABLE_LOG_CONSOLE
-String	toString(Endpoint  ep);
+String    toString(Endpoint  ep);
 #endif
 
-String	printBuf(const char *pBuf, size_t len);
+String    printBuf(const char *pBuf, size_t len);
 
-typedef boost::shared_ptr<EndPointWithData>	EndPointBufferPtr_t;
+typedef boost::shared_ptr<EndPointWithData>    EndPointBufferPtr_t;
 
 }//end namespace ffnet
 #endif

@@ -36,9 +36,9 @@ boost::shared_ptr< NetDispatcher > NetDispatcher::instance()
 
 static void usedToTrigerStop()
 {
-	//As m_oDispatchTasks.pop() will block if there is no task,
-	//so we need another task to let it return and check if it's stopped.
-	//So need to do nothing here, it's just a tricky.
+    //As m_oDispatchTasks.pop() will block if there is no task,
+    //so we need another task to let it return and check if it's stopped.
+    //So need to do nothing here, it's just a tricky.
 }
 void NetDispatcher::stop()
 {

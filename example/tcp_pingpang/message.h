@@ -23,21 +23,21 @@ public:
         , m_pContent(pContent) {}
 
 
-	virtual void			archive(ffnet::Archive &ar) 
-	{
-		ar.archive(m_iContentLen);
-		if(ar.getArTy()== ffnet::Archive::deseralizer)
-			m_pContent = (char *)malloc(m_iContentLen);
-		ar.archive(m_pContent, m_iContentLen);
-	}
-	void			print()
-	{
-		std::cout<<"ping: "<<m_iContentLen<<" content:"<<(char *)m_pContent<<std::endl;
-	}
+    virtual void            archive(ffnet::Archive &ar) 
+    {
+        ar.archive(m_iContentLen);
+        if(ar.getArTy()== ffnet::Archive::deseralizer)
+            m_pContent = (char *)malloc(m_iContentLen);
+        ar.archive(m_pContent, m_iContentLen);
+    }
+    void            print()
+    {
+        std::cout<<"ping: "<<m_iContentLen<<" content:"<<(char *)m_pContent<<std::endl;
+    }
 protected:
 
-    int 			m_iContentLen;
-    char	 		*m_pContent;
+    int             m_iContentLen;
+    char             *m_pContent;
 };
 
 class PongMsg: public ffnet::Package
@@ -51,11 +51,11 @@ public:
         : ffnet::Package(msg_pong)
         , m_iPongTimes(times) {}
 
-	virtual void			archive(ffnet::Archive &ar) 
-	{
-		ar.archive(m_iPongTimes);
-	}
+    virtual void            archive(ffnet::Archive &ar) 
+    {
+        ar.archive(m_iPongTimes);
+    }
 protected:
-    int			m_iPongTimes;
+    int            m_iPongTimes;
 };
 #endif

@@ -11,7 +11,7 @@ using namespace ::ffnet::event::more;
 boost::shared_ptr<GlobalConnections> GlobalConnections::s_pInstance;
 GlobalConnections::GlobalConnections()
 {
-	
+    
 }
 
 boost::shared_ptr< GlobalConnections> GlobalConnections::instance()
@@ -29,7 +29,7 @@ void GlobalConnections::addUDPPoint(UDPPoint* pPoint)
 void GlobalConnections::delUDPPoint(UDPPoint* pPoint)
 {
     boost::unique_lock<boost::mutex> _l(m_oMutex);
-	
+    
     RECHECK_DEL:
     for(std::list<UDPPoint *>::iterator it = m_oUDPPoints.begin();
         it != m_oUDPPoints.end();

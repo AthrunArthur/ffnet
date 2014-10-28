@@ -10,10 +10,10 @@ namespace ffnet
 {
 using namespace ::ffnet::event;
 using namespace ::ffnet::event::more;
-	
+    
 EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 {
-	return m_oRemoteEndpoint;
+    return m_oRemoteEndpoint;
 }
 
 void TCPConnectionBase::startRecv()
@@ -59,16 +59,16 @@ void TCPConnectionBase::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEn
 }
 void TCPConnectionBase::close()
 {
-	m_oSocket.close();
+    m_oSocket.close();
         m_iConnectionState.store(s_closed);
 }
 bool TCPConnectionBase::isFree()
 {
-	if(m_oSendBuffer.filled() == 0)
-	{
-		return true;
-	}
-	return false;
+    if(m_oSendBuffer.filled() == 0)
+    {
+        return true;
+    }
+    return false;
 }
 
 
@@ -82,7 +82,7 @@ void TCPConnectionBase::startSend()
                 this, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
                 boost::asio::buffer_size(m_oSendBuffer.readable()), _1)
             );
-	
+    
         m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
              boost::bind(&TCPConnectionBase::handlePkgSent, shared_from_this(),
                  boost::asio::placeholders::error,

@@ -4,9 +4,9 @@ namespace ffnet
 {
 NetNervureFromFile::NetNervureFromFile(String conf)
     : TypedNetNervure()
-	, m_pConfigure(new NervureConfigure(conf))
+    , m_pConfigure(new NervureConfigure(conf))
 {
-	
+    
     NervureConfigure & nc = *(m_pConfigure.get());
 
     int8_t tcp_server_flag = nc.get<int8_t>("conf.open-tcp-server");

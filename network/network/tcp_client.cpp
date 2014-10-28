@@ -29,8 +29,8 @@ void TCPClient::handleConnected(const boost::system::error_code &ec)
         m_iConnectionState.store(s_valid);
         m_oRemoteEndpoint = EndpointPtr_t(new Endpoint(m_oSocket.remote_endpoint()));
         Event<tcp_client_get_connection_succ>::triger(nervure(),
-			boost::bind(tcp_client_get_connection_succ::event,
-						this, _1)
+            boost::bind(tcp_client_get_connection_succ::event,
+                        this, _1)
         );
         startRecv();
     } else {

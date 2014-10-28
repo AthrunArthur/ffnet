@@ -16,17 +16,17 @@ public:
     LogWriter();
 
     virtual ~LogWriter();
-    BlockingQueue<String> &	queue() {
+    BlockingQueue<String> &    queue() {
         return m_oQueue;
     }
-    void			run(const char * filePath);
+    void            run(const char * filePath);
 protected:
-    void			actualRun();
+    void            actualRun();
 protected:
-    BlockingQueue<String>		m_oQueue;
-    boost::shared_ptr<boost::thread>		m_oIOThread;
-    String					m_strFilePath;
-    std::ofstream				m_oFile;
+    BlockingQueue<String>        m_oQueue;
+    boost::shared_ptr<boost::thread>        m_oIOThread;
+    String                    m_strFilePath;
+    std::ofstream                m_oFile;
     boost::atomic<bool>                         m_bRunning;
 };//end class LogWriter
 

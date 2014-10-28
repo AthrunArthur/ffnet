@@ -28,35 +28,35 @@ boost::shared_ptr< Message > ProtoBufWrapperPkg::PBMessage() const
     return m_pPBMsg;
 }
 
-void			ProtoBufWrapperPkg::archive(Archive &ar)
+void            ProtoBufWrapperPkg::archive(Archive &ar)
 {
     //optimizing for each archiver
-	ar.archive(m_strProtoBufMsgName);
-	
-	switch(ar.getArTy())
-	{
-		case Archive::deseralizer:
-		{
-			String buf;
-			ar.archive(buf);
-			m_pPBMsg = createMessage(m_strProtoBufMsgName);
-			assert(m_pPBMsg != NULL && "Can't find message in protobuf");
-			m_pPBMsg->ParseFromString(buf);
-			break;
-		}
-		case Archive::seralizer:
-		{
-			String buf(m_pPBMsg->ByteSize(), 0);
-			m_pPBMsg->SerializeToString(&buf);
-			ar.archive(buf);
-		}
-		case Archive::length_retriver:
-		{
-			assert(m_pPBMsg != NULL && "Didn't set m_pPBMsg yet!");
-			String buf(m_pPBMsg->ByteSize(), 0);
-			ar.archive(buf);
-		}
-	}
+    ar.archive(m_strProtoBufMsgName);
+    
+    switch(ar.getArTy())
+    {
+        case Archive::deseralizer:
+        {
+            String buf;
+            ar.archive(buf);
+            m_pPBMsg = createMessage(m_strProtoBufMsgName);
+            assert(m_pPBMsg != NULL && "Can't find message in protobuf");
+            m_pPBMsg->ParseFromString(buf);
+            break;
+        }
+        case Archive::seralizer:
+        {
+            String buf(m_pPBMsg->ByteSize(), 0);
+            m_pPBMsg->SerializeToString(&buf);
+            ar.archive(buf);
+        }
+        case Archive::length_retriver:
+        {
+            assert(m_pPBMsg != NULL && "Didn't set m_pPBMsg yet!");
+            String buf(m_pPBMsg->ByteSize(), 0);
+            ar.archive(buf);
+        }
+    }
 }
 
 ProtoBufWrapperPkg::MessagePtr_t ProtoBufWrapperPkg::createMessage(const std::string& typeName)

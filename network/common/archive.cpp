@@ -11,7 +11,7 @@ size_t seralize(const String &val, char *pBuf)
     return static_cast<size_t>(len) + offset;
 }
 
-size_t	deseralize(const char *pBuf, String &val)
+size_t    deseralize(const char *pBuf, String &val)
 {
     int32_t len;
     size_t offset = deseralize(pBuf, len);

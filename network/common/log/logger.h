@@ -93,7 +93,7 @@ private:
 
 template<class T>
 struct enable_traits{
-	static const bool value = false;
+    static const bool value = false;
 };//end enable_traits
 }//end namespace details
 
@@ -134,26 +134,26 @@ public:
     {
         boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
         String s = boost::posix_time::to_simple_string(now) + buffer_.asString();
-		//std::cout<<s<<std::endl;
+        //std::cout<<s<<std::endl;
         Singleton<LogWriter>::instance_ref().queue().push_back(s);
     }
 public:
     typedef Logger<EnableLogFlag> self;
-	
-	template<typename T>
-	self& operator<<(T v)
-	{
-		BOOST_STATIC_ASSERT(boost::is_integral<T>::value);
-		BOOST_STATIC_ASSERT((boost::is_same<bool, T>::value) == false);
-		BOOST_STATIC_ASSERT((boost::is_same<char, T>::value) == false);
-		
-		formatInteger(v);
-		return * this;
-	}
-	template<typename T>
-	self& operator<<(T * p)
-	{
-		uintptr_t v = reinterpret_cast<uintptr_t>(p);
+    
+    template<typename T>
+    self& operator<<(T v)
+    {
+        BOOST_STATIC_ASSERT(boost::is_integral<T>::value);
+        BOOST_STATIC_ASSERT((boost::is_same<bool, T>::value) == false);
+        BOOST_STATIC_ASSERT((boost::is_same<char, T>::value) == false);
+        
+        formatInteger(v);
+        return * this;
+    }
+    template<typename T>
+    self& operator<<(T * p)
+    {
+        uintptr_t v = reinterpret_cast<uintptr_t>(p);
         if (buffer_.avail() >= kMaxNumericSize)
         {
             char* buf = buffer_.current();
@@ -163,8 +163,8 @@ public:
             buffer_.add(len+2);
         }
         return *this;
-	}
-	
+    }
+    
     self & operator<<(bool v)
     {
         buffer_.append(v ? "1": "0", 1);
@@ -206,7 +206,7 @@ public:
 
 
 protected:
-	
+    
     template<typename T>
     static size_t convert(char buf[], T value)
     {
@@ -253,14 +253,14 @@ template<>
 class Logger<false>{
 public:
     typedef Logger<false> self;
-	template<typename T>
+    template<typename T>
     self& operator<<(T v) {
         return *this;
     }
     template<typename T>
     self& operator<< (T *v){
-		return *this;
-	}
+        return *this;
+    }
 };
 
 }//end namespace ffnet

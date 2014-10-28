@@ -47,7 +47,7 @@ using ffnet::UDPPoint;
 class GlobalConnections : public boost::noncopyable
 {
 public:
-    static boost::shared_ptr< GlobalConnections> 		instance();
+    static boost::shared_ptr< GlobalConnections>         instance();
     typedef boost::function<void (ASIOConnection * p)> FuncOnConn_t;
 
     void            addUDPPoint(UDPPoint * pPoint);
@@ -56,9 +56,9 @@ public:
     void            findConnectionAndDo( const EndpointPtr_t & pEndpoint, const FuncOnConn_t & func);
 
     //event
-    void				onTCPConnect(TCPConnectionPtr_t pConn);
-    void				onTCPClntConnect(TCPClient * pClnt);
-    void				onConnRecvOrSendError(ASIOConnection *pConn);
+    void                onTCPConnect(TCPConnectionPtr_t pConn);
+    void                onTCPClntConnect(TCPClient * pClnt);
+    void                onConnRecvOrSendError(ASIOConnection *pConn);
 
     void            onPkgSendFailed(PackagePtr_t pkg, EndpointPtr_t remote);
 
@@ -68,13 +68,13 @@ protected:
     GlobalConnections();
 
 protected:
-    typedef std::list<TCPConnectionBasePtr_t>	ConnHolder_t;
-    ConnHolder_t		m_oConnHolder;
+    typedef std::list<TCPConnectionBasePtr_t>    ConnHolder_t;
+    ConnHolder_t        m_oConnHolder;
 
-    std::list<TCPClient *>			m_oTCPClients;
-    std::list<UDPPoint *>			m_oUDPPoints;
-    boost::mutex						m_oMutex;
-    static boost::shared_ptr< GlobalConnections> 	s_pInstance;
+    std::list<TCPClient *>            m_oTCPClients;
+    std::list<UDPPoint *>            m_oUDPPoints;
+    boost::mutex                        m_oMutex;
+    static boost::shared_ptr< GlobalConnections>     s_pInstance;
 };//end class GlobalConnections
 }//end namespace details
 }//end namespace ffnet

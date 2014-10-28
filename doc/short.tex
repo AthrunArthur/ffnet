@@ -187,7 +187,7 @@ Similar as server side, we need to specify \texttt{PingPong::Pong}'s callback ha
 \begin{verbatim}
  pbn.addNeedToRecvPkg<PingPong::Pong>(onRecvPong);
  
- void	onRecvPong(
+ void    onRecvPong(
  boost::shared_ptr<PingPong::Pong>pPong, 
  ffnet::EndpointPtr_t pEP)
 {
@@ -205,7 +205,7 @@ Here we need to response \texttt{tcp\_get\_connection}.
  Event<tcp_get_connection>::listen(
      &pbn, onConnSucc);
  ...    
- void	onConnSucc(ffnet::TCPConnectionBase *pConn)
+ void    onConnSucc(ffnet::TCPConnectionBase *pConn)
 {
     std::cout<<"connect success"<<std::endl;
     ffnet::EndpointPtr_t tpp(

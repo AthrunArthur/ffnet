@@ -30,41 +30,41 @@ public:
     NetNervure( BonderSplitterPtr_t pBonderSplitter);
     virtual ~NetNervure();
 
-    static void				send(const boost::shared_ptr<Package> & pPkg, const EndpointPtr_t & ep);
+    static void                send(const boost::shared_ptr<Package> & pPkg, const EndpointPtr_t & ep);
 #ifdef PROTO_BUF_SUPPORT
-    static void 			send(const boost::shared_ptr<google::protobuf::Message> & pMsg, const EndpointPtr_t & ep);
+    static void             send(const boost::shared_ptr<google::protobuf::Message> & pMsg, const EndpointPtr_t & ep);
 #endif
-    void 					run();
+    void                     run();
 
-    void					stop();
+    void                    stop();
 
 
-    inline io_service 		&getIOService() {
+    inline io_service         &getIOService() {
         return m_oIOService;
     }
-    inline BonderSplitterPtr_t 	getBonderSplitter() {
+    inline BonderSplitterPtr_t     getBonderSplitter() {
         return m_pBonderSplitter;
     }
 
-    inline BlockingQueue<Func_t>&	getTaskQueue() {
+    inline BlockingQueue<Func_t>&    getTaskQueue() {
         return m_oTasks;
     }
 
-    void						initTCPServer(const std::string & ip, uint16_t iTCPPort);
-    void						initUDPServer(const std::string & ip, uint16_t iUDPPort);
-    void						addTCPClient(const EndpointPtr_t & remoteEndPoint);
+    void                        initTCPServer(const std::string & ip, uint16_t iTCPPort);
+    void                        initUDPServer(const std::string & ip, uint16_t iUDPPort);
+    void                        addTCPClient(const EndpointPtr_t & remoteEndPoint);
 
 protected:
     friend class ASIOConnection;
 
 
-    void						stopInThisThread();
+    void                        stopInThisThread();
 
 
-    virtual void				deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb);
+    virtual void                deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb);
 
 protected:
-    typedef std::list<ASIOConnectionPtr_t>	ConnContainer_t;
+    typedef std::list<ASIOConnectionPtr_t>    ConnContainer_t;
 
     boost::asio::io_service			m_oIOService;
     BlockingQueue<Func_t>				m_oTasks;
