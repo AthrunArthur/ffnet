@@ -23,7 +23,7 @@ void TCPConnectionBase::startRecv()
 					m_oSocket.local_endpoint(), 
 					m_oSocket.remote_endpoint(), _1)
 	);
-    LOG_DEBUG(connection)<<"TCPConnectionBase::startRecv() on "<<getRemoteEndpointPtr()->to_str();
+    LOG_DEBUG(connection)<<"TCPConnectionBase::startRecv() on ";//<<getRemoteEndpointPtr()->to_str();
     m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
                               boost::bind(&TCPConnectionBase::handlReceivedPkg, shared_from_this(), boost::asio::placeholders::error(),
                                           boost::asio::placeholders::bytes_transferred()));

@@ -88,7 +88,8 @@ void NetNervure::initTCPServer(const std::string & ip, uint16_t iTCPPort)
     LOG_TRACE(frmwk)<<"NetNervure::initTCPServer() "<<"initializing tcp server at port "<<iTCPPort;
     if(m_pTCPServer == NULL)
     {
-        m_pTCPServer = new TCPServer(this,ip, iTCPPort);
+        //m_pTCPServer = new TCPServer(this,ip, iTCPPort);
+        m_pTCPServer =  boost::shared_ptr<TCPServer>(new TCPServer(this,ip, iTCPPort));
         LOG_TRACE(frmwk)<<"NetNervure::initTCPServer() "<< "tcp server is initialized on port:"<<iTCPPort <<" with Nervure:"<<this;
     }
     else
@@ -118,8 +119,8 @@ void io_thread_func(TCPServer *p, boost::asio::io_service * ios)
 }
 void NetNervure::run()
 {
-    //m_oIOThread = boost::thread(boost::bind(&io_service::run, &m_oIOService));
-    m_oIOThread = boost::thread(boost::bind(&io_thread_func, m_pTCPServer, &m_oIOService));;
+    m_oIOThread = boost::thread(boost::bind(&io_service::run, &m_oIOService));
+    //m_oIOThread = boost::thread(boost::bind(&io_thread_func, m_pTCPServer, &m_oIOService));;
     Func_t f;
     while(!m_bIsStopped || !m_oTasks.empty()) {
         m_oTasks.pop(f);
@@ -140,6 +141,10 @@ void NetNervure::deseralizeAndDispatchHandler(const EndPointBufferPtr_t & epb)
 
 void NetNervure::stop()
 {
+    if(m_pTCPServer)
+     {
+         m_pTCPServer->close();
+     }
     //still need to check each connections is free and close it.
     m_oTasks.push_back(boost::bind(&NetNervure::stopInThisThread, this));
 }

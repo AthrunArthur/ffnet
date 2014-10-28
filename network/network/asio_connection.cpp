@@ -37,7 +37,7 @@ void ASIOConnection::handlePkgSent(const boost::system::error_code &ec, std::siz
                 boost::bind(connect_sent_stream_succ::event, 
 			    this, bytes_transferred, _1));
         m_oSendBuffer.eraseBuffer(bytes_transferred);
-        LOG_DEBUG(connection)<<"pkg sent "<< bytes_transferred<<" bytes, to "<<getRemoteEndpointPtr()->to_str();
+        LOG_DEBUG(connection)<<"pkg sent "<< bytes_transferred<<" bytes, to ";//<<getRemoteEndpointPtr()->to_str();
         startSend();
     } else {
       m_iConnectionState.store(s_error);
@@ -53,13 +53,13 @@ void ASIOConnection::handlReceivedPkg(const boost::system::error_code &error, si
         Event<connect_recv_stream_succ>::triger(nervure(),
 			boost::bind(connect_recv_stream_succ::event,
 						this, bytes_transferred, _1));
-        LOG_DEBUG(connection)<<"recv pkg: "<<bytes_transferred<<" bytes, from "<< getRemoteEndpointPtr()->to_str();
+        LOG_DEBUG(connection)<<"recv pkg: "<<bytes_transferred<<" bytes, from ";//<< getRemoteEndpointPtr()->to_str();
         m_oRecvBuffer.filled() += bytes_transferred;
         sliceAndDispatchPkg();
         startRecv();
     } else	{
         m_iConnectionState.store(s_error);
-        LOG_DEBUG(connection)<<"ASIOConnection::handlReceivedPkg(), Get error "<<error.message() <<" from "<< getRemoteEndpointPtr()->to_str();
+        LOG_DEBUG(connection)<<"ASIOConnection::handlReceivedPkg(), Get error "<<error.message() <<" from ";//<< getRemoteEndpointPtr()->to_str();
         Event<connect_recv_stream_error>::triger(nervure(),
                         boost::bind(connect_recv_stream_error::event,
                                 this, error, _1));

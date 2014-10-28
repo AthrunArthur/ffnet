@@ -5,8 +5,8 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 #add_definitions(-DPROTO_BUF_SUPPORT)
 add_definitions(-g)
-add_definitions(-O2)
-add_definitions(-DENABLE_LOG_CONSOLE)
+#add_definitions(-O2)
+#add_definitions(-DENABLE_LOG_CONSOLE)
 
 
 include_directories(${PROJECT_SOURCE_DIR})

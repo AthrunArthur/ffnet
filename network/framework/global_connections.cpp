@@ -97,7 +97,7 @@ void GlobalConnections::onTCPConnect(TCPConnectionPtr_t pConn)
     m_oMutex.lock();
     m_oConnHolder.push_back(pConn);
     m_oMutex.unlock();
-    LOG_TRACE(frmwk)<<"Get a TCP Connection from " <<pConn->getRemoteEndpointPtr()->to_str();
+    LOG_TRACE(frmwk)<<"Get a TCP Connection from "; // <<pConn->getRemoteEndpointPtr()->to_str();
     Event<tcp_get_connection>::triger(pConn->nervure(),
         boost::bind(tcp_get_connection::event,pConn.get(), _1)
     );
@@ -166,7 +166,7 @@ RECHECK_CLIENT:
 
 void GlobalConnections::onPkgSendFailed(PackagePtr_t pkg, EndpointPtr_t remote)
 {
-    std::cout<<"pkg send failed, to "<<remote->address();
+    std::cout<<"pkg send failed, to remote"; //<<remote->address();
 }
 
 }//end namespace details
