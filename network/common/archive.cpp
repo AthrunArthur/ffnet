@@ -2,29 +2,74 @@
 
 namespace ffnet
 {
-namespace archive {
-size_t seralize(const String &val, char *pBuf)
+Archive::Archive(const char *buf,size_t len, arch_type at)
+: m_pReadBuf(NULL)
+, m_iBufLen(len)
+, m_iAT(at)
+, m_iBase(0)
+, m_pWriteBuf(NULL)
 {
-    int32_t len = static_cast<int32_t>(val.size());
-    size_t offset = seralize(len, pBuf);
-    std::memcpy(pBuf + offset, val.c_str(), len);
-    return static_cast<size_t>(len) + offset;
+    if(m_iAT == deseralizer)
+    {
+        m_pReadBuf = buf;
+    }
+    else if(m_iAT == seralizer)
+    {
+        assert(0);
+    }
 }
 
-size_t    deseralize(const char *pBuf, String &val)
+Archive::Archive(char *buf, size_t len, arch_type at)
+: m_pReadBuf(NULL)
+, m_iBufLen(len)
+, m_iAT(at)
+, m_iBase(0)
+, m_pWriteBuf(buf)
 {
-    int32_t len;
-    size_t offset = deseralize(pBuf, len);
-    val = String(len, 0);
-    std::memcpy(const_cast<char *>(val.data()), pBuf + offset,len);
-    return static_cast<size_t>(len) + offset;
+    if(m_iAT == deseralizer)
+    {
+        m_pReadBuf = buf;
+    }
+    else if(m_iAT == seralizer)
+    {
+        m_pWriteBuf = buf;
+    }
+}
+
+Archive::Archive(arch_type at)
+: m_pReadBuf(NULL)
+, m_iBufLen(0)
+, m_iAT(at)
+, m_iBase(0)
+, m_pWriteBuf(NULL)
+{
+    assert(m_iAT == length_retriver);
+}
+
+void Archive::archive(String & s)
+{
+    size_t len = s.size();
+    switch(getArTy())
+    {
+    case Archive::seralizer:
+        len = s.size();
+        std::memcpy(m_pWriteBuf + m_iBase, (const char *) & len, sizeof(size_t));
+        m_iBase += sizeof(size_t);
+        std::memcpy(m_pWriteBuf + m_iBase, s.c_str(), len);
+        m_iBase += len;
+        break;
+    case Archive::deseralizer:
+        std::memcpy((char *)&len, m_pReadBuf + m_iBase, sizeof(size_t));
+        m_iBase += sizeof(size_t);
+        s = String(len, 0);
+        std::memcpy(const_cast<char *>(s.c_str()), m_pReadBuf + m_iBase, len);
+        m_iBase += len;
+        break;
+    case Archive::length_retriver:
+        m_iBase += (sizeof(size_t) + s.size());
+        break;
+    }
 }
 
 
-size_t length(const String &val)
-{
-    return length(val.size()) + val.size();
-}
-
-}//end namespace archive
 }//end namespace ffnet

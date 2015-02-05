@@ -40,6 +40,12 @@ public:
     , m_iLen(0)
     , m_pBuf(NULL){ 
     };
+
+    ~LargePkg()
+    {
+        if(m_pBuf != NULL)
+            delete[] m_pBuf;
+    }
     
     void init(size_t n)
     {
@@ -69,7 +75,7 @@ BOOST_AUTO_TEST_CASE(small_pkg)
 {
     ffnet::details::NetBuffer serbuf;
     ffnet::details::NetBuffer recvbuf;
-    
+
     ffnet::LengthBonderSplitter lbs;
     const int total_pkg_num = 1000;
     for(int i = 0; i < total_pkg_num; ++i)
@@ -78,10 +84,10 @@ BOOST_AUTO_TEST_CASE(small_pkg)
         p->num() = small_pkg_num;
         lbs.bond(serbuf, p);
     }
-    
+
     int ser_size = serbuf.filled();
     int done_size = 0;
-    
+
     int recv_pkg_num = 0;
     while(done_size < ser_size)
     {

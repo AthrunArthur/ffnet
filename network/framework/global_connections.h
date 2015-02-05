@@ -56,9 +56,9 @@ public:
     void            findConnectionAndDo( const EndpointPtr_t & pEndpoint, const FuncOnConn_t & func);
 
     //event
-    void                onTCPConnect(TCPConnectionPtr_t pConn);
-    void                onTCPClntConnect(TCPClient * pClnt);
-    void                onConnRecvOrSendError(ASIOConnection *pConn);
+    void            onTCPConnect(TCPConnectionPtr_t pConn);
+    void            onTCPClntConnect(TCPClient * pClnt);
+    void            onConnRecvOrSendError(ASIOConnection *pConn);
 
     void            onPkgSendFailed(PackagePtr_t pkg, EndpointPtr_t remote);
 

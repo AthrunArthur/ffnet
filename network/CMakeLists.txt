@@ -39,7 +39,7 @@ set(src_list     common/shared_buffer.cpp
     
 add_library(network_dynamic SHARED ${src_list})
 #add_library(network_static STATIC ${src_list})
-target_link_libraries(network_dynamic protobuf boost_system boost_date_time boost_thread)
+target_link_libraries(network_dynamic boost_system boost_date_time boost_thread)
 #target_link_libraries(network_static protobuf boost_system boost_date_time boost_thread)
 
 
