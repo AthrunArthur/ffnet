@@ -10,16 +10,23 @@ class BonderSplitter;
 class LengthBonderSplitter;
 
 /*******************
- * TODO(A.A), we should describe the useage of Package here!
+ * You should declare your own package by deriving from this class.
+ * Basically, you need to do two things,
+ * 1. to specify the typeID, which should be unique;
+ * 2. to implement the virtual function, archive.
+ *    archive is used to serialize and deserialize the Package, and
+ * a typical implementation is like this,
+ *    virtual void archive(Archive & ar)
+ *    {
+ *          ar.archive(m_strName);
+ *    }
+ *  You can find me examples about Archive.
  */
 class Package
 {
 protected:
-
     virtual void        archive(Archive & ar) = 0;
-
-
-
+    
 public:
     Package(uint32_t typeID)
         : m_iTypeID(typeID) {}

@@ -17,6 +17,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/thread/shared_mutex.hpp>
 #include <boost/bind.hpp>
+#include <boost/type_traits.hpp>
 
 #include <stddef.h>
 

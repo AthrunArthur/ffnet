@@ -24,8 +24,9 @@ set(src_list     common/shared_buffer.cpp
     #middleware/net_dispatcher.cpp
     middleware/length_bonder_splitter.cpp
     nervures/typed_net_nervure.cpp
-    nervures/net_nervure_from_file.cpp
+    #nervures/net_nervure_from_file.cpp
     nervures/net_nervure.cpp
+    nervures/thread_nervure.cpp
     #nervures/proto_buf_nervure.cpp
     network/asio_connection.cpp
     network/endpoint_data.cpp

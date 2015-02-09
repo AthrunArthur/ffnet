@@ -17,6 +17,7 @@
 //#include "middleware/net_dispatcher.h"
 #include "nervures/net_nervure_from_file.h"
 #include "nervures/typed_net_nervure.h"
+#include "nervures/thread_nervure.h"
 //#include "nervures/proto_buf_nervure.h"
 #include "network/endpoint_data.h"
 #include "network/tcp_client.h"
