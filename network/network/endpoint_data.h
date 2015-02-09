@@ -24,9 +24,7 @@ protected:
     SharedBuffer             m_oBuffer;
 };//end class EndPointWithData
 
-#ifdef ENABLE_LOG_CONSOLE
 String    toString(Endpoint  ep);
-#endif
 
 String    printBuf(const char *pBuf, size_t len);
 

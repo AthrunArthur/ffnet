@@ -61,9 +61,8 @@ template<class T>
 typename boost::enable_if_c<
     boost::is_arithmetic<T>::value
 >::type
-archive(T * & data, size_t & count)
+archive(T * & data, size_t  count)
 {
-    archive(count);
     switch(m_iAT)
     {
     case seralizer:
@@ -71,12 +70,6 @@ archive(T * & data, size_t & count)
         m_iBase += sizeof(T)*count;
         break;
     case deseralizer:
-        data = (T*) malloc(sizeof(T) * count);
-        if(data == NULL)
-        {
-            assert(false && "malloc failed!");
-            exit(-1);
-        }
         std::memcpy((char *)data, m_pReadBuf + m_iBase, sizeof(T)*count);
         m_iBase += sizeof(T) * count;
         break;

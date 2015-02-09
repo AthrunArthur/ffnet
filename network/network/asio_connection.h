@@ -4,6 +4,7 @@
 #include "common.h"
 #include "network/endpoint_data.h"
 #include "middleware/bonder_splitter.h"
+#include "middleware/event_handler.h"
 #include "package/package.h"
 #include <boost/noncopyable.hpp>
 #include <boost/atomic.hpp> 
@@ -13,12 +14,10 @@
 
 namespace ffnet
 {
-class NetNervure;
-class TCPConnectionBase;
-class UDPPoint;
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
+class RawPkgHandler;
 
 class ASIOConnection : public boost::noncopyable
 {
@@ -30,32 +29,32 @@ public:
       s_error,
     };
 
-    ASIOConnection(NetNervure *pNervure);
+    /*
+    virtual void        send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
+    virtual void        send(const PackagePtr_t & pkg);
+#ifdef PROTO_BUF_SUPPORT
+    virtual void send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep);
+    virtual void send(const boost::shared_ptr<google::protobuf::Message> & pMsg);
+#endif
+    */
+    
+    ASIOConnection(io_service & ioservice, BonderSplitter * bs, EventHandler * eh, RawPkgHandler * rph);
     virtual ~ASIOConnection();
 
-    NetNervure             *nervure() const {
-        return m_pNervure;
-    }
-    BonderSplitter         *bonderSplitter() const {
-        return m_pBonderSplitter;
-    }
-    virtual void        send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint) = 0;
-#ifdef PROTO_BUF_SUPPORT
-    virtual void        send(const boost::shared_ptr<google::protobuf::Message> & pMsg, const EndpointPtr_t & ep);
-#endif
-    virtual void         close() {m_iConnectionState.store(s_closed);};
-    virtual TCPConnectionBase *TCPConnectionBasePointer() {
-        return NULL;
-    }
-    virtual UDPPoint *          UDPPointPointer() {
-        return NULL;
-    }
+    inline BonderSplitter         *bonderSplitter() const {return m_pBonderSplitter;}
+    inline io_service &            ioservice() {return m_oIOService;}
+    inline const io_service &      ioservice() const {return m_oIOService;}
+    inline EventHandler *          eventHandler() const{return m_pEH;}
+    inline RawPkgHandler *         rawPkgHandler() const{return m_pRPH;}
+
+    virtual void         close() {m_iConnectionState.store(s_closed);}
+
     
     virtual bool        isFree() = 0;
     virtual EndpointPtr_t getRemoteEndpointPtr() = 0;
     
 protected:
-    virtual     void                startSend() = 0;
+    virtual void        startSend() = 0;
     virtual void        startRecv() = 0;
     
     virtual void        sliceAndDispatchPkg();
@@ -65,11 +64,12 @@ protected:
     
 
 protected:
-    NetNervure             *m_pNervure;
-    io_service             &m_oIOService;
-    BonderSplitter         *m_pBonderSplitter;
-    NetBuffer                m_oRecvBuffer;
-    NetBuffer                m_oSendBuffer;
+    io_service &            m_oIOService;
+    BonderSplitter *        m_pBonderSplitter;
+    EventHandler *          m_pEH;
+    RawPkgHandler *         m_pRPH;
+    NetBuffer               m_oRecvBuffer;
+    NetBuffer               m_oSendBuffer;
     boost::mutex        m_oMutex;
     bool            m_bIsSending;
     boost::atomic<ConnState>    m_iConnectionState;

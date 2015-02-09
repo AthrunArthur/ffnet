@@ -6,10 +6,6 @@
 
 namespace ffnet
 {
-namespace details
-{
-class TypedNetNervure;
-}
 class BonderSplitter;
 class LengthBonderSplitter;
 

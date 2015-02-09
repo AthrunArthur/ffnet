@@ -1,15 +1,15 @@
 #include "network/tcp_server.h"
 #include "network/endpoint_data.h"
-#include "framework/net_nervure.h"
-#include "framework/event.h"
+#include "network/events.h"
 
 namespace ffnet
 {
 
 using namespace ::ffnet::event;
 using namespace ::ffnet::event::more;
-TCPConnection::TCPConnection(NetNervure *pNervure, TCPServer *pSvr)
-    : TCPConnectionBase(pNervure)
+TCPConnection::TCPConnection(io_service & ioservice, BonderSplitter *bs,
+                             EventHandler * eh, RawPkgHandler * rph, TCPServer *pSvr)
+    : TCPConnectionBase(ioservice, bs, eh, rph)
     , m_pTCPServer(pSvr)
 {
     m_iConnectionState.store(s_valid);
@@ -23,10 +23,13 @@ void TCPConnection::start()
     startRecv();
 }
 
-TCPServer::TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPort)
-    : m_oAcceptor(pNervure->getIOService(), tcp::endpoint(ip::address::from_string(ip.c_str()), iPort))
-    , m_pNervure(pNervure)
+TCPServer::TCPServer(io_service & ioservice, BonderSplitter *bs,
+                     EventHandler * eh, RawPkgHandler * rph, boost::asio::ip::tcp::endpoint ep)
+    : m_oAcceptor(ioservice, ep)
     , m_pAcceptEP()
+    , m_pBS(bs)
+    , m_pEH(eh)
+    , m_pRPH(rph)
 {
     m_pAcceptEP = EndpointPtr_t(new Endpoint(m_oAcceptor.local_endpoint()));
     startAccept();
@@ -34,12 +37,11 @@ TCPServer::TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPor
 
 void TCPServer::startAccept()
 {
-    TCPConnectionPtr_t pNewConn(new TCPConnection(m_pNervure, this));
+    TCPConnectionPtr_t pNewConn(new TCPConnection(m_oAcceptor.get_io_service(),
+                                                  m_pBS, m_pEH, m_pRPH, this));
 
     //m_pHandler->onStartListening(this);
-    Event<tcp_server_start_listen>::triger(nervure(),boost::bind(
-            tcp_server_start_listen::event, m_oAcceptor.local_endpoint(), _1
-                                           ));
+    m_pEH->triger<tcp_server_start_listen>(m_oAcceptor.local_endpoint());
 
     m_oAcceptor.async_accept(pNewConn->m_oSocket,
                              boost::bind(&TCPServer::handleAccept, this, pNewConn,
@@ -51,14 +53,10 @@ void TCPServer::handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::e
 {
     if(!error) {
         pNewConn->start();
-        Event<tcp_server_accept_connection>::triger(nervure(),
-            boost::bind(tcp_server_accept_connection::event,
-                        pNewConn, _1));
+        m_pEH->triger<tcp_server_accept_connection>(pNewConn);
         startAccept();
     } else {
-        Event<tcp_server_accept_error>::triger(nervure(),
-            boost::bind(tcp_server_accept_error::event, m_pAcceptEP, error, _1)
-        );
+        m_pEH->triger<tcp_server_accept_error>(m_pAcceptEP, error);
     }
 }
 void TCPServer::close()

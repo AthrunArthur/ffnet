@@ -16,20 +16,18 @@ NetNervureFromFile::NetNervureFromFile(String conf)
     if(tcp_server_flag) {
         String ip = nc.get<String>("tcp-server.ip");
         uint16_t port = nc.get<uint16_t>("tcp-server.port");
-        initTCPServer(ip, port);
+        addTCPServer(ip, port);
     }
     if(udp_server_flag) {
         String ip = nc.get<String>("udp-server.ip");
         uint16_t port = nc.get<uint16_t>("udp-server.port");
-        initUDPServer(ip, port);
+        addUDPPoint(ip, port);
     }
     if(tcp_client_flag) {
         String ip = nc.get<String>("tcp-client.target-svr-ip-addr");
         uint16_t port = nc.get<uint16_t>("tcp-client.target-svr-port");
 
-        EndpointPtr_t ep(new Endpoint(boost::asio::ip::address_v4::from_string(ip), port, ffnet::proto_tcp));
-        
-        addTCPClient(ep);
+        addTCPClient(ip, port);
     }
 }
 }//end namespace ffnet

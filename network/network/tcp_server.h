@@ -7,8 +7,6 @@
 
 namespace ffnet
 {
-
-class NetNervure;
 class TCPServer;
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -20,10 +18,11 @@ using boost::asio::ip::tcp;
 class TCPConnection : public TCPConnectionBase
 {
 public:
-    TCPConnection(NetNervure *pNervure, TCPServer *pSvr);
+    TCPConnection(io_service & ioservice, BonderSplitter *bs,
+                  EventHandler * eh, RawPkgHandler * rph, TCPServer *pSvr);
 
-    void                     start();
-    inline TCPServer          *    getTCPServer() { return m_pTCPServer;}
+    void                  start();
+    inline TCPServer *    getTCPServer() { return m_pTCPServer;}
 
 protected:
     friend class TCPServer;
@@ -35,7 +34,8 @@ typedef boost::shared_ptr<TCPConnection> TCPConnectionPtr_t;
 class TCPServer : public boost::noncopyable
 {
 public:
-    TCPServer(NetNervure *pNervure, const std::string & ip, uint16_t iPort);
+    TCPServer(io_service & ioservice, BonderSplitter *bs,
+              EventHandler * eh, RawPkgHandler * rph, ip::tcp::endpoint ep);
 
     inline tcp::acceptor &      getAcceptor() {
         return m_oAcceptor;
@@ -45,7 +45,6 @@ public:
     }
     
     void                        close();
-    inline NetNervure *         nervure() const{return m_pNervure;}
 
 protected:
     void        startAccept();
@@ -53,9 +52,11 @@ protected:
     void        handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::error_code &error);
 
 protected:
-    NetNervure *                m_pNervure;
     tcp::acceptor               m_oAcceptor;
     EndpointPtr_t               m_pAcceptEP;
+    BonderSplitter *            m_pBS;
+    EventHandler *              m_pEH;
+    RawPkgHandler *             m_pRPH;
 };//end class TCPServer
 typedef boost::shared_ptr<TCPServer> TCPServerPtr_t;
 }//end namespace ffnet

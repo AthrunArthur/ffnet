@@ -59,6 +59,9 @@ public:
     
     virtual void archive(ffnet::Archive & ar)
     {
+        ar.archive(m_iLen);
+        if(ar.is_deserializer())
+            m_pBuf=new int[m_iLen];
         ar.archive(m_pBuf, m_iLen);
     }
     

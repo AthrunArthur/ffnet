@@ -1,10 +1,7 @@
 #include "network/tcp_connection_base.h"
-#include "middleware/net_dispatcher.h"
 #include "common/archive.h"
 #include "common/defines.h"
-#include "framework/global_connections.h"
-#include "framework/net_nervure.h"
-#include "framework/event.h"
+#include "network/events.h"
 
 namespace ffnet
 {
@@ -18,31 +15,35 @@ EndpointPtr_t TCPConnectionBase::getRemoteEndpointPtr()
 
 void TCPConnectionBase::startRecv()
 {
-	Event<tcp_start_recv_stream>::triger(nervure(),
-		boost::bind(tcp_start_recv_stream::event, 
-					m_oSocket.local_endpoint(), 
-					m_oSocket.remote_endpoint(), _1)
-	);
-    LOG_DEBUG(connection)<<"TCPConnectionBase::startRecv() on ";//<<getRemoteEndpointPtr()->to_str();
+    try{
+        m_pEH->triger<tcp_start_recv_stream>(m_oSocket.local_endpoint(),
+                                         m_oSocket.remote_endpoint());
+        LOG_DEBUG(connection)<<"TCPConnectionBase::startRecv() on " <<getRemoteEndpointPtr()->to_str();
+    }catch(boost::system::system_error se)
+    {
+        LOG_DEBUG(connection)<<"TCPConnectionBase::startRecv(), remote_endpoint is disconnected!";
+    }
+    
     m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
                               boost::bind(&TCPConnectionBase::handlReceivedPkg, shared_from_this(), boost::asio::placeholders::error(),
                                           boost::asio::placeholders::bytes_transferred()));
 }
-TCPConnectionBase::TCPConnectionBase(NetNervure *pNervure)
-: ASIOConnection(pNervure)
-, m_oSocket(pNervure->getIOService())
+TCPConnectionBase::TCPConnectionBase(io_service & ioservice, BonderSplitter *bs,
+                                     EventHandler *eh, RawPkgHandler * rph)
+: ASIOConnection(ioservice, bs, eh, rph)
+, m_oSocket(ioservice)
 {
 }
 TCPConnectionBase::~TCPConnectionBase()
 {
 }
 
-void TCPConnectionBase::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
+
+void TCPConnectionBase::send(const PackagePtr_t & pkg)
 {
     if (m_iConnectionState.load() != s_valid)
     {
-      Event<pkg_send_failed>::triger(nervure(),
-          boost::bind(pkg_send_failed::event, pkg, pEndpoint, _1));
+      m_pEH->triger<pkg_send_failed>(pkg, getRemoteEndpointPtr());
       return ;
     }
 
@@ -57,10 +58,18 @@ void TCPConnectionBase::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEn
         m_oMutex.unlock();
     }
 }
+
+#ifdef PROTO_BUF_SUPPORT
+void TCPConnectionBase::send(const boost::shared_ptr<google::protobuf::Message> & pMsg){
+    boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
+    send(pPkg);
+}
+#endif
+
 void TCPConnectionBase::close()
 {
     m_oSocket.close();
-        m_iConnectionState.store(s_closed);
+    m_iConnectionState.store(s_closed);
 }
 bool TCPConnectionBase::isFree()
 {
@@ -77,11 +86,9 @@ void TCPConnectionBase::startSend()
     LOG_DEBUG(connection)<<"TCPConnectionBase  enter startSend";
     m_oMutex.lock();
     if(m_oSendBuffer.filled() != 0) {
-        Event<tcp_start_send_stream>::triger(nervure(),
-            boost::bind(tcp_start_send_stream::event, 
-                this, boost::asio::buffer_cast<const char *>( m_oSendBuffer.readable()),
-                boost::asio::buffer_size(m_oSendBuffer.readable()), _1)
-            );
+        m_pEH->triger<tcp_start_send_stream>(this, boost::asio::buffer_cast<const char *>(m_oSendBuffer.readable()),
+                                             boost::asio::buffer_size(m_oSendBuffer.readable()));
+
     
         m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
              boost::bind(&TCPConnectionBase::handlePkgSent, shared_from_this(),
@@ -91,7 +98,7 @@ void TCPConnectionBase::startSend()
         m_bIsSending = false;
     }
     m_oMutex.unlock();
-    startRecv();
     LOG_DEBUG(connection)<<"TCPConnectionBase exit startSend";
 }
+
 }//end namespace ffnet

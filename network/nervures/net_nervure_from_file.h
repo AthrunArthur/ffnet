@@ -6,7 +6,7 @@
 
 namespace ffnet
 {
-    class NetNervureFromFile : public ffnet::details::TypedNetNervure
+    class NetNervureFromFile : public TypedNetNervure
     {
     public:
         NetNervureFromFile(String conf);

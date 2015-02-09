@@ -19,13 +19,14 @@ set(src_list     common/shared_buffer.cpp
     common/log/logwriter.cpp
     common/log.cpp
     framework/nervure_config.cpp
-    framework/global_connections.cpp
-    framework/net_nervure.cpp
-    middleware/net_dispatcher.cpp
+    #framework/global_connections.cpp
+    #framework/net_nervure.cpp
+    #middleware/net_dispatcher.cpp
     middleware/length_bonder_splitter.cpp
     nervures/typed_net_nervure.cpp
     nervures/net_nervure_from_file.cpp
-    nervures/proto_buf_nervure.cpp
+    nervures/net_nervure.cpp
+    #nervures/proto_buf_nervure.cpp
     network/asio_connection.cpp
     network/endpoint_data.cpp
     network/net_buffer.cpp

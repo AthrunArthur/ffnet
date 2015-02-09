@@ -8,16 +8,20 @@
 
 namespace ffnet
 {
-class NetNervure;
 using boost::asio::ip::udp;
 using boost::asio::ip::udp;
 
 class UDPPoint: public ASIOConnection
 {
 public:
-    UDPPoint(NetNervure *pNervure, const std::string & ip, uint16_t iPort);
+    UDPPoint(io_service & ioservice, BonderSplitter *bs,
+             EventHandler * eh, RawPkgHandler * rph, ip::udp::endpoint ep);
     virtual ~UDPPoint();
+
     virtual void        send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
+#ifdef PROTO_BUF_SUPPORT
+    virtual void send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep);
+#endif
     
     virtual UDPPoint*         UDPPointPointer(){return this;}
     virtual void         close();

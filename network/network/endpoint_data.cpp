@@ -9,7 +9,7 @@ EndPointWithData::EndPointWithData(EndpointPtr_t ep, SharedBuffer &buffer)
 
 }
 
-#ifdef ENABLE_LOG_CONSOLE
+
 static char int2C(int t)
 {
     if(t >=0 && t<= 9)
@@ -36,12 +36,6 @@ String printBuf(const char *pBuf, size_t len)
     }
     return res;
 }
-#else
-String printBuf(const char *pBuf, size_t len)
-{
-  return "";
-}
-#endif
 
 
 }

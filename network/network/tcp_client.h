@@ -8,7 +8,8 @@ namespace ffnet
 class TCPClient : public TCPConnectionBase
 {
 public:
-    TCPClient(NetNervure *pNervure, Endpoint &ep);
+    TCPClient(io_service & ioservice, BonderSplitter * bs,
+              EventHandler * eh, RawPkgHandler *rph, boost::asio::ip::tcp::endpoint & ep);
 
     void     handleConnected(const boost::system::error_code &ec);
 

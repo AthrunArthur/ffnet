@@ -1,25 +1,25 @@
 #include "network/udp_point.h"
-#include "framework/net_nervure.h"
-#include "framework/global_connections.h"
-#include "framework/event.h"
+#include "network/events.h"
+#include "common/defines.h"
 
 namespace ffnet
 {
 using namespace ffnet::details;
 using namespace ::ffnet::event;
 
-UDPPoint::UDPPoint(ffnet::NetNervure *pNervure, const std::string & ip, uint16_t iPort)
-: ffnet::details::ASIOConnection(pNervure)
-, m_oSocket(pNervure->getIOService(), udp::endpoint(ip::address::from_string(ip.c_str()), iPort))
+UDPPoint::UDPPoint(io_service & ioservice, BonderSplitter *bs,
+                   EventHandler * eh, RawPkgHandler * rph, ip::udp::endpoint ep)
+: ASIOConnection(ioservice, bs, eh, rph)
+, m_oSocket(ioservice, ep)
 {
     m_iConnectionState.store(s_valid);
-    GlobalConnections::instance()->addUDPPoint(this);
+    //GlobalConnections::instance()->addUDPPoint(this);
     startRecv();
 }
 
 UDPPoint::~UDPPoint()
 {
-    GlobalConnections::instance()->delUDPPoint(this);
+    //GlobalConnections::instance()->delUDPPoint(this);
 }
 
 EndpointPtr_t UDPPoint::getRemoteEndpointPtr()
@@ -52,12 +52,13 @@ void UDPPoint::startSend()
         m_oMutex.unlock();
     }
 }
+
+
 void UDPPoint::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
 {
     if (m_iConnectionState.load() != s_valid)
     {
-      Event<pkg_send_failed>::triger(nervure(),
-          boost::bind(pkg_send_failed::event, pkg, pEndpoint, _1));
+      m_pEH->triger<pkg_send_failed>(pkg, pEndpoint);
       return ;
     }
     m_oSendTasks.push(boost::bind(&UDPPoint::actualSendPkg, this, pkg, pEndpoint));
@@ -71,6 +72,13 @@ void UDPPoint::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
     else
         m_oMutex.unlock();
 }
+#ifdef PROTO_BUF_SUPPORT
+void UDPPoint::send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep)
+{
+    boost::shared_ptr<Package> pPkg(new ::ffnet::ProtoBufWrapperPkg(pMsg));
+    send(pPkg, ep);
+}
+#endif
 
 void UDPPoint::actualSendPkg(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
 {

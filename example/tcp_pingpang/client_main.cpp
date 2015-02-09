@@ -4,30 +4,29 @@
 
 ffnet::NetNervureFromFile nnff("../clnt_net_conf.ini");
 
-void    sendPingMsg(ffnet::EndpointPtr_t pEP)
+void    sendPingMsg(ffnet::TCPConnectionBase * pConn)
 {
     char * pContent = new char[16];
     const char *str = "ping world!";
     std::memcpy(pContent, str, std::strlen(str) + 1); 
     boost::shared_ptr<PingMsg> pMsg(new PingMsg(pContent, std::strlen(str) + 1));
 
-    ffnet::NetNervure::send(pMsg, pEP);
-    
+    //ffnet::NetNervure::send(pMsg, pEP);
+    pConn->send(pMsg);
     std::cout<<"service running..."<<std::endl;
 }
 
-void    onRecvPong(boost::shared_ptr<PongMsg>pPong, ffnet::EndpointPtr_t pEP)
+void    onRecvPong(boost::shared_ptr<PongMsg>pPong, ffnet::TCPConnectionBase* from)
 {
     PongMsg & msg =*pPong.get();
     std::cout<<"got pong!"<<std::endl;
-    sendPingMsg(pEP);
+    sendPingMsg(from);
 }
 
 void    onConnSucc(ffnet::TCPConnectionBase *pConn)
 {
     std::cout<<"connect success"<<std::endl;
-    ffnet::EndpointPtr_t tpp = pConn->getRemoteEndpointPtr();
-    sendPingMsg(tpp);
+    sendPingMsg(pConn);
 }
 void    onLostConn(ffnet::EndpointPtr_t pEP, ffnet::NetNervure * pbn)
 {
@@ -37,11 +36,10 @@ void    onLostConn(ffnet::EndpointPtr_t pEP, ffnet::NetNervure * pbn)
 
 int main(int argc, char **argv) {
        ffnet::Log::init(ffnet::Log::TRACE, "clnt.log"); 
-    nnff.addNeedToRecvPkg<PongMsg>(onRecvPong);
-    ffnet::event::Event<ffnet::event::tcp_get_connection>::listen(&nnff, onConnSucc);
-    ffnet::event::Event<ffnet::event::tcp_lost_connection>::listen
-            (&nnff, 
-             boost::bind(onLostConn, _1, &nnff));
+    nnff.tcpToRecvPkg<PongMsg>(onRecvPong);
+    nnff.getEventHandler()->listen<ffnet::event::tcp_get_connection>(onConnSucc);
+    nnff.getEventHandler()->listen<ffnet::event::tcp_lost_connection>(boost::bind(onLostConn, _1, &nnff));
+    
             
     nnff.run();
     

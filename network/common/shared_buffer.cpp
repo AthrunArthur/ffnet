@@ -14,14 +14,4 @@ SharedBuffer::SharedBuffer(boost::shared_array< char > buffer, size_t len)
 }
 
 
-boost::shared_array< char >& SharedBuffer::buffer()
-{
-    return m_oBuffer;
-}
-
-size_t &SharedBuffer::length()
-{
-    return m_iLength;
-}
-
 }

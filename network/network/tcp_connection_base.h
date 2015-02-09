@@ -14,8 +14,13 @@ class TCPConnectionBase : public ASIOConnection, public boost::enable_shared_fro
 {
 public:
     virtual ~TCPConnectionBase();
+    
     //This may be called in another thread, and it's thread safe.
-    virtual void            send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
+    virtual void            send(const PackagePtr_t & pkg);
+    
+#ifdef PROTO_BUF_SUPPORT
+    virtual void            send(const boost::shared_ptr<google::protobuf::Message> & pMsg);
+#endif
 /*
     inline tcp::socket     &getSocket() {
         return m_oSocket;
@@ -28,14 +33,15 @@ public:
     virtual TCPConnectionBase * TCPConnectionBasePointer(){return this;}
     virtual EndpointPtr_t getRemoteEndpointPtr();
 protected:
-    TCPConnectionBase(NetNervure * pNervure);
+    TCPConnectionBase(io_service & ioservice, BonderSplitter *bs,
+                      EventHandler * eh, RawPkgHandler *rph);
     
     virtual void         startSend();
     virtual void        startRecv();
 
 protected:
     tcp::socket         m_oSocket;
-    EndpointPtr_t               m_oRemoteEndpoint;
+    EndpointPtr_t       m_oRemoteEndpoint;
 };//class TCPConnectionBase
 typedef boost::shared_ptr<TCPConnectionBase> TCPConnectionBasePtr_t;
 }//end namespace ffnet

@@ -2,6 +2,7 @@
 #include "common/archive.h"
 #include "package/package.h"
 #include "common/defines.h"
+#include "network/endpoint_data.h"
 
 using namespace ffnet::archive;
 namespace ffnet
@@ -28,9 +29,9 @@ void LengthBonderSplitter::bond(NetBuffer &oSendBuffer, const PackagePtr_t & pkg
     Archive s(pBuf, oSendBuffer.idle(), Archive::seralizer);
     pkg->arch(s);
     oSendBuffer.filled() += len;
-    LOG_TRACE(connection)<<"LengthBonderSplitter::bond(), seralize pkg: ";
-         // <<printBuf(boost::asio::buffer_cast<const char *>(oSendBuffer.readable()),
-//                     oSendBuffer.filled());
+    LOG_TRACE(connection)<<"LengthBonderSplitter::bond(), seralize pkg: "
+          <<printBuf(boost::asio::buffer_cast<const char *>(oSendBuffer.readable()),
+                     oSendBuffer.filled());
 }
 
 std::list<SharedBuffer> LengthBonderSplitter::split(NetBuffer &oRecvBuffer)
@@ -47,6 +48,9 @@ std::list<SharedBuffer> LengthBonderSplitter::split(NetBuffer &oRecvBuffer)
     while(oRecvBuffer.filled() - bi >= sizeof(len) &&
         oRecvBuffer.filled() -bi - sizeof(len) >=len)
     {
+        LOG_DEBUG(connection) <<"LengthBonderSplitter::split() buffer is "
+                             <<printBuf(boost::asio::buffer_cast<const char *>(oRecvBuffer.readable()),
+                                         oRecvBuffer.filled());
         LOG_DEBUG(connection) <<"LengthBonderSplitter::split() "<<"split pkg with len:"<<len;
         
         bi += sizeof(len);
