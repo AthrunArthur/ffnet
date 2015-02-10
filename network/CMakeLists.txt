@@ -23,6 +23,7 @@ set(src_list     common/shared_buffer.cpp
     #framework/net_nervure.cpp
     #middleware/net_dispatcher.cpp
     middleware/length_bonder_splitter.cpp
+    middleware/nake_bonder_splitter.cpp
     nervures/typed_net_nervure.cpp
     #nervures/net_nervure_from_file.cpp
     nervures/net_nervure.cpp

@@ -1,0 +1,5 @@
+daytime   --RFC867
+discard   --RFC863
+echo	  --RFC862
+time      -- RFC 868
+timeclient -- RFC868 client

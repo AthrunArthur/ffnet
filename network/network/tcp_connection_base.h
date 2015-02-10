@@ -18,6 +18,8 @@ public:
     //This may be called in another thread, and it's thread safe.
     virtual void            send(const PackagePtr_t & pkg);
     
+    virtual void            send(const char * pBuf, size_t len);
+    
 #ifdef PROTO_BUF_SUPPORT
     virtual void            send(const boost::shared_ptr<google::protobuf::Message> & pMsg);
 #endif

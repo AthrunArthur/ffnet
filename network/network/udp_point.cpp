@@ -9,8 +9,8 @@ using namespace ::ffnet::event;
 
 UDPPoint::UDPPoint(io_service & ioservice, BonderSplitter *bs,
                    EventHandler * eh, RawPkgHandler * rph, ip::udp::endpoint ep)
-: ASIOConnection(ioservice, bs, eh, rph)
-, m_oSocket(ioservice, ep)
+    : ASIOConnection(ioservice, bs, eh, rph)
+    , m_oSocket(ioservice, ep)
 {
     m_iConnectionState.store(s_valid);
     //GlobalConnections::instance()->addUDPPoint(this);
@@ -35,8 +35,8 @@ void UDPPoint::startRecv()
     m_oSocket.async_receive_from(
         boost::asio::buffer(m_oRecvBuffer.writeable()), m_oRemoteEndPoint,
         boost::bind(&UDPPoint::handlReceivedPkg, this,
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::bytes_transferred));
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
 }
 void UDPPoint::startSend()
 {
@@ -53,13 +53,31 @@ void UDPPoint::startSend()
     }
 }
 
+void UDPPoint::send(const char* pBuf, size_t len, const EndpointPtr_t & pEP)
+{
+    //TODO(A.A) implement something like actualSendPkg...
+    if (m_iConnectionState.load() != s_valid)
+    {
+        return ;
+    }
+    m_oMutex.lock();
+    m_pBonderSplitter->bond(m_oSendBuffer, pBuf, len);
+    if(!m_bIsSending)
+    {
+        m_bIsSending = true;
+        m_oMutex.unlock();
+    }
+    else
+        m_oMutex.unlock();
+}
+
 
 void UDPPoint::send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint)
 {
     if (m_iConnectionState.load() != s_valid)
     {
-      m_pEH->triger<pkg_send_failed>(pkg, pEndpoint);
-      return ;
+        m_pEH->triger<pkg_send_failed>(pkg, pEndpoint);
+        return ;
     }
     m_oSendTasks.push(boost::bind(&UDPPoint::actualSendPkg, this, pkg, pEndpoint));
     m_oMutex.lock();
@@ -87,9 +105,9 @@ void UDPPoint::actualSendPkg(const PackagePtr_t & pkg, const EndpointPtr_t & pEn
     UDPEndPoint uep;
     pEndpoint->generateTypedEndpoint(uep);
     m_oSocket.async_send_to(boost::asio::buffer(m_oSendBuffer.readable()), uep,
-                                   boost::bind(&UDPPoint::handlePkgSent, this,
-                                               boost::asio::placeholders::error,
-                                               boost::asio::placeholders::bytes_transferred));
+                            boost::bind(&UDPPoint::handlePkgSent, this,
+                                        boost::asio::placeholders::error,
+                                        boost::asio::placeholders::bytes_transferred));
 }
 void UDPPoint::close()
 {

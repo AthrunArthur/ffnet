@@ -38,6 +38,24 @@ TCPConnectionBase::~TCPConnectionBase()
 {
 }
 
+void TCPConnectionBase::send(const char* pBuf, size_t len)
+{
+    if (m_iConnectionState.load() != s_valid)
+    {
+      return ;
+    }
+
+    m_oMutex.lock();
+    m_pBonderSplitter->bond(m_oSendBuffer, pBuf, len);
+
+    if(!m_bIsSending) {
+        m_bIsSending = true;
+        m_oMutex.unlock();
+        startSend();
+    } else {
+        m_oMutex.unlock();
+    }
+}
 
 void TCPConnectionBase::send(const PackagePtr_t & pkg)
 {

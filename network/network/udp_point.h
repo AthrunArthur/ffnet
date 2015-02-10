@@ -19,6 +19,8 @@ public:
     virtual ~UDPPoint();
 
     virtual void        send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
+    
+    virtual void        send(const char * pBuf, size_t len);
 #ifdef PROTO_BUF_SUPPORT
     virtual void send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep);
 #endif

@@ -14,6 +14,7 @@
 //#include "framework/event.h"
 #include "middleware/bonder_splitter.h"
 #include "middleware/length_bonder_splitter.h"
+#include "middleware/nake_bonder_splitter.h"
 //#include "middleware/net_dispatcher.h"
 #include "nervures/net_nervure_from_file.h"
 #include "nervures/typed_net_nervure.h"
