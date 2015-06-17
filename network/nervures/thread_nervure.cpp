@@ -1,5 +1,5 @@
 #include "nervures/thread_nervure.h"
-#include "network/asio_connection.h"
+#include "asio_point.h"
 #include "network/tcp_client.h"
 #include "network/tcp_connection_base.h"
 #include "network/udp_point.h"

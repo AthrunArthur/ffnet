@@ -9,24 +9,24 @@ enum MsgType {
 };
 
 
-class PingMsg : public ffnet::Package
+class PingMsg : public ffnet::package
 {
 public:
     PingMsg()
-        : Package(msg_ping)
+        : package(msg_ping)
         , m_iContentLen(0)
         , m_pContent(NULL) {}
 
     PingMsg(char *pContent, int iLen)
-        : Package(msg_ping)
+        : package(msg_ping)
         , m_iContentLen(iLen)
         , m_pContent(pContent) {}
 
 
-    virtual void            archive(ffnet::Archive &ar) 
+    virtual void            archive(ffnet::marshaler &ar)
     {
         ar.archive(m_iContentLen);
-        if(ar.getArTy()== ffnet::Archive::deseralizer)
+        if(ar.get_marshaler_type()== ffnet::marshaler::deseralizer)
             m_pContent = (char *)malloc(m_iContentLen);
         ar.archive(m_pContent, m_iContentLen);
     }
@@ -40,18 +40,18 @@ protected:
     char             *m_pContent;
 };
 
-class PongMsg: public ffnet::Package
+class PongMsg: public ffnet::package
 {
 public:
     PongMsg()
-        : ffnet::Package(msg_pong)
+        : ffnet::package(msg_pong)
         , m_iPongTimes(0) {}
 
     PongMsg(int times)
-        : ffnet::Package(msg_pong)
+        : ffnet::package(msg_pong)
         , m_iPongTimes(times) {}
 
-    virtual void            archive(ffnet::Archive &ar) 
+    virtual void            archive(ffnet::marshaler &ar)
     {
         ar.archive(m_iPongTimes);
     }

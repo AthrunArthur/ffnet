@@ -1,19 +1,15 @@
-#ifndef _NETWORK_NETWORK_TCP_CLIENT_H_
-#define _NETWORK_NETWORK_TCP_CLIENT_H_
+#pragma once
 #include "common.h"
 #include "network/tcp_connection_base.h"
 namespace ffnet
 {
-    
-class TCPClient : public TCPConnectionBase
+
+class net_tcp_client : public net_tcp_connection_base
 {
 public:
-    TCPClient(io_service & ioservice, BonderSplitter * bs,
-              EventHandler * eh, RawPkgHandler *rph, boost::asio::ip::tcp::endpoint & ep);
-
-    void     handleConnected(const boost::system::error_code &ec);
-
+    net_tcp_client(io_service & ioservice, pkg_packer * bs,
+              event_handler * eh, const std::vector<tcp_pkg_handler *> & rph, const tcp_endpoint & ep);
 protected:
-};//end class TCPClient
+    void handle_connected(const boost::system::error_code &ec);
+};//end class tcp_client
 }//end namespace ffnet
-#endif

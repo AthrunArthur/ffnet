@@ -2,10 +2,10 @@
 
 namespace ffnet
 {
-Package::Package(uint32_t typeID)
+package::package(uint32_t typeID)
     : m_iTypeID(typeID){}
 
-Package::~Package()
+package::~package()
 {
 
 }

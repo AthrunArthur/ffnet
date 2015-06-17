@@ -1,16 +1,16 @@
 #include "network/net_buffer.h"
-
+#include <sstream>
 namespace ffnet
 {
-namespace details
-{
-NetBuffer::NetBuffer(int iInitSize)
+
+net_buffer::net_buffer(int iInitSize)
     : m_oBuffer(iInitSize)
     , m_iToWriteBufIndex(0)
+, m_iToReadBufIndex(0)
 {
 }
 
-void NetBuffer::writeBuffer(const char *pBuf, size_t len)
+void net_buffer::write_buffer(const char *pBuf, size_t len)
 {
     if(len >= idle())
         m_oBuffer.resize(m_iToWriteBufIndex + len + 64);
@@ -18,7 +18,7 @@ void NetBuffer::writeBuffer(const char *pBuf, size_t len)
     m_iToWriteBufIndex += len;
 }
 
-size_t NetBuffer::readBuffer(char *pBuf, size_t len)
+size_t net_buffer::read_buffer(char *pBuf, size_t len)
 {
     if(filled() < len)
         len = filled();
@@ -28,44 +28,57 @@ size_t NetBuffer::readBuffer(char *pBuf, size_t len)
     return len;
 }
 
-void NetBuffer::eraseBuffer(size_t len)
+void net_buffer::erase_buffer(size_t len)
 {
     if(len == 0)
         return;
     if(len >= m_iToWriteBufIndex)
         len = m_iToWriteBufIndex;
     m_oBuffer.erase(m_oBuffer.begin(), m_oBuffer.begin() + len);
-    m_iToWriteBufIndex -= len;
+    m_iToReadBufIndex += len;
+    if(m_iToReadBufIndex == m_iToWriteBufIndex)
+    {
+        m_iToReadBufIndex = 0;
+        m_iToWriteBufIndex = 0;
+    }
 }
 
-boost::asio::const_buffer NetBuffer::readable() const
+boost::asio::const_buffer net_buffer::readable() const
 {
-    return boost::asio::const_buffer(m_oBuffer.data(), m_iToWriteBufIndex);
+    return boost::asio::const_buffer(m_oBuffer.data() + m_iToReadBufIndex, m_iToWriteBufIndex);
 }
-boost::asio::mutable_buffer NetBuffer::writeable()
+boost::asio::mutable_buffer net_buffer::writeable()
 {
     if(idle() < BUFFER_INC_STEP)
         m_oBuffer.resize(size() + BUFFER_INC_STEP);
     return boost::asio::mutable_buffer(m_oBuffer.data() + m_iToWriteBufIndex, idle());
 }
 
-void NetBuffer::appendBuffer(boost::asio::const_buffer buf)
+void net_buffer::append_buffer(boost::asio::const_buffer buf)
 {
-    writeBuffer(boost::asio::buffer_cast<const char *>(buf), boost::asio::buffer_size(buf));
+    write_buffer(boost::asio::buffer_cast<const char *>(buf), boost::asio::buffer_size(buf));
 }
 
-void NetBuffer::reserve(size_t r)
+void net_buffer::reserve(size_t r)
 {
     m_oBuffer.reserve(r);
 }
 
-void NetBuffer::reserveIdle(size_t r)
+void net_buffer::reserve_idle(size_t r)
 {
     if(idle() < r)
     {
         m_oBuffer.resize(filled() + r);
     }
 }
+    std::string print_buf(const char * pBuf, size_t len)
+    {
+        std::stringstream ss;
+        for(size_t i = 0; i < len; ++i){
+            uint8_t v = (uint8_t) pBuf[i];
+            ss<<std::hex<<v/16<<v%16<<" ";
+        }
+        return ss.str();
+    }
 
-}//end namespace details
 }//end namespace ffnet

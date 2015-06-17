@@ -1,11 +1,10 @@
-#ifndef _NETWORK_EVENT_HANDLER_H
-#define _NETWORK_EVENT_HANDLER_H
+#pragma once
 #include "common.h"
 #include <boost/any.hpp>
 
 namespace ffnet
 {
-class EventHandler
+class event_handler
 {
 public:
     template<class ETy_>
@@ -47,5 +46,4 @@ protected:
     ETHandlers_t m_oHandlers;
 };
 }//end ffnet
-#endif // EVENT_HANDLER_H
 

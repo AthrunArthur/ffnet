@@ -135,18 +135,18 @@ public:
         boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
         String s = boost::posix_time::to_simple_string(now) + buffer_.asString();
         //std::cout<<s<<std::endl;
-        Singleton<LogWriter>::instance_ref().queue().push_back(s);
+        singleton<LogWriter>::instance_ref().queue().push_back(s);
     }
 public:
     typedef Logger<EnableLogFlag> self;
-    
+
     template<typename T>
     self& operator<<(T v)
     {
         BOOST_STATIC_ASSERT(boost::is_integral<T>::value);
         BOOST_STATIC_ASSERT((boost::is_same<bool, T>::value) == false);
         BOOST_STATIC_ASSERT((boost::is_same<char, T>::value) == false);
-        
+
         formatInteger(v);
         return * this;
     }
@@ -164,7 +164,7 @@ public:
         }
         return *this;
     }
-    
+
     self & operator<<(bool v)
     {
         buffer_.append(v ? "1": "0", 1);
@@ -206,7 +206,7 @@ public:
 
 
 protected:
-    
+
     template<typename T>
     static size_t convert(char buf[], T value)
     {

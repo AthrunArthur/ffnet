@@ -4,9 +4,7 @@
  *  Created on: 2012-6-24
  *      Author: AthrunArthur
  */
-
-#ifndef _LED_AD_UTILS_SYNC_QUEUE_H_
-#define _LED_AD_UTILS_SYNC_QUEUE_H_
+#pragma once
 #include <list>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/locks.hpp>
@@ -52,7 +50,7 @@ public:
     }
     boost::mutex &            mutex(){return m_oMutex;}
     std::list<Ty_> &            content(){return m_oQueue;}
-    
+
 protected:
     std::list<Ty_>             m_oQueue;
     mutable boost::mutex        m_oMutex;
@@ -61,4 +59,3 @@ protected:
 }
 
 
-#endif /* SYNC_QUEUE_H_ */

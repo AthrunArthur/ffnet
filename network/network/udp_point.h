@@ -1,42 +1,76 @@
-#ifndef _NETWORK_NETWORK_UDP_POINT_H_
-#define _NETWORK_NETWORK_UDP_POINT_H_
+#pragma once
+
+#include <middleware/pkg_handler.h>
 #include "common.h"
-#include "network/asio_connection.h"
-#include "package/package.h"
-#include "common/sync_queue.h"
+#include "network/asio_point.h"
+#include "middleware/package.h"
+#include "network/net_buffer.h"
+#include "network/end_point.h"
 
 
-namespace ffnet
-{
-using boost::asio::ip::udp;
-using boost::asio::ip::udp;
+namespace ffnet {
+    class udp_pkg_handler;
 
-class UDPPoint: public ASIOConnection
-{
-public:
-    UDPPoint(io_service & ioservice, BonderSplitter *bs,
-             EventHandler * eh, RawPkgHandler * rph, ip::udp::endpoint ep);
-    virtual ~UDPPoint();
+    class udp_point: public asio_point{
+    public:
+        udp_point(io_service & ioservice,
+                  pkg_packer * bs,
+                  event_handler * eh,
+                  const std::vector<udp_pkg_handler *> & rph,
+                  const udp_endpoint & ep);
 
-    virtual void        send(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
-#ifdef PROTO_BUF_SUPPORT
-    virtual void send(const boost::shared_ptr< google::protobuf::Message > & pMsg, const EndpointPtr_t & ep);
-#endif
-    
-    virtual UDPPoint*         UDPPointPointer(){return this;}
-    virtual void         close();
-    virtual bool        isFree();
-    virtual EndpointPtr_t     getRemoteEndpointPtr();
-protected:
-    virtual void         startSend();
-    virtual void        startRecv();
-    void             actualSendPkg(const PackagePtr_t & pkg, const EndpointPtr_t & pEndpoint);
-protected:
-    typedef boost::function<void () > Func_t;
-    udp::socket        m_oSocket;
-    udp::endpoint    m_oRemoteEndPoint;
-    sync_queue<Func_t>        m_oSendTasks;
-};//end class UDPPoint
-typedef boost::shared_ptr<UDPPoint> UDPPointPtr_t;
+        virtual ~udp_point();
+
+        virtual void send(const package_ptr & pkg, const udp_endpoint & ep) = 0;
+
+        virtual void close() = 0;
+
+    protected:
+        boost::asio::ip::udp::socket m_oSocket;
+        std::vector<udp_pkg_handler *> m_pRPH;
+    };
+
+    class net_udp_point : public udp_point {
+    public:
+        net_udp_point(io_service &ioservice, pkg_packer *bs,
+                 event_handler *eh, const std::vector<udp_pkg_handler *> & rph, const udp_endpoint &ep);
+
+        virtual ~net_udp_point();
+
+        virtual void send(const package_ptr &pkg, const udp_endpoint &endpoint);
+
+        virtual void close();
+
+        void ticktack();
+
+    protected:
+        void start_send();
+
+        void handle_pkg_sent(const boost::system::error_code &ec, std::size_t bytes_transferred);
+
+        void actual_send_pkg(const package_ptr &pkg, const udp_endpoint &endpoint);
+
+        void start_recv();
+
+        void handle_received_pkg(const boost::system::error_code &error, size_t bytes_transferred);
+
+        void slice_and_dispatch_pkg(net_buffer *pBuf, const udp_endpoint &ep);
+
+    protected:
+        typedef boost::function<void()> func_t;
+        typedef std::queue<func_t> tasks_t;
+        typedef std::map<udp_endpoint, net_buffer *> recv_buffer_t;
+
+        udp_endpoint m_oRecvEndPoint;
+        udp_endpoint m_oSendEndpoint;
+        tasks_t m_oSendTasks;
+        net_buffer m_oSendBuffer;
+        net_buffer m_oTempBuffer;
+        recv_buffer_t m_oRecvBuffer;
+        std::map<uint32_t, udp_pkg_handler *> m_oRPHCache;
+        bool m_bIsSending;
+    };
+
+    //end class UDPPoint
+    typedef boost::shared_ptr<udp_point> udp_point_ptr;
 }//end namespace ffnet
-#endif

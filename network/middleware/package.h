@@ -1,14 +1,10 @@
-#ifndef _NETWORK_PACKAGE_PACKAGE_H_
-#define _NETWORK_PACKAGE_PACKAGE_H_
+#pragma once
 #include "common.h"
 #include "common/archive.h"
 
 
 namespace ffnet
 {
-class BonderSplitter;
-class LengthBonderSplitter;
-
 /*******************
  * You should declare your own package by deriving from this class.
  * Basically, you need to do two things,
@@ -16,29 +12,29 @@ class LengthBonderSplitter;
  * 2. to implement the virtual function, archive.
  *    archive is used to serialize and deserialize the Package, and
  * a typical implementation is like this,
- *    virtual void archive(Archive & ar)
+ *    virtual void archive(archive & ar)
  *    {
  *          ar.archive(m_strName);
  *    }
- *  You can find me examples about Archive.
+ *  You can find me examples about archive.
  */
-class Package
+class package
 {
 protected:
-    virtual void        archive(Archive & ar) = 0;
-    
+    virtual void        archive(marshaler & ar) = 0;
+
 public:
-    Package(uint32_t typeID)
+    package(uint32_t typeID)
         : m_iTypeID(typeID) {}
 
-    virtual ~Package() {};
+    virtual ~package() {};
 
-    uint32_t        getTypeID() const {
+    uint32_t        type_id() const {
         return m_iTypeID;
     }
-    uint32_t     &    getTypeID() {return m_iTypeID;}
-    
-    void        arch(Archive &ar) {
+    uint32_t     &    type_id() {return m_iTypeID;}
+
+    void        arch(marshaler &ar) {
         ar.archive(m_iTypeID);
         archive(ar);
     }
@@ -47,8 +43,7 @@ protected:
     uint32_t                            m_iTypeID;
 };//end class Package
 
-typedef boost::shared_ptr<Package>    PackagePtr_t;
+typedef boost::shared_ptr<package>    package_ptr;
 
 }//end namespace ffnet
 
-#endif

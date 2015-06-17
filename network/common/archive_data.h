@@ -8,15 +8,15 @@ typename boost::enable_if_c<
 archive(T & data ){
     switch(m_iAT)
     {
-    case Archive::seralizer:
+    case seralizer:
         std::memcpy(m_pWriteBuf + m_iBase, (const char *)&data, sizeof(T));
         m_iBase += sizeof(T);
         break;
-    case Archive::deseralizer:
+    case deseralizer:
         std::memcpy((char *) &data, m_pReadBuf + m_iBase, sizeof(T));
         m_iBase += sizeof(T);
         break;
-    case Archive::length_retriver:
+    case length_retriver:
         m_iBase += sizeof(T);
         break;
     }
@@ -31,15 +31,15 @@ typename boost::enable_if_c<
 archive(T (& data)[N])
 {
     switch (m_iAT) {
-    case Archive::seralizer:
+    case seralizer:
         std::memcpy(m_pWriteBuf + m_iBase, (const char *)&data, sizeof(T) * N);
         m_iBase += sizeof(T) * N;
         break;
-    case Archive::deseralizer:
+    case deseralizer:
         std::memcpy((char *)&data, m_pReadBuf + m_iBase, sizeof(T) * N);
         m_iBase += sizeof(T) * N;
         break;
-    case Archive::length_retriver:
+    case length_retriver:
         m_iBase += sizeof(T) * N;
         break;
     }
@@ -98,7 +98,7 @@ archive(std::vector<T> & data)
         for(int i = 0; i < count; ++i)
         {
             T d;
-            archive(d);
+            archive_data(d);
             data.push_back(d);
         }
         break;

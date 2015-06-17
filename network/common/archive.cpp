@@ -2,7 +2,7 @@
 
 namespace ffnet
 {
-Archive::Archive(const char *buf,size_t len, arch_type at)
+    marshaler::marshaler(const char *buf,size_t len, marshaler_type at)
 : m_pReadBuf(NULL)
 , m_iBufLen(len)
 , m_iAT(at)
@@ -19,7 +19,7 @@ Archive::Archive(const char *buf,size_t len, arch_type at)
     }
 }
 
-Archive::Archive(char *buf, size_t len, arch_type at)
+    marshaler::marshaler(char *buf, size_t len, marshaler_type at)
 : m_pReadBuf(NULL)
 , m_iBufLen(len)
 , m_iAT(at)
@@ -36,7 +36,7 @@ Archive::Archive(char *buf, size_t len, arch_type at)
     }
 }
 
-Archive::Archive(arch_type at)
+    marshaler::marshaler(marshaler_type at)
 : m_pReadBuf(NULL)
 , m_iBufLen(0)
 , m_iAT(at)
@@ -46,26 +46,26 @@ Archive::Archive(arch_type at)
     assert(m_iAT == length_retriver);
 }
 
-void Archive::archive(String & s)
+void marshaler::archive(String & s)
 {
     size_t len = s.size();
-    switch(getArTy())
+    switch(get_marshaler_type())
     {
-    case Archive::seralizer:
+    case seralizer:
         len = s.size();
         std::memcpy(m_pWriteBuf + m_iBase, (const char *) & len, sizeof(size_t));
         m_iBase += sizeof(size_t);
         std::memcpy(m_pWriteBuf + m_iBase, s.c_str(), len);
         m_iBase += len;
         break;
-    case Archive::deseralizer:
+    case deseralizer:
         std::memcpy((char *)&len, m_pReadBuf + m_iBase, sizeof(size_t));
         m_iBase += sizeof(size_t);
         s = String(len, 0);
         std::memcpy(const_cast<char *>(s.c_str()), m_pReadBuf + m_iBase, len);
         m_iBase += len;
         break;
-    case Archive::length_retriver:
+    case length_retriver:
         m_iBase += (sizeof(size_t) + s.size());
         break;
     }

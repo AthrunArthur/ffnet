@@ -1,37 +1,34 @@
-#ifndef _NETWORK_NETWORK_NET_BUFFER_H_
-#define _NETWORK_NETWORK_NET_BUFFER_H_
+#pragma once
 #include "common.h"
 #include <vector>
 #include <boost/asio.hpp>
 
 namespace ffnet
 {
-namespace details
-{
 #define BUFFER_INC_STEP 256
-class NetBuffer
+class net_buffer
 {
 public:
-    NetBuffer(int iInitSize = 256);
-        
-    void                     writeBuffer(const char *pBuf, size_t len) ;
+    net_buffer(int iInitSize = 256);
 
-    size_t                    readBuffer(char *pBuf, size_t len) ;
+    void                     write_buffer(const char *pBuf, size_t len) ;
 
-    void                        eraseBuffer(size_t len);
+    size_t                    read_buffer(char *pBuf, size_t len) ;
+
+    void                        erase_buffer(size_t len);
 
     boost::asio::const_buffer        readable() const;
-    
+
     boost::asio::mutable_buffer        writeable() ;
-    
-    void                        appendBuffer(boost::asio::const_buffer buf) ;
+
+    void                        append_buffer(boost::asio::const_buffer buf) ;
     void                        reserve(size_t r) ;
-    void                        reserveIdle( size_t r);
+    void                        reserve_idle( size_t r);
     inline const char                 *buffer() const {
-        return &m_oBuffer[0];
+        return &m_oBuffer[m_iToWriteBufIndex];
     }
     inline  size_t                    length() const {
-        return m_iToWriteBufIndex;
+        return m_iToWriteBufIndex-m_iToReadBufIndex;
     }
     inline size_t             size() const {
         return m_oBuffer.size();
@@ -48,14 +45,20 @@ public:
     inline size_t             &filled() {
         return m_iToWriteBufIndex;
     }
+    inline const size_t & read() const {
+        return m_iToReadBufIndex;
+    }
+    inline size_t & read() {
+        return m_iToReadBufIndex;
+    }
     inline size_t            idle() const {
         return size() - filled();
     }
 protected:
     std::vector<char>        m_oBuffer;
     size_t                    m_iToWriteBufIndex;
+    size_t m_iToReadBufIndex;
 };//end class NetBuffer
 
-}//end namespace details
+    std::string print_buf(const char * pBuf, size_t len);
 }//end namespace ffnet
-#endif

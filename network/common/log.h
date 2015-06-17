@@ -1,5 +1,4 @@
-#ifndef FFNET_COMMON_LOG_H_
-#define FFNET_COMMON_LOG_H_
+#pragma once
 #include "common/log/logger.h"
 #include "common/log/logwriter.h"
 namespace ffnet
@@ -25,25 +24,25 @@ namespace ffnet
 
 //template<class MTy_>
 //class Logger : public ffnet::details::LoggerDoNothing{};
-    
 
-#define DEF_LOG_MODULE(module) struct log_ ##module{}; 
+
+#define DEF_LOG_MODULE(module) struct log_ ##module{};
 
 #define ENABLE_LOG_MODULE(module) \
     namespace ffnet{namespace details{ \
   template<> struct enable_traits<log_ ##module> { \
     static const bool value = true; };  \
     }}
-    
+
 
 #define LOG_TRACE(module)  if(::ffnet::Log::s_LogLevel <= ::ffnet::Log::TRACE) \
     ffnet::Logger<ffnet::details::enable_traits<log_ ## module>::value >()\
     <<"\tTRACE"<<"\t"<<#module<<"\t"
-    
+
 #define LOG_DEBUG(module)  if(::ffnet::Log::s_LogLevel <= ::ffnet::Log::DEBUG) \
     ffnet::Logger<ffnet::details::enable_traits<log_ ## module>::value >()\
     <<"\tDEBUG"<<"\t"<<#module<<"\t"
-    
+
 #define LOG_INFO(module)  if(::ffnet::Log::s_LogLevel <= ::ffnet::Log::INFO) \
     ffnet::Logger<ffnet::details::enable_traits<log_ ## module>::value >()\
     <<"\tINFO"<<"\t"<<#module<<"\t"
@@ -60,4 +59,3 @@ namespace ffnet
     ffnet::Logger<ffnet::details::enable_traits<log_ ## module>::value >()\
     <<"\tFATAL"<<"\t"<<#module<<"\t"
 
-#endif

@@ -1,6 +1,4 @@
-#ifndef _NETWORK_NETWORK_H_
-#define _NETWORK_NETWORK_H_
-
+#pragma once
 #include "common.h"
 #include "common/archive.h"
 #include "common/blocking_queue.h"
@@ -12,23 +10,15 @@
 //#include "framework/global_connections.h"
 //#include "framework/net_nervure.h"
 //#include "framework/event.h"
-#include "middleware/bonder_splitter.h"
-#include "middleware/length_bonder_splitter.h"
-//#include "middleware/net_dispatcher.h"
-#include "nervures/net_nervure_from_file.h"
-#include "nervures/typed_net_nervure.h"
-#include "nervures/thread_nervure.h"
+#include "middleware/net_nervure.h"
+#include "middleware/typed_pkg_hub.h"
 //#include "nervures/proto_buf_nervure.h"
-#include "network/endpoint_data.h"
-#include "network/tcp_client.h"
-#include "network/asio_connection.h"
-#include "network/end_point.h"
-#include "network/tcp_server.h"
-#include "network/events.h"
-#include "middleware/event_handler.h"
-#include "middleware/raw_pkg_handler.h"
-#include "package/package.h"
-    
-    
+
+#include "extension/package_types.h"
+
+#ifdef PROTO_BUF_SUPPORT
+#include "extension/protobuf/protobuf_pkg_hub.h"
+#include "extension/protobuf/proto_buf_wrapper_pkg.h"
 #endif
+
 

@@ -1,65 +1,75 @@
-#ifndef _NETWORK_NETWORK_TCP_SERVER_H_
-#define _NETWORK_NETWORK_TCP_SERVER_H_
+#pragma once
 #include "common.h"
 #include "network/tcp_connection_base.h"
 #include "network/end_point.h"
 #include <boost/noncopyable.hpp>
 
-namespace ffnet
-{
-class TCPServer;
-using namespace boost::asio;
-using namespace boost::asio::ip;
-using boost::asio::ip::tcp;
-
-
+namespace ffnet {
+    class tcp_server;
 
 //////////////////////////////////////////////////////
-class TCPConnection : public TCPConnectionBase
-{
-public:
-    TCPConnection(io_service & ioservice, BonderSplitter *bs,
-                  EventHandler * eh, RawPkgHandler * rph, TCPServer *pSvr);
+    class net_tcp_connection : public net_tcp_connection_base {
+    public:
+        net_tcp_connection(io_service &ioservice, pkg_packer *bs,
+                      event_handler *eh, const std::vector<tcp_pkg_handler *> & rph, tcp_server *pSvr);
 
-    void                  start();
-    inline TCPServer *    getTCPServer() { return m_pTCPServer;}
 
-protected:
-    friend class TCPServer;
-    TCPServer         *m_pTCPServer;
-};//end class TCPConnection
-typedef boost::shared_ptr<TCPConnection> TCPConnectionPtr_t;
+        inline tcp_server * get_tcp_server() { return m_pTCPServer; }
+
+    protected:
+        friend class net_tcp_server;
+
+        void start();
+
+        tcp_server *m_pTCPServer;
+    };
+
+    //end class TCPConnection
+    //typedef boost::shared_ptr<tcp_connection> tcp_connection_ptr;
 
 //////////////////////////////////////////////////////
-class TCPServer : public boost::noncopyable
-{
-public:
-    TCPServer(io_service & ioservice, BonderSplitter *bs,
-              EventHandler * eh, RawPkgHandler * rph, ip::tcp::endpoint ep);
+    class tcp_server : public boost::noncopyable {
+    public:
+        tcp_server(io_service &ioservice, pkg_packer *bs,
+                  event_handler *eh, const std::vector<tcp_pkg_handler *> & rph, const tcp_endpoint & ep);
 
-    inline tcp::acceptor &      getAcceptor() {
-        return m_oAcceptor;
-    }
-    inline io_service &         getIOService() {
-        return m_oAcceptor.get_io_service();
-    }
-    
-    void                        close();
 
-protected:
-    void        startAccept();
+        inline boost::asio::io_service &ioservice() {
+            return m_oIOService;
+        }
 
-    void        handleAccept(TCPConnectionPtr_t pNewConn, const boost::system::error_code &error);
+        virtual void start_accept() = 0;
 
-protected:
-    tcp::acceptor               m_oAcceptor;
-    EndpointPtr_t               m_pAcceptEP;
-    BonderSplitter *            m_pBS;
-    EventHandler *              m_pEH;
-    RawPkgHandler *             m_pRPH;
-};//end class TCPServer
-typedef boost::shared_ptr<TCPServer> TCPServerPtr_t;
+        virtual void close() = 0;
+
+    protected:
+        io_service & m_oIOService;
+        tcp_endpoint m_oAcceptEP;
+        pkg_packer *m_pBS;
+        event_handler *m_pEH;
+        std::vector<tcp_pkg_handler *> m_pRPH;
+    };
+    typedef boost::shared_ptr<tcp_server> tcp_server_ptr;
+
+    class net_tcp_server : public tcp_server {
+    public:
+        net_tcp_server(io_service &ioservice, pkg_packer *bs,
+                   event_handler *eh, const std::vector<tcp_pkg_handler *> & rph, const tcp_endpoint & ep);
+
+        inline boost::asio::ip::tcp::acceptor &acceptor() {
+            return m_oAcceptor;
+        }
+
+        virtual void start_accept();
+
+        virtual void close();
+
+    protected:
+
+        void handle_accept(tcp_connection_base_ptr pNewConn, const boost::system::error_code &error);
+
+    protected:
+        boost::asio::ip::tcp::acceptor m_oAcceptor;
+    };
 }//end namespace ffnet
-
-#endif
 

@@ -1,5 +1,4 @@
-#ifndef NETWORK_COMMON_DEFINES_H_
-#define NETWORK_COMMON_DEFINES_H_
+#pragma once
 
 //#include "framework/event.h"
 #include "common/log.h"
@@ -21,4 +20,3 @@ ENABLE_LOG_MODULE(tcp_client)
 ENABLE_LOG_MODULE(connection)
 ENABLE_LOG_MODULE(frmwk)
 
-#endif

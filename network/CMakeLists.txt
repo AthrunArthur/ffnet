@@ -18,30 +18,42 @@ set(src_list     common/shared_buffer.cpp
     common/log/logger.cpp
     common/log/logwriter.cpp
     common/log.cpp
-    framework/nervure_config.cpp
+    #framework/nervure_config.cpp
     #framework/global_connections.cpp
-    #framework/net_nervure.cpp
+    #framework/NetNervure.cpp
     #middleware/net_dispatcher.cpp
-    middleware/length_bonder_splitter.cpp
-    nervures/typed_net_nervure.cpp
+    middleware/typed_pkg_hub.cpp
     #nervures/net_nervure_from_file.cpp
-    nervures/net_nervure.cpp
-    nervures/thread_nervure.cpp
+    middleware/net_nervure.cpp
+    #nervures/thread_nervure.cpp
     #nervures/proto_buf_nervure.cpp
-    network/asio_connection.cpp
-    network/endpoint_data.cpp
+    network/asio_point.cpp
     network/net_buffer.cpp
     network/tcp_connection_base.cpp
     network/tcp_client.cpp
     network/tcp_server.cpp
     network/udp_point.cpp
-    package/proto_buf_wrapper_pkg.cpp
+    #Package/proto_buf_wrapper_pkg.cpp
     common/archive.cpp
 )
+
+set(lib_list boost_system boost_date_time boost_thread)
+
+find_package(Protobuf QUIET)
+if(PROTOBUF_FOUND)
+message(STATUS "found protobuf, and include protobuf support")
+add_definitions(-DPROTO_BUF_SUPPORT)
+include_directories(${PROTOBUF_INCLUDE_DIRS})
+set(src_list ${src_list} extension/protobuf/proto_buf_wrapper_pkg.cpp
+    extension/protobuf/protobuf_pkg_hub.cpp)
+set(lib_list ${lib_list} ${PROTOBUF_LIBRARIES})
+else()
+message(STATUS "not found protobuf, gonna ignore protobuf support")
+endif()
     
 add_library(network_dynamic SHARED ${src_list})
 #add_library(network_static STATIC ${src_list})
-target_link_libraries(network_dynamic boost_system boost_date_time boost_thread)
+target_link_libraries(network_dynamic ${lib_list})
 #target_link_libraries(network_static protobuf boost_system boost_date_time boost_thread)
 
 

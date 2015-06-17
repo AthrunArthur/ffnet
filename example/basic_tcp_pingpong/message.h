@@ -1,5 +1,4 @@
-#ifndef TEST_NETWORK_COMMON_MESSAGE_H_
-#define TEST_NETWORK_COMMON_MESSAGE_H_
+#pragma once
 
 #include "network.h"
 
@@ -9,18 +8,18 @@ enum MsgType {
 };
 
 
-class PingMsg : public ffnet::Package
+class PingMsg : public ffnet::package
 {
 public:
     PingMsg()
-        : Package(msg_ping) {}
+        : package(msg_ping) {}
 
     PingMsg(std::string s)
-        : Package(msg_ping)
+        : package(msg_ping)
 	, m_strContent(s){}
 
 
-    virtual void            archive(ffnet::Archive &ar) 
+    virtual void            archive(ffnet::marshaler &ar)
     {
         ar.archive(m_strContent);
     }
@@ -33,18 +32,18 @@ protected:
     std::string m_strContent;
 };
 
-class PongMsg: public ffnet::Package
+class PongMsg: public ffnet::package
 {
 public:
     PongMsg()
-        : ffnet::Package(msg_pong)
+        : ffnet::package(msg_pong)
         , m_iPongTimes(0) {}
 
     PongMsg(int times)
-        : ffnet::Package(msg_pong)
+        : ffnet::package(msg_pong)
         , m_iPongTimes(times) {}
 
-    virtual void            archive(ffnet::Archive &ar) 
+    virtual void            archive(ffnet::marshaler &ar)
     {
         ar.archive(m_iPongTimes);
     }
@@ -55,4 +54,3 @@ public:
 protected:
     int            m_iPongTimes;
 };
-#endif
