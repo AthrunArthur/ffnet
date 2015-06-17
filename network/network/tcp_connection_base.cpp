@@ -81,6 +81,7 @@ namespace ffnet {
             LOG_DEBUG(connection) << "TCPConnectionBase::handle_pkg_sent(), Get error " << ec.message();
             m_pEH->triger<tcp_send_stream_error>(this, ec);
         }
+
     }
 
     void net_tcp_connection_base::start_recv() {

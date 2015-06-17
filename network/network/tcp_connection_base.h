@@ -66,5 +66,6 @@ namespace ffnet {
     };
 
     typedef boost::shared_ptr<tcp_connection_base> tcp_connection_base_ptr;
+
 }//end namespace ffnet
 
