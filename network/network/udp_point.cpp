@@ -1,4 +1,4 @@
-#include "udp_point.h"
+#include "network/udp_point.h"
 #include "network/events.h"
 #include "common/defines.h"
 #include "middleware/event_handler.h"
@@ -10,9 +10,7 @@ namespace ffnet {
 
     udp_point::udp_point(io_service &ioservice, pkg_packer *bs,
                          event_handler *eh, const std::vector<udp_pkg_handler *> & rph, const udp_endpoint &ep)
-            : asio_point(ioservice, bs, eh), m_oSocket(ioservice, ep), m_pRPH(rph)
-    {
-    }
+            : asio_point(ioservice, bs, eh), m_oSocket(ioservice, ep), m_pRPH(rph){}
 
     udp_point::~udp_point(){ }
     net_udp_point::net_udp_point(io_service &ioservice, pkg_packer *bs,

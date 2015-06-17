@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.h"
-#include <boost/function.hpp>
 #include "network/tcp_connection_base.h"
 #include "network/tcp_client.h"
 #include "network/tcp_server.h"

@@ -6,13 +6,8 @@
 #include "common/log.h"
 #include "common/defines.h"
 
-//#include "framework/nervure_config.h"
-//#include "framework/global_connections.h"
-//#include "framework/net_nervure.h"
-//#include "framework/event.h"
 #include "middleware/net_nervure.h"
 #include "middleware/typed_pkg_hub.h"
-//#include "nervures/proto_buf_nervure.h"
 
 #include "extension/package_types.h"
 

@@ -12,8 +12,6 @@
 #include <cassert>
 
 namespace ffnet {
-
-
     class typed_pkg_hub {
     public:
         typed_pkg_hub();

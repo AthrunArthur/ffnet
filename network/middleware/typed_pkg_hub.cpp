@@ -5,9 +5,6 @@
 #include "network/asio_point.h"
 
 namespace ffnet {
-
-
-
     typed_pkg_hub::typed_tcp_pkg_handler::typed_tcp_pkg_handler(typed_pkg_hub *pHub)
             :m_pHub(pHub){}
 

@@ -6,9 +6,7 @@ namespace ffnet
 net_buffer::net_buffer(int iInitSize)
     : m_oBuffer(iInitSize)
     , m_iToWriteBufIndex(0)
-, m_iToReadBufIndex(0)
-{
-}
+, m_iToReadBufIndex(0){}
 
 void net_buffer::write_buffer(const char *pBuf, size_t len)
 {

@@ -1,7 +1,5 @@
 #pragma once
 #include "common.h"
-#include <vector>
-#include <boost/asio.hpp>
 
 namespace ffnet
 {

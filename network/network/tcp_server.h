@@ -2,7 +2,6 @@
 #include "common.h"
 #include "network/tcp_connection_base.h"
 #include "network/end_point.h"
-#include <boost/noncopyable.hpp>
 
 namespace ffnet {
     class tcp_server;

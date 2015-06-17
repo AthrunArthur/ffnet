@@ -1,6 +1,5 @@
 #pragma once
 #include "common.h"
-#include <boost/any.hpp>
 
 namespace ffnet
 {
