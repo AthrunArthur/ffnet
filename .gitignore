@@ -14,3 +14,11 @@
 *~
 *.aux
 *.log
+
+*.idea/
+
+*build/
+
+*.pb.h
+*.pb.cc
+network/lib/
