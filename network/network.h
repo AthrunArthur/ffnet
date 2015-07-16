@@ -9,6 +9,9 @@
 #include "middleware/net_nervure.h"
 #include "middleware/typed_pkg_hub.h"
 
+#include "framework/application.h"
+#include "framework/routine.h"
+
 #include "extension/package_types.h"
 
 #ifdef PROTO_BUF_SUPPORT

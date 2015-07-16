@@ -25,22 +25,24 @@ set(src_list     common/shared_buffer.cpp
     network/tcp_server.cpp
     network/udp_point.cpp
     common/archive.cpp
+    framework/application.cpp
+    framework/routine.cpp
 )
 
-set(lib_list boost_system boost_date_time boost_thread)
+set(lib_list boost_system boost_date_time boost_thread boost_program_options)
 
 find_package(Protobuf QUIET)
 if(PROTOBUF_FOUND)
-message(STATUS "found protobuf, and include protobuf support")
-add_definitions(-DPROTO_BUF_SUPPORT)
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-set(src_list ${src_list} extension/protobuf/proto_buf_wrapper_pkg.cpp
-    extension/protobuf/protobuf_pkg_hub.cpp)
-set(lib_list ${lib_list} ${PROTOBUF_LIBRARIES})
+  #message(STATUS "found protobuf, and include protobuf support")
+  #add_definitions(-DPROTO_BUF_SUPPORT)
+  #include_directories(${PROTOBUF_INCLUDE_DIRS})
+  #set(src_list ${src_list} extension/protobuf/proto_buf_wrapper_pkg.cpp
+  #  extension/protobuf/protobuf_pkg_hub.cpp)
+  #set(lib_list ${lib_list} ${PROTOBUF_LIBRARIES})
 else()
 message(STATUS "not found protobuf, gonna ignore protobuf support")
 endif()
-    
+
 add_library(network_dynamic SHARED ${src_list})
 #add_library(network_static STATIC ${src_list})
 target_link_libraries(network_dynamic ${lib_list})
