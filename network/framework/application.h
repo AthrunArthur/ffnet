@@ -20,14 +20,14 @@ namespace ffnet{
       void  print_help();
       void  list_routines();
       void  run_rountine();
+      void  start_routine(routine * r);
 
       std::vector<routine *>  m_routines;
       boost::function<void ()>  m_to_run_func;
       net_mode m_nm;
-      std::string m_routine_name;
+      std::vector<std::string> m_routine_name;
       std::vector<std::string> m_routine_args;
       std::string m_app_name;
-      std::string m_usage;
 
       boost::program_options::options_description m_desc;
   };//end class application

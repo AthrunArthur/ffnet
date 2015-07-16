@@ -36,7 +36,7 @@ namespace ffnet {
     typedef boost::uint8_t uint8_t;
 
     enum net_mode{
-        real_net,
+        real_net = 1,
         simu_net,
         single_net,
     };

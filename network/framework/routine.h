@@ -6,9 +6,9 @@ namespace ffnet{
     public:
       routine(const std::string & name);
 
-      virtual void initialize(const std::string & args);
+      virtual void initialize(net_mode nm, const std::vector<std::string> & args);
 
-      virtual void run(net_mode nm) = 0;
+      virtual void run() = 0;
 
       inline std::string get_name() const{
         return m_name;
