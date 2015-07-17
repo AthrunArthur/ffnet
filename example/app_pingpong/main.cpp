@@ -29,24 +29,24 @@ class client: public ffnet::routine{
       boost::shared_ptr<PingMsg> pMsg(new PingMsg(pContent, std::strlen(str) + 1));
 
       pConn->send(pMsg);
-      std::cout<<"service running..."<<std::endl;
+      ffnet::mout<<"service running..."<<std::endl;
     }
 
     void    onRecvPong(boost::shared_ptr<PongMsg>pPong, ffnet::tcp_connection_base* from)
     {
       PongMsg & msg =*pPong.get();
-      std::cout<<"got pong!"<<std::endl;
+      ffnet::mout<<"got pong!"<<std::endl;
       sendPingMsg(from);
     }
 
     void    onConnSucc(ffnet::tcp_connection_base *pConn)
     {
-      std::cout<<"connect success"<<std::endl;
+      ffnet::mout<<"connect success"<<std::endl;
       sendPingMsg(pConn);
     }
     void    onLostConn(ffnet::tcp_connection_base * pConn, ffnet::net_nervure * pbn)
     {
-      std::cout<<"Server lost!"<<std::endl;
+      ffnet::mout<<"Server lost!"<<std::endl;
       pbn->stop();
     }
 
@@ -88,15 +88,15 @@ class server: public ffnet::routine{
 
     void onLostTCPConnection(ffnet::tcp_connection_base * pConn)
     {
-      std::cout<<"lost connection!"<<std::endl;
+      ffnet::mout<<"lost connection!"<<std::endl;
     }
 
     void  press_and_stop()
     {
-      std::cout<<"Press any key to quit..."<<std::endl;
+      ffnet::mout<<"Press any key to quit..."<<std::endl;
       std::cin.get();
       pnn->stop();
-      std::cout<<"Stopping, please wait..."<<std::endl;
+      ffnet::mout<<"Stopping, please wait..."<<std::endl;
     }
   protected:
     ffnet::typed_pkg_hub pkghub;
