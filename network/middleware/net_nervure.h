@@ -6,6 +6,8 @@
 #include "middleware/pkg_handler.h"
 #include "network/tcp_connection_base.h"
 #include "network/events.h"
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition_variable.hpp>
 
 namespace ffnet {
     class tcp_server;
@@ -40,6 +42,7 @@ namespace ffnet {
 
         void run();
 
+        //!This is thread safe!
         void stop();
 
         tcp_server * add_tcp_server(const std::string &ip, uint16_t iTCPPort);
@@ -80,6 +83,8 @@ namespace ffnet {
 
         void on_conn_recv_or_send_error(tcp_connection_base *pConn, boost::system::error_code ec);
 
+        void internal_stop();
+
     protected:
         pkg_packer *m_pBS;
         event_handler *m_pEH;
@@ -97,6 +102,10 @@ namespace ffnet {
         tcp_clients_t m_oClients;
         udp_points_t m_oUDPPoints;
         tcp_connections_t m_oTCPConnections;
+        bool m_safe_to_stop;
+        boost::mutex m_stop_mutex;
+        boost::condition_variable m_stop_cond;
+        boost::thread::id m_io_service_thrd;
     };//end class NetNervure
 }
 

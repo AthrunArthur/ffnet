@@ -81,7 +81,8 @@ namespace ffnet {
 
     net_nervure::net_nervure(net_mode nm)
             : m_oIOService()
-            , mi_mode(nm){
+            , mi_mode(nm)
+            , m_safe_to_stop(true){
         m_pEH = new event_handler();
         m_pBS = new length_packer();
         m_pEH->listen < event::more::tcp_server_accept_connection >
@@ -206,11 +207,29 @@ namespace ffnet {
     }
 
     void net_nervure::stop() {
+      boost::thread::id cid = boost::this_thread::get_id();
+      if(m_safe_to_stop) return ;
+
+      if(cid == m_io_service_thrd){
+        internal_stop();
+      }
+      else{
+        boost::unique_lock<boost::mutex> _lock(m_stop_mutex);
+        m_oIOService.post(boost::bind(&net_nervure::internal_stop, this));
+        while(!m_safe_to_stop){
+          std::cout<<"waiting..."<<std::endl;
+          m_stop_cond.wait(_lock);
+        }
+      }
+    }
+
+    void net_nervure::internal_stop(){
+        m_oIOService.stop();
         for (tcp_servers_t::iterator it = m_oServers.begin(); it != m_oServers.end(); ++it) {
             tcp_server_ptr p = *it;
             p->close();
         }
-        m_oServers.clear();;
+        m_oServers.clear();
         for (tcp_connections_t::iterator it = m_oTCPConnections.begin(); it != m_oTCPConnections.end(); ++it) {
             tcp_connection_base_ptr p = *it;
             p->close();
@@ -221,9 +240,14 @@ namespace ffnet {
             p->close();
         }
         m_oClients.clear();
+        boost::unique_lock<boost::mutex> _lock(m_stop_mutex);
+        m_safe_to_stop = true;
+        m_stop_cond.notify_one();
     }
 
     void net_nervure::run() {
+        m_safe_to_stop= false;
+        m_io_service_thrd = boost::this_thread::get_id();
         m_oIOService.run();
     }
 
