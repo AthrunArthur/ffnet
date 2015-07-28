@@ -16,4 +16,12 @@ namespace ffnet
         virtual void                    pack(net_buffer & oSendBuffer, const package_ptr & pkg) = 0;
     };//end class PkgPacker
     typedef boost::shared_ptr<pkg_packer> pkg_packer_ptr;
+
+    class length_packer : public : pkg_packer{
+      public:
+        virtual ~length_packer();
+        virtual std::list<shared_buffer>        split(net_buffer &oRecvBuffer);
+        virtual void                    pack(net_buffer & oSendBuffer, const char *pBuf, size_t len);
+        virtual void                    pack(net_buffer & oSendBuffer, const package_ptr & pkg);
+    };
 }//end namespace ffnet

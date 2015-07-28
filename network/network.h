@@ -5,6 +5,7 @@
 #include "common/shared_buffer.h"
 #include "common/log.h"
 #include "common/defines.h"
+#include "common/mout.h"
 
 #include "middleware/net_nervure.h"
 #include "middleware/typed_pkg_hub.h"

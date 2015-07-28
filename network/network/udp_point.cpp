@@ -66,7 +66,7 @@ namespace ffnet {
         if (!ec) {
             m_pEH->triger<udp_send_data_succ>(this, bytes_transferred);
             m_oSendBuffer.erase_buffer(bytes_transferred);
-            LOG_DEBUG(connection) << "pkg sent " << bytes_transferred <<
+            LOG(INFO) << "pkg sent " << bytes_transferred <<
                                   " bytes, to ";//<<getRemoteEndpointPtr()->to_str();
             if (m_oSendBuffer.length() != 0) {
                 m_oSocket.async_send_to(boost::asio::buffer(m_oSendBuffer.readable()), m_oSendEndpoint,
@@ -78,7 +78,7 @@ namespace ffnet {
             }
         } else {
             m_iPointState = state_error;
-            LOG_DEBUG(connection) << "ASIOConnection::handle_pkg_sent(), Get error " << ec.message();
+            LOG(WARNING) << "handle_pkg_sent(), Get error " << ec.message();
             m_pEH->triger<udp_send_data_error>(this, ec);
         }
     }
@@ -95,7 +95,7 @@ namespace ffnet {
         if (!error) {
             m_pEH->triger<udp_recv_data_succ>(this, bytes_transferred);
             m_oTempBuffer.filled() += bytes_transferred;
-            LOG_DEBUG(connection) << "recv pkg: " << bytes_transferred << " bytes, from " << m_oRecvEndPoint.address().to_string();
+            LOG(INFO) << "recv pkg: " << bytes_transferred << " bytes, from " << m_oRecvEndPoint.address().to_string();
             if (m_oRecvBuffer.find(m_oRecvEndPoint) == m_oRecvBuffer.end()) {
                 net_buffer *pBuffer = new net_buffer();
                 if (pBuffer == NULL) {
@@ -111,7 +111,7 @@ namespace ffnet {
             start_recv();
         } else {
             m_iPointState = state_error;
-            LOG_DEBUG(connection) << "ASIOConnection::handle_received_pkg(), Get error " << error.message() << " from " <<
+            LOG(WARNING) << "handle_received_pkg(), Get error " << error.message() << " from " <<
                                   m_oRecvEndPoint.address().to_string();
             m_pEH->triger<udp_recv_data_error>(this, error);
         }
@@ -143,7 +143,7 @@ namespace ffnet {
             }
 
             if(!got_pkg_handler){
-                LOG_WARN(connection)<<"udp_point::slice_and_dispatch_pkg(), cannot find handler for pkg id: "<<pkg_id;
+                LOG(WARNING)<<"slice_and_dispatch_pkg(), cannot find handler for pkg id: "<<pkg_id;
             }
         }
     }

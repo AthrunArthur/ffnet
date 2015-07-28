@@ -41,5 +41,19 @@ namespace ffnet {
         single_net,
     };
 
+    enum {
+      protobuf_wrapper_pkg_type = 1,
+      retrans_pkg_type = 10,
+
+      simu_udp_open,
+      simu_udp_send_pkg,
+      simu_udp_close,
+
+      ffnet_internal_reserve,
+    };
+
+    const static std::string simu_server_addr("127.0.0.1");
+    const static uint16_t simu_server_port = 8150;
+
 }//end namespace ffnet;
 

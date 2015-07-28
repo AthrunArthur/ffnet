@@ -18,14 +18,14 @@ namespace ffnet {
 
     void net_tcp_client::handle_connected(const boost::system::error_code &ec) {
         if (!ec) {
-            LOG_TRACE(tcp_client) << "Get connection succ!";
+            LOG(INFO)<<"Get connection succ";
             m_iPointState = state_valid;
             m_oRemoteEndpoint = m_oSocket.remote_endpoint();
             m_pEH->triger<tcp_client_get_connection_succ>(this);
             start_recv();
         } else {
             m_iPointState = state_error;
-            LOG_DEBUG(tcp_client) << "Get connection error!";
+            LOG(WARNING)<<"Get connection error!";
             m_pEH->triger<tcp_client_conn_error>(this, ec);
         }
     }

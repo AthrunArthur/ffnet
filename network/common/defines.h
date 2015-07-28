@@ -1,6 +1,7 @@
 #pragma once
 
 //#include "framework/event.h"
+/*
 #include "common/log.h"
 
 DEF_LOG_MODULE(app)
@@ -19,4 +20,6 @@ ENABLE_LOG_MODULE(udp_server)
 ENABLE_LOG_MODULE(tcp_client)
 ENABLE_LOG_MODULE(connection)
 ENABLE_LOG_MODULE(frmwk)
+*/
 
+#include <glog/logging.h>

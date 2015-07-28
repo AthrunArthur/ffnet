@@ -42,10 +42,10 @@ namespace ffnet {
         const char *pBuf = buf.buffer();
         uint32_t iTypeID;
         ffnet::deseralize(pBuf, iTypeID);
-        LOG_DEBUG(frmwk)<<"typed_pkt_hub::get_pkg(), buf is "<<print_buf(pBuf, buf.length());
+        LOG(INFO)<<"typed_pkt_hub::get_pkg(), buf is "<<print_buf(pBuf, buf.length());
 
         if (m_oPkgCreatorContainer.find(iTypeID) == m_oPkgCreatorContainer.end()) {
-            LOG_ERROR(frmwk) << "TypedPkgHub::get_pkg() " << "can't find the type id:" << iTypeID;
+            LOG(ERROR) << "TypedPkgHub::get_pkg() " << "can't find the type id:" << iTypeID;
             assert(0 && "can't find the type id in service recv pkg set!");
             return package_ptr();
         }
@@ -53,7 +53,7 @@ namespace ffnet {
         package_ptr pPkg = pkg_creator();
         marshaler d(const_cast<const char *>(pBuf), buf.length(), marshaler::deseralizer);
         pPkg->arch(d);
-        LOG_INFO(frmwk) << "TypedPkgHub::get_pkg(), a pkg with id:" << pPkg->type_id() <<
+        LOG(INFO) << "TypedPkgHub::get_pkg(), a pkg with id:" << pPkg->type_id() <<
                         " is forward to user";
         return pPkg;
     }
@@ -75,7 +75,7 @@ namespace ffnet {
                 handler(pkg);
             }
             if(!got_callback){
-                LOG_ERROR(frmwk)<<"TypedPkgHub::handle_tcp_pkg(), a pkg with id: "<<pkg->type_id()<<" has no handler!";
+                LOG(ERROR)<<"TypedPkgHub::handle_tcp_pkg(), a pkg with id: "<<pkg->type_id()<<" has no handler!";
             }
         }
     }
@@ -105,7 +105,7 @@ namespace ffnet {
                 handler(pkg);
             }
             if(!got_callback){
-                LOG_ERROR(frmwk)<<"TypedPkgHub::handle_udp_pkg(), a pkg with id: "<<pkg->type_id()<<" has no handler!";
+                LOG(ERROR)<<"TypedPkgHub::handle_udp_pkg(), a pkg with id: "<<pkg->type_id()<<" has no handler!";
             }
         }
     }

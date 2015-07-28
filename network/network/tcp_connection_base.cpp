@@ -61,8 +61,7 @@ namespace ffnet {
         if (!ec) {
             m_pEH->triger<tcp_send_stream_succ>(this, bytes_transferred);
             m_oSendBuffer.erase_buffer(bytes_transferred);
-            LOG_DEBUG(connection) << "pkg sent " << bytes_transferred <<
-                                  " bytes, to ";//<<getRemoteEndpointPtr()->to_str();
+            LOG(INFO)<<"pkg sent "<<bytes_transferred<<" bytes, to "<<m_oRemoteEndpoint.address().to_string();
             if (m_oSendBuffer.length() != 0) {
                 m_pEH->triger<tcp_start_send_stream>(this,
                                                      boost::asio::buffer_cast<const char *>(m_oSendBuffer.readable()),
@@ -78,7 +77,7 @@ namespace ffnet {
             }
         } else {
             m_iPointState = state_error;
-            LOG_DEBUG(connection) << "TCPConnectionBase::handle_pkg_sent(), Get error " << ec.message();
+            LOG(WARNING)<<"handle_pkg_sent, get error "<<ec.message();
             m_pEH->triger<tcp_send_stream_error>(this, ec);
         }
 
@@ -88,27 +87,27 @@ namespace ffnet {
         try {
             m_pEH->triger<tcp_start_recv_stream>(m_oSocket.local_endpoint(),
                                                  m_oSocket.remote_endpoint());
-            LOG_DEBUG(connection) << "TCPConnectionBase::start_recv() on " << m_oRemoteEndpoint.address().to_string();
-        } catch (boost::system::system_error se) {
-            LOG_DEBUG(connection) << "TCPConnectionBase::start_recv(), remote_endpoint is disconnected!";
-        }
-
-        m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
+            LOG(INFO) << "start_recv() on " << m_oRemoteEndpoint.address().to_string();
+            m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
                                   boost::bind(&net_tcp_connection_base::handle_received_pkg, this, //shared_from_this(),
                                               boost::asio::placeholders::error(),
                                               boost::asio::placeholders::bytes_transferred()));
+        } catch (boost::system::system_error se) {
+            LOG(WARNING) << "start_recv(), remote_endpoint is disconnected!";
+        }
+
     }
 
     void net_tcp_connection_base::handle_received_pkg(const boost::system::error_code &error, size_t bytes_transferred) {
         if (!error) {
             m_pEH->triger<tcp_recv_stream_succ>(this, bytes_transferred);
             m_oRecvBuffer.filled() += bytes_transferred;
-            LOG_DEBUG(connection) << "recv pkg: " << bytes_transferred << " bytes, from " << m_oRemoteEndpoint.address().to_string();
+            LOG(INFO) << "recv pkg: " << bytes_transferred << " bytes, from " << m_oRemoteEndpoint.address().to_string();
             slice_and_dispatch_pkg();
             start_recv();
         } else {
             m_iPointState = state_error;
-            LOG_DEBUG(connection) << "ASIOConnection::handle_received_pkg(), Get error " << error.message() << " from " <<
+            LOG(WARNING) << "handle_received_pkg(), Get error " << error.message() << " from " <<
                                   m_oRemoteEndpoint.address().to_string();
             m_pEH->triger<tcp_recv_stream_error>(this, error);
         }
@@ -140,7 +139,7 @@ namespace ffnet {
             }
 
             if(!got_pkg_handler){
-                LOG_WARN(connection)<<"udp_point::slice_and_dispatch_pkg(), cannot find handler for pkg id: "<<pkg_id;
+                LOG(WARNING)<<"slice_and_dispatch_pkg(), cannot find handler for pkg id: "<<pkg_id;
             }
         }
     }

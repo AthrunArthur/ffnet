@@ -6,18 +6,30 @@ add_definitions(-g)
 #add_definitions(-O2)
 #add_definitions(-DENABLE_LOG_CONSOLE)
 
+set(THIRD_PARTY_LIB_DIR ${PROJECT_SOURCE_DIR}/third_party_libs/)
+
+if(NOT EXISTS ${THIRD_PARTY_LIB_DIR}/glog.zip)
+  message(STATUS "require glog, downloading glog...")
+  file(DOWNLOAD https://github.com/google/glog/archive/master.zip ${THIRD_PARTY_LIB_DIR}/glog.zip)
+  exec_program(unzip ${THIRD_PARTY_LIB_DIR} ARGS glog.zip)
+  exec_program(./configure ${THIRD_PARTY_LIB_DIR}/glog-master ARGS --prefix=${THIRD_PARTY_LIB_DIR}/build)
+  exec_program(make ${THIRD_PARTY_LIB_DIR}/glog-master ARGS)
+  exec_program(make ${THIRD_PARTY_LIB_DIR}/glog-master ARGS install)
+endif(NOT EXISTS ${THIRD_PARTY_LIB_DIR}/glog.zip)
+
+include_directories(${THIRD_PARTY_LIB_DIR}/build/include)
+link_directories(${THIRD_PARTY_LIB_DIR}/build/lib)
+
 
 include_directories(${PROJECT_SOURCE_DIR})
-
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 
 set(src_list     common/shared_buffer.cpp
-    common/log/logger.cpp
-    common/log/logwriter.cpp
-    common/log.cpp
+    common/mout.cpp
     middleware/typed_pkg_hub.cpp
     middleware/net_nervure.cpp
+    middleware/length_packer.cpp
     network/asio_point.cpp
     network/net_buffer.cpp
     network/tcp_connection_base.cpp
