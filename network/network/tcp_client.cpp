@@ -10,13 +10,13 @@ namespace ffnet {
     net_tcp_client::net_tcp_client(io_service &ioservice, pkg_packer * bs,
                          event_handler *eh, const std::vector<tcp_pkg_handler *> & rph, const tcp_endpoint &ep)
             : net_tcp_connection_base(ioservice, bs, eh, rph) {
-        boost::system::error_code ec;
+              std::error_code ec;
         m_pEH->triger<tcp_client_start_connection>(ep);
-        m_oSocket.async_connect(ep, boost::bind(&net_tcp_client::handle_connected,
-                                                 this, boost::asio::placeholders::error()));
+        m_oSocket.async_connect(ep, [this](const std::error_code & ec){
+            handle_connected(ec);});
     }
 
-    void net_tcp_client::handle_connected(const boost::system::error_code &ec) {
+    void net_tcp_client::handle_connected(const std::error_code &ec) {
         if (!ec) {
             LOG(INFO)<<"Get connection succ";
             m_iPointState = state_valid;

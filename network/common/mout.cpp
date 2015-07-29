@@ -14,6 +14,6 @@ namespace ffnet{
     }
   }
 
-  boost::mutex mout_stream::mout_internal_stream::s_out_mutex;
+  std::mutex mout_stream::mout_internal_stream::s_out_mutex;
   mout_stream mout;
 }

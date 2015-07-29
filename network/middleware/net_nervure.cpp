@@ -19,13 +19,13 @@ namespace ffnet {
         m_pEH = new event_handler();
         m_pBS = new length_packer();
         m_pEH->listen < event::more::tcp_server_accept_connection >
-        (boost::bind(&net_nervure::on_tcp_server_accept_connect, this, _1));
+        (std::bind(&net_nervure::on_tcp_server_accept_connect, this, std::placeholders::_1));
         m_pEH->listen < event::more::tcp_client_get_connection_succ >
-        (boost::bind(&net_nervure::on_tcp_client_get_connect, this, _1));
+        (std::bind(&net_nervure::on_tcp_client_get_connect, this, std::placeholders::_1));
         m_pEH->listen < event::more::tcp_recv_stream_error >
-        (boost::bind(&net_nervure::on_conn_recv_or_send_error, this, _1, _2));
+        (std::bind(&net_nervure::on_conn_recv_or_send_error, this, std::placeholders::_1, std::placeholders::_2));
         m_pEH->listen < event::more::tcp_send_stream_error >
-        (boost::bind(&net_nervure::on_conn_recv_or_send_error, this, _1, _2));
+        (std::bind(&net_nervure::on_conn_recv_or_send_error, this, std::placeholders::_1, std::placeholders::_2));
     }
 
     void net_nervure::add_pkg_handler(tcp_pkg_handler * p_tcp_handler, udp_pkg_handler * p_udp_handler)
@@ -48,7 +48,7 @@ namespace ffnet {
     }
 
     tcp_connection_base *net_nervure::add_tcp_client(const std::string &ip, uint16_t iTCPPort) {
-        tcp_endpoint ep(boost::asio::ip::address_v4::from_string(ip), iTCPPort);
+        tcp_endpoint ep(asio::ip::address_v4::from_string(ip), iTCPPort);
         return add_tcp_client(ep);
     }
 
@@ -68,7 +68,7 @@ namespace ffnet {
     }
 
     tcp_server *net_nervure::add_tcp_server(const std::string &ip, uint16_t iTCPPort) {
-        tcp_endpoint ep(boost::asio::ip::address_v4::from_string(ip), iTCPPort);
+        tcp_endpoint ep(asio::ip::address_v4::from_string(ip), iTCPPort);
         return add_tcp_server(ep);
     }
 
@@ -89,7 +89,7 @@ namespace ffnet {
     }
 
     udp_point *net_nervure::add_udp_point(const std::string &ip, uint16_t iUDPPort) {
-        udp_endpoint ep(boost::asio::ip::address_v4::from_string(ip), iUDPPort);
+        udp_endpoint ep(asio::ip::address_v4::from_string(ip), iUDPPort);
         return add_udp_point(ep);
     }
 
@@ -108,7 +108,7 @@ namespace ffnet {
         return ppoint.get();
     }
 
-    void net_nervure::on_conn_recv_or_send_error(tcp_connection_base *pConn, boost::system::error_code ec) {
+    void net_nervure::on_conn_recv_or_send_error(tcp_connection_base *pConn, std::error_code ec) {
         //todo, should revise the connections.
         for (tcp_clients_t::iterator it = m_oClients.begin(); it != m_oClients.end(); ++it) {
             tcp_connection_base_ptr p = *it;
@@ -140,15 +140,15 @@ namespace ffnet {
     }
 
     void net_nervure::stop() {
-      boost::thread::id cid = boost::this_thread::get_id();
+      std::thread::id cid = std::this_thread::get_id();
       if(m_safe_to_stop) return ;
 
       if(cid == m_io_service_thrd){
         internal_stop();
       }
       else{
-        boost::unique_lock<boost::mutex> _lock(m_stop_mutex);
-        m_oIOService.post(boost::bind(&net_nervure::internal_stop, this));
+        std::unique_lock<std::mutex> _lock(m_stop_mutex);
+        m_oIOService.post(std::bind(&net_nervure::internal_stop, this));
         while(!m_safe_to_stop){
           std::cout<<"waiting..."<<std::endl;
           m_stop_cond.wait(_lock);
@@ -173,14 +173,14 @@ namespace ffnet {
             p->close();
         }
         m_oClients.clear();
-        boost::unique_lock<boost::mutex> _lock(m_stop_mutex);
+        std::unique_lock<std::mutex> _lock(m_stop_mutex);
         m_safe_to_stop = true;
         m_stop_cond.notify_one();
     }
 
     void net_nervure::run() {
         m_safe_to_stop= false;
-        m_io_service_thrd = boost::this_thread::get_id();
+        m_io_service_thrd = std::this_thread::get_id();
         m_oIOService.run();
     }
 

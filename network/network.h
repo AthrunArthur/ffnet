@@ -3,7 +3,6 @@
 #include "common/archive.h"
 #include "common/blocking_queue.h"
 #include "common/shared_buffer.h"
-#include "common/log.h"
 #include "common/defines.h"
 #include "common/mout.h"
 

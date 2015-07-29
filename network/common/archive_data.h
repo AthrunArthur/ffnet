@@ -2,8 +2,8 @@
 //!This file is to implement archive for different types.
 
 template <class T>
-typename boost::enable_if_c<
-    boost::is_arithmetic<T>::value
+typename std::enable_if<
+    std::is_arithmetic<T>::value, void
 >::type
 archive(T & data ){
     switch(m_iAT)
@@ -25,8 +25,8 @@ archive(T & data ){
 void archive(String & s);
 
 template<class T, size_t N>
-typename boost::enable_if_c<
-    boost::is_arithmetic<T>::value
+typename std::enable_if<
+    std::is_arithmetic<T>::value, void
 >::type
 archive(T (& data)[N])
 {
@@ -46,8 +46,8 @@ archive(T (& data)[N])
 }
 
 template<class T, size_t N>
-typename boost::enable_if_c<
-    !boost::is_arithmetic<T>::value
+typename std::enable_if<
+    !std::is_arithmetic<T>::value, void
 >::type
 archive(T(&data)[N])
 {
@@ -58,8 +58,8 @@ archive(T(&data)[N])
 }
 
 template<class T>
-typename boost::enable_if_c<
-    boost::is_arithmetic<T>::value
+typename std::enable_if<
+    std::is_arithmetic<T>::value, void
 >::type
 archive(T * & data, size_t  count)
 {
@@ -80,8 +80,8 @@ archive(T * & data, size_t  count)
 }
 
 template<class T>
-typename boost::enable_if_c<
-    boost::is_arithmetic<T>::value
+typename std::enable_if<
+    std::is_arithmetic<T>::value, void
 >::type
 archive(std::vector<T> & data)
 {

@@ -98,12 +98,12 @@ namespace ffnet{
             }
         }
     }
-    void send_message(tcp_connection_base * p_from, const boost::shared_ptr<Message>& p_msg){
+    void send_message(tcp_connection_base * p_from, const std::shared_ptr<Message>& p_msg){
         package_ptr p(new protobuf_wrapper_pkg(p_msg));
         p_from->send(p);
     }
-            
-    void send_message(udp_point * p_from, const udp_endpoint & to, const boost::shared_ptr<Message> & p_msg){
+
+    void send_message(udp_point * p_from, const udp_endpoint & to, const std::shared_ptr<Message> & p_msg){
         package_ptr p(new protobuf_wrapper_pkg(p_msg));
         p_from->send(p, to);
     }

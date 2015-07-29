@@ -41,20 +41,20 @@ void net_buffer::erase_buffer(size_t len)
     }
 }
 
-boost::asio::const_buffer net_buffer::readable() const
+asio::const_buffer net_buffer::readable() const
 {
-    return boost::asio::const_buffer(m_oBuffer.data() + m_iToReadBufIndex, m_iToWriteBufIndex);
+    return asio::const_buffer(m_oBuffer.data() + m_iToReadBufIndex, m_iToWriteBufIndex);
 }
-boost::asio::mutable_buffer net_buffer::writeable()
+asio::mutable_buffer net_buffer::writeable()
 {
     if(idle() < BUFFER_INC_STEP)
         m_oBuffer.resize(size() + BUFFER_INC_STEP);
-    return boost::asio::mutable_buffer(m_oBuffer.data() + m_iToWriteBufIndex, idle());
+    return asio::mutable_buffer(m_oBuffer.data() + m_iToWriteBufIndex, idle());
 }
 
-void net_buffer::append_buffer(boost::asio::const_buffer buf)
+void net_buffer::append_buffer(asio::const_buffer buf)
 {
-    write_buffer(boost::asio::buffer_cast<const char *>(buf), boost::asio::buffer_size(buf));
+    write_buffer(asio::buffer_cast<const char *>(buf), asio::buffer_size(buf));
 }
 
 void net_buffer::reserve(size_t r)

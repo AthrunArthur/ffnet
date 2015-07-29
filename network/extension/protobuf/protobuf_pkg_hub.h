@@ -24,26 +24,26 @@ namespace  ffnet{
         void to_recv_pkg(const typename pkg_recv_callback<Message, PkgTy_>::pkg_recv_handler_t & handler)
         {
             std::string name(PkgTy_::default_instance().GetDescriptor()->full_name());
-            pkg_recv_handler_t h = boost::bind(pkg_recv_callback<Message, PkgTy_>::recv_handler, _1, handler);
+            pkg_recv_handler_t h = std::bind(pkg_recv_callback<Message, PkgTy_>::recv_handler, _1, handler);
             m_oPkgHandlers.insert(std::make_pair(name, h));
         }
 
         template <class PkgTy_>
         void tcp_to_recv_pkg(const typename tcp_recv_callback<Message, PkgTy_>::pkg_recv_handler_t & handler){
             std::string name(PkgTy_::default_instance().GetDescriptor()->full_name());
-            tcp_recv_handler_t h = boost::bind(tcp_recv_callback<Message, PkgTy_>::recv_handler, _1, _2, handler);
+            tcp_recv_handler_t h = std::bind(tcp_recv_callback<Message, PkgTy_>::recv_handler, _1, _2, handler);
             m_oTCPHandlers.insert(std::make_pair(name, h));
         }
 
         template <class PkgTy_>
         void udp_to_recv_pkg(const typename udp_recv_callback<Message, PkgTy_>::pkg_recv_handler_t & handler){
             std::string name(PkgTy_::default_instance().GetDescriptor()->full_name());
-            udp_recv_handler_t h = boost::bind(udp_recv_callback<Message, PkgTy_>::recv_handler, _1, _2, _3, handler);
+            udp_recv_handler_t h = std::bind(udp_recv_callback<Message, PkgTy_>::recv_handler, _1, _2, _3, handler);
             m_oUDPHandlers.insert(std::make_pair(name, h));
         }
 
     protected:
-        typedef boost::shared_ptr<Message> message_ptr;
+        typedef std::shared_ptr<Message> message_ptr;
         class pb_tcp_pkg_handler : public tcp_pkg_handler {
         public:
             pb_tcp_pkg_handler(protobuf_pkg_hub *pHub);
@@ -80,9 +80,9 @@ namespace  ffnet{
 
     protected:
 
-        typedef boost::function<void (message_ptr, tcp_connection_base *)> tcp_recv_handler_t;
-        typedef boost::function<void (message_ptr, udp_point *, udp_endpoint) > udp_recv_handler_t;
-        typedef boost::function<void (message_ptr) > pkg_recv_handler_t;
+        typedef std::function<void (message_ptr, tcp_connection_base *)> tcp_recv_handler_t;
+        typedef std::function<void (message_ptr, udp_point *, udp_endpoint) > udp_recv_handler_t;
+        typedef std::function<void (message_ptr) > pkg_recv_handler_t;
         typedef std::map<std::string, tcp_recv_handler_t> tcp_handlers_t;
         typedef std::map<std::string, udp_recv_handler_t> udp_handlers_t;
         typedef std::map<std::string, pkg_recv_handler_t> pkg_handlers_t;
@@ -93,7 +93,7 @@ namespace  ffnet{
         pkg_handlers_t m_oPkgHandlers;
     };
 
-    void send_message(tcp_connection_base * p_from, const boost::shared_ptr<Message>& p_msg);
-    void send_message(udp_point * p_from, const udp_endpoint & to, const boost::shared_ptr<Message> & p_msg);
+    void send_message(tcp_connection_base * p_from, const std::shared_ptr<Message>& p_msg);
+    void send_message(udp_point * p_from, const udp_endpoint & to, const std::shared_ptr<Message> & p_msg);
 
 }

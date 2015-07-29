@@ -33,7 +33,7 @@ namespace ffnet {
                   event_handler *eh, const std::vector<tcp_pkg_handler *> & rph, const tcp_endpoint & ep);
 
 
-        inline boost::asio::io_service &ioservice() {
+        inline asio::io_service &ioservice() {
             return m_oIOService;
         }
 
@@ -48,14 +48,14 @@ namespace ffnet {
         event_handler *m_pEH;
         std::vector<tcp_pkg_handler *> m_pRPH;
     };
-    typedef boost::shared_ptr<tcp_server> tcp_server_ptr;
+    typedef std::shared_ptr<tcp_server> tcp_server_ptr;
 
     class net_tcp_server : public tcp_server {
     public:
         net_tcp_server(io_service &ioservice, pkg_packer *bs,
                    event_handler *eh, const std::vector<tcp_pkg_handler *> & rph, const tcp_endpoint & ep);
 
-        inline boost::asio::ip::tcp::acceptor &acceptor() {
+        inline asio::ip::tcp::acceptor &acceptor() {
             return m_oAcceptor;
         }
 
@@ -65,10 +65,10 @@ namespace ffnet {
 
     protected:
 
-        void handle_accept(tcp_connection_base_ptr pNewConn, const boost::system::error_code &error);
+        void handle_accept(tcp_connection_base_ptr pNewConn, const std::error_code &error);
 
     protected:
-        boost::asio::ip::tcp::acceptor m_oAcceptor;
+        asio::ip::tcp::acceptor m_oAcceptor;
     };
 }//end namespace ffnet
 

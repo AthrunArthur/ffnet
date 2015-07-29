@@ -6,8 +6,6 @@
 #include "middleware/package.h"
 #include "middleware/pkg_handler.h"
 #include "network/end_point.h"
-
-
 #include <map>
 #include <cassert>
 
@@ -24,31 +22,31 @@ namespace ffnet {
 
         template<typename PkgTy_>
         void to_recv_pkg(const typename pkg_recv_callback<package, PkgTy_>::pkg_recv_handler_t &handler) {
-            boost::shared_ptr<PkgTy_> pPkg(new PkgTy_());
+            std::shared_ptr<PkgTy_> pPkg(new PkgTy_());
             if (m_oPkgCreatorContainer.find(pPkg->type_id()) == m_oPkgCreatorContainer.end())
                 m_oPkgCreatorContainer.insert(std::make_pair(pPkg->type_id(),
-                                                             boost::bind(package_new_wrapper<PkgTy_>::New)));
-            pkg_recv_handler_t rh(boost::bind(pkg_recv_callback<package, PkgTy_>::recv_handler, _1, handler));
+                                                             std::bind(package_new_wrapper<PkgTy_>::New)));
+            pkg_recv_handler_t rh(std::bind(pkg_recv_callback<package, PkgTy_>::recv_handler, std::placeholders::_1, handler));
             m_oPkgHandlers.insert(std::make_pair(pPkg->type_id(), rh));
         }
 
         template<class PkgTy_>
-        void tcp_to_recv_pkg(typename tcp_recv_callback<package, PkgTy_>::pkg_recv_handler_t handler) {
-            boost::shared_ptr<PkgTy_> pPkg(new PkgTy_());
+        void tcp_to_recv_pkg(const typename tcp_recv_callback<package, PkgTy_>::pkg_recv_handler_t & handler) {
+            std::shared_ptr<PkgTy_> pPkg(new PkgTy_());
             if (m_oPkgCreatorContainer.find(pPkg->type_id()) == m_oPkgCreatorContainer.end())
                 m_oPkgCreatorContainer.insert(std::make_pair(pPkg->type_id(),
-                                                             boost::bind(package_new_wrapper<PkgTy_>::New)));
-            tcp_recv_handler_t rh(boost::bind(tcp_recv_callback<package, PkgTy_>::recv_handler, _1, _2, handler));
+                                                             std::bind(package_new_wrapper<PkgTy_>::New)));
+            tcp_recv_handler_t rh(std::bind(tcp_recv_callback<package, PkgTy_>::recv_handler, std::placeholders::_1, std::placeholders::_2, handler));
             m_oTCPHandlers.insert(std::make_pair(pPkg->type_id(), rh));
         }
 
         template<class PkgTy_>
         void udp_to_recv_pkg(typename udp_recv_callback<package, PkgTy_>::pkg_recv_handler_t handler) {
-            boost::shared_ptr<PkgTy_> pPkg(new PkgTy_());
+            std::shared_ptr<PkgTy_> pPkg(new PkgTy_());
             if (m_oPkgCreatorContainer.find(pPkg->type_id()) == m_oPkgCreatorContainer.end())
                 m_oPkgCreatorContainer.insert(std::make_pair(pPkg->type_id(),
-                                                             boost::bind(package_new_wrapper<PkgTy_>::New)));
-            udp_recv_handler_t rh(boost::bind(udp_recv_callback<package, PkgTy_>::recv_handler, _1, _2, _3, handler));
+                                                             std::bind(package_new_wrapper<PkgTy_>::New)));
+            udp_recv_handler_t rh(std::bind(udp_recv_callback<package, PkgTy_>::recv_handler, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, handler));
             m_oUDPHandlers.insert(std::make_pair(pPkg->type_id(), rh));
         }
 
@@ -93,10 +91,10 @@ namespace ffnet {
         package_ptr get_pkg(const shared_buffer &buf);
 
     protected:
-        typedef boost::function<package_ptr()> pkg_creator_t;
-        typedef boost::function<void(package_ptr, tcp_connection_base *)> tcp_recv_handler_t;
-        typedef boost::function<void(package_ptr, udp_point *, udp_endpoint)> udp_recv_handler_t;
-        typedef boost::function<void(package_ptr)> pkg_recv_handler_t;
+        typedef std::function<package_ptr()> pkg_creator_t;
+        typedef std::function<void(package_ptr, tcp_connection_base *)> tcp_recv_handler_t;
+        typedef std::function<void(package_ptr, udp_point *, udp_endpoint)> udp_recv_handler_t;
+        typedef std::function<void(package_ptr)> pkg_recv_handler_t;
         typedef std::map<uint32_t, pkg_creator_t> pkg_creator_container_t;
         typedef std::map<uint32_t, tcp_recv_handler_t> tcp_handlers_t;
         typedef std::map<uint32_t, udp_recv_handler_t> udp_handlers_t;

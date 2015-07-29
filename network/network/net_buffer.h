@@ -15,11 +15,11 @@ public:
 
     void                        erase_buffer(size_t len);
 
-    boost::asio::const_buffer        readable() const;
+    asio::const_buffer        readable() const;
 
-    boost::asio::mutable_buffer        writeable() ;
+    asio::mutable_buffer        writeable() ;
 
-    void                        append_buffer(boost::asio::const_buffer buf) ;
+    void                        append_buffer(asio::const_buffer buf) ;
     void                        reserve(size_t r) ;
     void                        reserve_idle( size_t r);
     inline const char                 *buffer() const {

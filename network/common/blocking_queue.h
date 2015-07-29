@@ -1,7 +1,6 @@
 #pragma once
 #include "common.h"
-#include <boost/thread/condition_variable.hpp>
-#include <boost/thread.hpp>
+#include <condition_variable>
 #include <queue>
 namespace ffnet
 {
@@ -27,7 +26,7 @@ namespace ffnet
 
         void                            pop(Ty & val)
         {
-            boost::unique_lock<boost::mutex> ul(m_oMutex);
+            std::unique_lock<std::mutex> ul(m_oMutex);
 
             while(m_oContainer.empty())
             {
@@ -40,17 +39,17 @@ namespace ffnet
 
         size_t                        size() const
         {
-            boost::unique_lock<boost::mutex> ul(m_oMutex);
+            std::unique_lock<std::mutex> ul(m_oMutex);
             return m_oContainer.size();
         }
         bool                            empty() const
         {
-            boost::unique_lock<boost::mutex> ul(m_oMutex);
+            std::unique_lock<std::mutex> ul(m_oMutex);
             return m_oContainer.empty();
         }
     protected:
-        mutable boost::mutex                    m_oMutex;
-        mutable boost::condition_variable    m_oCond;
+        mutable std::mutex                    m_oMutex;
+        mutable std::condition_variable    m_oCond;
         std::queue<Ty>                m_oContainer;
     };//end class CondPopQueue
 }

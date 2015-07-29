@@ -1,6 +1,7 @@
 #include "network/tcp_server.h"
 #include "network/events.h"
 #include "middleware/event_handler.h"
+#include "common/defines.h"
 
 namespace ffnet {
 
@@ -30,20 +31,22 @@ namespace ffnet {
             , m_oAcceptor(ioservice, ep) {}
 
     void net_tcp_server::start_accept() {
-        net_tcp_connection * ntc = new net_tcp_connection(m_oAcceptor.get_io_service(), m_pBS, m_pEH, m_pRPH, this);
-        tcp_connection_base_ptr pNewConn(ntc);
+        auto pn = std::make_shared<net_tcp_connection>(m_oAcceptor.get_io_service(), m_pBS, m_pEH, m_pRPH, this);
+        tcp_connection_base_ptr pNewConn = std::dynamic_pointer_cast<tcp_connection_base>(pn);
+        net_tcp_connection * ntc = static_cast<net_tcp_connection *>(pNewConn.get());
 
+        LOG(INFO)<<"start_accept";
         m_pEH->triger<tcp_server_start_listen>(m_oAcceptor.local_endpoint());
 
-        m_oAcceptor.async_accept(ntc->m_oSocket,
-                                 boost::bind(&net_tcp_server::handle_accept, this, pNewConn,
-                                             boost::asio::placeholders::error)
-        );
+        m_oAcceptor.async_accept(ntc->m_oSocket,[this, pNewConn](const std::error_code & ec){
+            handle_accept(pNewConn, ec);
+            });
     }
 
-    void net_tcp_server::handle_accept(tcp_connection_base_ptr pNewConn, const boost::system::error_code &error) {
+    void net_tcp_server::handle_accept(tcp_connection_base_ptr pNewConn, const std::error_code &error) {
         if (!error) {
             net_tcp_connection * ntc = (net_tcp_connection *)pNewConn.get();
+            LOG(INFO)<<"accept connection";
             ntc->start();
             m_pEH->triger<tcp_server_accept_connection>(pNewConn);
             start_accept();

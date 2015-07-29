@@ -1,8 +1,6 @@
 #pragma once
 
 #include "common.h"
-#include <boost/concept_check.hpp>
-#include <boost/utility.hpp>
 
 namespace ffnet {
 //!Note, we can not use a base class and sub-classes to handle this, because we
@@ -54,21 +52,21 @@ namespace ffnet {
 
 
     template<class Ty_>
-    typename boost::enable_if<boost::is_arithmetic<Ty_>, size_t>::type
+    typename std::enable_if<std::is_arithmetic<Ty_>::value, size_t>::type
     seralize(const Ty_ &val, char *pBuf) {
         std::memcpy(pBuf, (const char *) &val, sizeof(Ty_));
         return sizeof(Ty_);
     }
 
     template<class Ty_>
-    typename boost::enable_if<boost::is_arithmetic<Ty_>, size_t>::type
+    typename std::enable_if<std::is_arithmetic<Ty_>::value, size_t>::type
     deseralize(const char *pBuf, Ty_ &val) {
         std::memcpy((char *) &val, pBuf, sizeof(Ty_));
         return sizeof(Ty_);
     }
 
     template<class Ty_>
-    typename boost::enable_if<boost::is_arithmetic<Ty_>, size_t>::type
+    typename std::enable_if<std::is_arithmetic<Ty_>::value, size_t>::type
     length(const Ty_ &val) {
         return sizeof(Ty_);
     }

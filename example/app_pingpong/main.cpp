@@ -1,19 +1,20 @@
 #include <iostream>
 #include "network.h"
 #include "message.h"
+#include<chrono>
 
 class client: public ffnet::routine{
   public:
     client(): ffnet::routine("client"){}
 
     virtual void initialize(ffnet::net_mode nm, const std::vector<std::string> & args){
-      pkghub.tcp_to_recv_pkg<PongMsg>(boost::bind(&client::onRecvPong, this, _1, _2));
+      pkghub.tcp_to_recv_pkg<PongMsg>(std::bind(&client::onRecvPong, this, std::placeholders::_1, std::placeholders::_2));
 
       pnn = new ffnet::net_nervure(nm);
       pnn->add_pkg_hub(pkghub);
       pnn->add_tcp_client("127.0.0.1", 6891);
-      pnn->get_event_handler()->listen<ffnet::event::tcp_get_connection>(boost::bind(&client::onConnSucc, this, _1));
-      pnn->get_event_handler()->listen<ffnet::event::tcp_lost_connection>(boost::bind(&client::onLostConn, this, _1, pnn));
+      pnn->get_event_handler()->listen<ffnet::event::tcp_get_connection>(std::bind(&client::onConnSucc, this, std::placeholders::_1));
+      pnn->get_event_handler()->listen<ffnet::event::tcp_lost_connection>(std::bind(&client::onLostConn, this, std::placeholders::_1, pnn));
     }
 
     virtual void run(){
@@ -26,13 +27,13 @@ class client: public ffnet::routine{
       char * pContent = new char[16];
       const char *str = "ping world!";
       std::memcpy(pContent, str, std::strlen(str) + 1);
-      boost::shared_ptr<PingMsg> pMsg(new PingMsg(pContent, std::strlen(str) + 1));
+      std::shared_ptr<PingMsg> pMsg(new PingMsg(pContent, std::strlen(str) + 1));
 
       pConn->send(pMsg);
       ffnet::mout<<"service running..."<<std::endl;
     }
 
-    void    onRecvPong(boost::shared_ptr<PongMsg>pPong, ffnet::tcp_connection_base* from)
+    void    onRecvPong(std::shared_ptr<PongMsg>pPong, ffnet::tcp_connection_base* from)
     {
       PongMsg & msg =*pPong.get();
       ffnet::mout<<"got pong!"<<std::endl;
@@ -60,27 +61,27 @@ class server: public ffnet::routine{
     server(): ffnet::routine("server"){}
 
     virtual void initialize(ffnet::net_mode nm, const std::vector<std::string> & args){
-      pkghub.tcp_to_recv_pkg<PingMsg>(boost::bind(&server::onRecvPing, this, _1, _2));
+      pkghub.tcp_to_recv_pkg<PingMsg>(std::bind(&server::onRecvPing, this, std::placeholders::_1, std::placeholders::_2));
 
       pnn = new ffnet::net_nervure(nm);
       pnn->add_pkg_hub(pkghub);
       pnn->add_tcp_server("127.0.0.1", 6891);
-      pnn->get_event_handler()->listen<ffnet::event::tcp_lost_connection>(boost::bind(&server::onLostTCPConnection, this, _1));
+      pnn->get_event_handler()->listen<ffnet::event::tcp_lost_connection>(std::bind(&server::onLostTCPConnection, this, std::placeholders::_1));
     }
 
     virtual void run(){
-      boost::thread monitor_thrd(boost::bind(&server::press_and_stop, this));
+      std::thread monitor_thrd(std::bind(&server::press_and_stop, this));
       pnn->run();
 
       monitor_thrd.join();
     }
   protected:
-    void onRecvPing(boost::shared_ptr<PingMsg> pPing, ffnet::tcp_connection_base * from)
+    void onRecvPing(std::shared_ptr<PingMsg> pPing, ffnet::tcp_connection_base * from)
     {
 
       pPing->print();
 
-      boost::this_thread::sleep(boost::posix_time::seconds(1));
+      std::this_thread::sleep_for(std::chrono::seconds(1));
 
       ffnet::package_ptr pkg(new PongMsg(1));
       from->send(pkg);
