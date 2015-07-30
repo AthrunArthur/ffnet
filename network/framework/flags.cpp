@@ -23,3 +23,6 @@ DEFINE_string(run_routine, "",
 
 DEFINE_bool(list_routines, false,
     "list all available routines");
+
+DEFINE_bool(simu_server, false,
+    "start the simulation server");

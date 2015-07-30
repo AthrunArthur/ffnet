@@ -41,13 +41,14 @@ exec_program(cp ${THIRD_PARTY_LIB_DIR}/asio-master/asio/include ARGS -rf * ${THI
 include_directories(${THIRD_PARTY_LIB_DIR}/build/include)
 link_directories(${THIRD_PARTY_LIB_DIR}/build/lib)
 
-
 include_directories(${PROJECT_SOURCE_DIR})
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 
 set(src_list     common/shared_buffer.cpp
   common/mout.cpp
+  common/archive.cpp
+  common/timer.cpp
   middleware/typed_pkg_hub.cpp
   middleware/net_nervure.cpp
   middleware/length_packer.cpp
@@ -57,10 +58,12 @@ set(src_list     common/shared_buffer.cpp
   network/tcp_client.cpp
   network/tcp_server.cpp
   network/udp_point.cpp
-  common/archive.cpp
   framework/application.cpp
   framework/flags.cpp
   framework/routine.cpp
+  simu_net/simu_server.cpp
+  simu_net/net_simu_base.cpp
+  simu_net/network/simu_udp_point.cpp
   )
 
 set(lib_list glog gflags)

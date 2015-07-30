@@ -40,13 +40,16 @@ namespace ffnet{
       }
 
       EP from_endpoint(){
-        EP ep(boost::asio::ip::address::from_string(m_from_addr), m_from_port);
+        EP ep(asio::ip::address::from_string(m_from_addr), m_from_port);
         return ep;
       }
       EP to_endpoint(){
-        EP ep(boost::asio::ip::address::from_string(m_to_addr), m_to_port);
+        EP ep(asio::ip::address::from_string(m_to_addr), m_to_port);
         return ep;
       }
+
+      const char * pkg_content() const {return m_pkg_content;}
+      int32_t pkg_content_len() const {return m_pkg_len;}
 
     protected:
       std::string m_from_addr;
@@ -57,5 +60,5 @@ namespace ffnet{
       char * m_pkg_content;
   };//end class simu_send_pkg
 
-  typedef simu_send_pkg<simu_udp_send_pkg, udp_endpoint> simu_udp_send_pkg;
+  typedef simu_send_pkg<simu_udp_send_pkg_type, udp_endpoint> simu_udp_send_pkg;
 }

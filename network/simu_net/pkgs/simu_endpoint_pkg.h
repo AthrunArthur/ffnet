@@ -1,7 +1,7 @@
 #pragma once
 #include "common.h"
 #include "middleware/package.h"
-#include "network/endpoint.h"
+#include "network/end_point.h"
 
 
 namespace ffnet{
@@ -21,7 +21,7 @@ namespace ffnet{
       }
 
       EP endpoint(){
-        EP ep(boost::ip::address::from_string(m_self_ep), m_self_port);
+        EP ep(asio::ip::address::from_string(m_self_ep), m_self_port);
         return ep;
       }
 
@@ -30,6 +30,6 @@ namespace ffnet{
       uint16_t m_self_port;
   };//end class simu_endpoint_pkg
 
-  typedef simu_endpoint_pkg<simu_udp_open, udp_endpoint> simu_udp_open_pkg;
-  typedef simu_endpoint_pkg<simu_udp_close, udp_endpoint> simu_udp_close_pkg;
-//}
+  typedef simu_endpoint_pkg<simu_udp_open_type, udp_endpoint> simu_udp_open_pkg;
+  typedef simu_endpoint_pkg<simu_udp_close_type, udp_endpoint> simu_udp_close_pkg;
+}

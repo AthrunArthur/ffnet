@@ -1,6 +1,8 @@
 #include "framework/application.h"
 #include "framework/routine.h"
-#include <glog/logging.h>
+#include "simu_net/simu_server.h"
+#include <common/defines.h>
+#include "simu_net/net_simu_base.h"
 
 
 namespace ffnet{
@@ -8,8 +10,8 @@ namespace ffnet{
     : m_app_name(app_name){}
 
   void application::initialize(int argc, char *argv[]){
-    google::InitGoogleLogging(argv[0]);
-    google::ParseCommandLineFlags(&argc, &argv, true);
+    ::google::InitGoogleLogging(argv[0]);
+    ::google::ParseCommandLineFlags(&argc, &argv, true);
   }
 
   void application::register_routine(routine * rp){
@@ -20,6 +22,10 @@ namespace ffnet{
   void application::run(){
     if(FLAGS_list_routines){
       list_routines();
+      return ;
+    }
+    if(FLAGS_simu_server){
+      start_simu_server();
       return ;
     }
     if(FLAGS_run_routine != std::string("")){
@@ -77,5 +83,11 @@ namespace ffnet{
     }
   }
 
+  void application::start_simu_server(){
+    simu_server ss;
+    simu_net_default snd(&ss);
+    ss.init(&snd);
+    ss.run();
+  }
 }
 

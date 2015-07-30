@@ -20,6 +20,7 @@ namespace ffnet{
       void  list_routines();
       void  run_routine();
       void  start_routine(routine * r);
+      void start_simu_server();
 
       std::vector<routine *>  m_routines;
       std::function<void ()>  m_to_run_func;

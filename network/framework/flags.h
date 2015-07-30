@@ -7,3 +7,4 @@ DECLARE_int32(simu_server_port);
 DECLARE_int32(net_mode);
 DECLARE_string(run_routine);
 DECLARE_bool(list_routines);
+DECLARE_bool(simu_server);

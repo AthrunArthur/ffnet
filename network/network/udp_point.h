@@ -25,7 +25,7 @@ namespace ffnet {
         virtual void close() = 0;
 
     protected:
-        asio::ip::udp::socket m_oSocket;
+        udp_endpoint mo_self_endpoint;
         std::vector<udp_pkg_handler *> m_pRPH;
     };
 
@@ -60,6 +60,7 @@ namespace ffnet {
         typedef std::queue<func_t> tasks_t;
         typedef std::map<udp_endpoint, net_buffer *> recv_buffer_t;
 
+        asio::ip::udp::socket m_oSocket;
         udp_endpoint m_oRecvEndPoint;
         udp_endpoint m_oSendEndpoint;
         tasks_t m_oSendTasks;

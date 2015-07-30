@@ -30,9 +30,9 @@ namespace ffnet {
       protobuf_wrapper_pkg_type = 1,
       retrans_pkg_type = 10,
 
-      simu_udp_open,
-      simu_udp_send_pkg,
-      simu_udp_close,
+      simu_udp_open_type,
+      simu_udp_send_pkg_type,
+      simu_udp_close_type,
 
       ffnet_internal_reserve,
     };
