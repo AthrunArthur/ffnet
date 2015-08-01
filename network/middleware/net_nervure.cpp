@@ -7,6 +7,7 @@
 #include "network/events.h"
 #include "middleware/event_handler.h"
 #include "common/defines.h"
+#include "simu_net/network/simu_udp_point.h"
 
 
 namespace ffnet {
@@ -98,6 +99,9 @@ namespace ffnet {
         switch(mi_mode){
             case real_net:
                 p = new net_udp_point(m_oIOService, m_pBS, m_pEH, m_pUDPHandler, ep);
+                break;
+            case simu_net:
+                p = new simu_udp_point(m_oIOService, m_pBS, m_pEH, m_pUDPHandler, ep);
                 break;
             default:
                 assert(0 && "not impl");

@@ -48,7 +48,6 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 set(src_list     common/shared_buffer.cpp
   common/mout.cpp
   common/archive.cpp
-  common/timer.cpp
   middleware/typed_pkg_hub.cpp
   middleware/net_nervure.cpp
   middleware/length_packer.cpp

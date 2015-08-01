@@ -73,6 +73,9 @@ namespace ffnet{
   }
 
   void application::start_routine(routine * r){
+      r->initialize(m_nm, m_routine_args);
+      r->run();
+    /*
     if(m_nm == real_net){
       r->initialize(m_nm, m_routine_args);
       r->run();
@@ -80,7 +83,7 @@ namespace ffnet{
 
       std::cout<<"TODO start_routine:do something here!"<<std::endl;
 
-    }
+    }*/
   }
 
   void application::start_simu_server(){

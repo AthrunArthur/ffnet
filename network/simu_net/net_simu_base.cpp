@@ -1,7 +1,6 @@
 #include "simu_net/net_simu_base.h"
 #include "simu_net/simu_server.h"
 #include <chrono>
-#include "common/timer.h"
 
 namespace ffnet{
   simu_net_base::simu_net_base(simu_server * svr)
@@ -14,11 +13,11 @@ namespace ffnet{
       mp_svr->forward_pkg(pkg);
       return ;
     }
-    deadline_timer::register_func([this, pkg](){
-        mp_svr->m_nn.ioservice().post([this, pkg](){
-            mp_svr->forward_pkg(pkg);
-          });
-        }, delay_milliseconds);
+    asio::deadline_timer dt(mp_svr->m_nn.ioservice());
+    dt.expires_from_now(boost::posix_time::milliseconds(delay_milliseconds));
+    dt.async_wait([this, pkg](const asio::error_code & error){
+      mp_svr->forward_pkg(pkg);
+        });
   }
 
   void simu_net_base::forward_pkg(std::shared_ptr<simu_udp_send_pkg> pkg){}
