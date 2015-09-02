@@ -8,47 +8,49 @@ class client: public ffnet::routine{
     client(): ffnet::routine("client"){}
 
     virtual void initialize(ffnet::net_mode nm, const std::vector<std::string> & args){
-      pkghub.tcp_to_recv_pkg<PongMsg>(std::bind(&client::onRecvPong, this, std::placeholders::_1, std::placeholders::_2));
+      pkghub.udp_to_recv_pkg<PongMsg>(std::bind(&client::onRecvPong, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
       pnn = new ffnet::net_nervure(nm);
       pnn->add_pkg_hub(pkghub);
-      pnn->add_tcp_client("127.0.0.1", 6891);
-      pnn->get_event_handler()->listen<ffnet::event::tcp_get_connection>(std::bind(&client::onConnSucc, this, std::placeholders::_1));
-      pnn->get_event_handler()->listen<ffnet::event::tcp_lost_connection>(std::bind(&client::onLostConn, this, std::placeholders::_1, pnn));
+      ffnet::udp_point * p = pnn->add_udp_point("127.0.0.1", 7891);
+      ffnet::udp_endpoint ep(asio::ip::address::from_string("127.0.0.1"), 7892);
+      asio::deadline_timer dt(pnn->ioservice());
+      dt.expires_from_now(boost::posix_time::seconds(1));
+      dt.async_wait([this, p, ep](const asio::error_code &ec){
+          sendPingMsg(p, ep);
+          });
     }
 
     virtual void run(){
       pnn->run();
+
     }
 
   protected:
-    void    sendPingMsg(ffnet::tcp_connection_base * pConn)
+    void    sendPingMsg(ffnet::udp_point * point, const ffnet::udp_endpoint & tp)
     {
+      LOG(INFO)<<"to send ping message";
+      ffnet::mout<<"sendPingMsg"<<std::endl;
       char * pContent = new char[16];
       const char *str = "ping world!";
       std::memcpy(pContent, str, std::strlen(str) + 1);
       std::shared_ptr<PingMsg> pMsg(new PingMsg(pContent, std::strlen(str) + 1));
 
-      pConn->send(pMsg);
-      ffnet::mout<<"service running..."<<std::endl;
+      point->send(pMsg, tp);
+      ffnet::mout<<"sent ping "<<std::endl;
+
+      asio::deadline_timer dt(pnn->ioservice());
+      dt.expires_from_now(boost::posix_time::seconds(1));
+      dt.async_wait([this, point, tp](const asio::error_code & ec){
+          sendPingMsg(point, tp);
+          });
+
     }
 
-    void    onRecvPong(std::shared_ptr<PongMsg>pPong, ffnet::tcp_connection_base* from)
+    void    onRecvPong(std::shared_ptr<PongMsg>pPong, ffnet::udp_point * point, ffnet::udp_endpoint from)
     {
       PongMsg & msg =*pPong.get();
       ffnet::mout<<"got pong!"<<std::endl;
-      sendPingMsg(from);
-    }
-
-    void    onConnSucc(ffnet::tcp_connection_base *pConn)
-    {
-      ffnet::mout<<"connect success"<<std::endl;
-      sendPingMsg(pConn);
-    }
-    void    onLostConn(ffnet::tcp_connection_base * pConn, ffnet::net_nervure * pbn)
-    {
-      ffnet::mout<<"Server lost!"<<std::endl;
-      pbn->stop();
     }
 
   protected:
@@ -61,12 +63,11 @@ class server: public ffnet::routine{
     server(): ffnet::routine("server"){}
 
     virtual void initialize(ffnet::net_mode nm, const std::vector<std::string> & args){
-      pkghub.tcp_to_recv_pkg<PingMsg>(std::bind(&server::onRecvPing, this, std::placeholders::_1, std::placeholders::_2));
+      pkghub.udp_to_recv_pkg<PingMsg>(std::bind(&server::onRecvPing, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
       pnn = new ffnet::net_nervure(nm);
       pnn->add_pkg_hub(pkghub);
-      pnn->add_tcp_server("127.0.0.1", 6891);
-      pnn->get_event_handler()->listen<ffnet::event::tcp_lost_connection>(std::bind(&server::onLostTCPConnection, this, std::placeholders::_1));
+      pnn->add_udp_point("127.0.0.1", 7892);
     }
 
     virtual void run(){
@@ -76,20 +77,12 @@ class server: public ffnet::routine{
       monitor_thrd.join();
     }
   protected:
-    void onRecvPing(std::shared_ptr<PingMsg> pPing, ffnet::tcp_connection_base * from)
+    void onRecvPing(std::shared_ptr<PingMsg> pPing, ffnet::udp_point * point, ffnet::udp_endpoint from)
     {
-
       pPing->print();
-
-      std::this_thread::sleep_for(std::chrono::seconds(1));
-
+      LOG(INFO)<<"recv ping";
       ffnet::package_ptr pkg(new PongMsg(1));
-      from->send(pkg);
-    }
-
-    void onLostTCPConnection(ffnet::tcp_connection_base * pConn)
-    {
-      ffnet::mout<<"lost connection!"<<std::endl;
+      point->send(pkg, from);
     }
 
     void  press_and_stop()

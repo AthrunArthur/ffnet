@@ -27,10 +27,10 @@ namespace ffnet {
     template<typename Base_, typename Ty_>
     class pkg_recv_callback{
     public:
-        typedef boost::function<void(boost::shared_ptr<Ty_>)> pkg_recv_handler_t;
+        typedef std::function<void(std::shared_ptr<Ty_>)> pkg_recv_handler_t;
 
-        static void recv_handler(boost::shared_ptr<Base_> pPkg, const pkg_recv_handler_t & handler) {
-            boost::shared_ptr<Ty_> pConcretPkg = boost::dynamic_pointer_cast<Ty_, Base_>(pPkg);
+        static void recv_handler(std::shared_ptr<Base_> pPkg, const pkg_recv_handler_t & handler) {
+            std::shared_ptr<Ty_> pConcretPkg = std::dynamic_pointer_cast<Ty_, Base_>(pPkg);
             handler(pConcretPkg);
         }
     };
@@ -38,10 +38,10 @@ namespace ffnet {
     template<class Base_, class Ty_>
     class tcp_recv_callback{
     public:
-        typedef boost::function<void(boost::shared_ptr<Ty_>, tcp_connection_base *)> pkg_recv_handler_t;
+        typedef std::function<void(std::shared_ptr<Ty_>, tcp_connection_base *)> pkg_recv_handler_t;
 
-        static void recv_handler(boost::shared_ptr<Base_> pPkg, tcp_connection_base *pConn, const pkg_recv_handler_t & handler) {
-            boost::shared_ptr<Ty_> pConcretPkg = boost::dynamic_pointer_cast<Ty_, Base_>(pPkg);
+        static void recv_handler(std::shared_ptr<Base_> pPkg, tcp_connection_base *pConn, const pkg_recv_handler_t & handler) {
+            std::shared_ptr<Ty_> pConcretPkg = std::dynamic_pointer_cast<Ty_, Base_>(pPkg);
             handler(pConcretPkg, pConn);
         }
     };
@@ -49,10 +49,10 @@ namespace ffnet {
     template<class Base_, class Ty_>
     class udp_recv_callback{
     public:
-        typedef boost::function<void(boost::shared_ptr<Ty_>, udp_point *, udp_endpoint)> pkg_recv_handler_t;
+        typedef std::function<void(std::shared_ptr<Ty_>, udp_point *, udp_endpoint)> pkg_recv_handler_t;
 
-        static void recv_handler(boost::shared_ptr<Base_> pPkg, udp_point *from, udp_endpoint ep, const pkg_recv_handler_t & handler) {
-            boost::shared_ptr<Ty_> pConcretPkg = boost::dynamic_pointer_cast<Ty_, Base_>(pPkg);
+        static void recv_handler(std::shared_ptr<Base_> pPkg, udp_point *from, udp_endpoint ep, const pkg_recv_handler_t & handler) {
+            std::shared_ptr<Ty_> pConcretPkg = std::dynamic_pointer_cast<Ty_, Base_>(pPkg);
             handler(pConcretPkg, from, ep);
         }
     };

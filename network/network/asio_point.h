@@ -7,7 +7,7 @@ namespace ffnet
 
     class pkg_packer;
     class event_handler;
-    using boost::asio::io_service;
+    using asio::io_service;
 
     class asio_point : public boost::noncopyable
     {
@@ -34,5 +34,5 @@ namespace ffnet
         point_state m_iPointState;
 
     };
-    typedef boost::shared_ptr<asio_point>        asio_point_ptr;
+    typedef std::shared_ptr<asio_point>        asio_point_ptr;
 }//end namespace ffnet

@@ -10,12 +10,12 @@ namespace ffnet {
 
     udp_point::udp_point(io_service &ioservice, pkg_packer *bs,
                          event_handler *eh, const std::vector<udp_pkg_handler *> & rph, const udp_endpoint &ep)
-            : asio_point(ioservice, bs, eh), m_oSocket(ioservice, ep), m_pRPH(rph){}
+            : asio_point(ioservice, bs, eh), mo_self_endpoint(ep), m_pRPH(rph){}
 
     udp_point::~udp_point(){ }
     net_udp_point::net_udp_point(io_service &ioservice, pkg_packer *bs,
                        event_handler *eh, const std::vector<udp_pkg_handler *> & rph, const udp_endpoint &ep)
-            : udp_point(ioservice, bs, eh, rph, ep), m_bIsSending(false) {
+            : udp_point(ioservice, bs, eh, rph, ep), m_oSocket(ioservice, ep), m_bIsSending(false) {
         m_iPointState = state_valid;
         start_recv();
     }
@@ -33,7 +33,7 @@ namespace ffnet {
             //m_pEH->triger<udp_send_recv_exception>(pkg, pEndpoint);
             return;
         }
-        m_oSendTasks.push(boost::bind(&net_udp_point::actual_send_pkg, this, pkg, pEndpoint));
+        m_oSendTasks.push(std::bind(&net_udp_point::actual_send_pkg, this, pkg, pEndpoint));
         if (!m_bIsSending) {
             m_bIsSending = true;
             start_send();
@@ -56,23 +56,23 @@ namespace ffnet {
         //m_pHandler->onUDPStartSend(this);
         m_pPacker->pack(m_oSendBuffer, pkg);
         m_oSendEndpoint = ep;
-        m_oSocket.async_send_to(boost::asio::buffer(m_oSendBuffer.readable()), m_oSendEndpoint,
-                                boost::bind(&net_udp_point::handle_pkg_sent, this,
-                                            boost::asio::placeholders::error,
-                                            boost::asio::placeholders::bytes_transferred));
+        m_oSocket.async_send_to(asio::buffer(m_oSendBuffer.readable()), m_oSendEndpoint,
+            [this](const std::error_code & ec, std::size_t bt){
+            handle_pkg_sent(ec, bt);
+            });
     }
 
-    void net_udp_point::handle_pkg_sent(const boost::system::error_code &ec, std::size_t bytes_transferred) {
+    void net_udp_point::handle_pkg_sent(const std::error_code &ec, std::size_t bytes_transferred) {
         if (!ec) {
             m_pEH->triger<udp_send_data_succ>(this, bytes_transferred);
             m_oSendBuffer.erase_buffer(bytes_transferred);
             LOG(INFO) << "pkg sent " << bytes_transferred <<
                                   " bytes, to ";//<<getRemoteEndpointPtr()->to_str();
             if (m_oSendBuffer.length() != 0) {
-                m_oSocket.async_send_to(boost::asio::buffer(m_oSendBuffer.readable()), m_oSendEndpoint,
-                                        boost::bind(&net_udp_point::handle_pkg_sent, this,
-                                                    boost::asio::placeholders::error,
-                                                    boost::asio::placeholders::bytes_transferred));
+                m_oSocket.async_send_to(asio::buffer(m_oSendBuffer.readable()), m_oSendEndpoint,
+                  [this](const std::error_code & ec, std::size_t bt){
+                  handle_pkg_sent(ec, bt);
+                  });
             } else {
                 start_send();
             }
@@ -85,13 +85,13 @@ namespace ffnet {
 
     void net_udp_point::start_recv() {
         m_oSocket.async_receive_from(
-                boost::asio::buffer(m_oTempBuffer.writeable()), m_oRecvEndPoint,
-                boost::bind(&net_udp_point::handle_received_pkg, this,
-                            boost::asio::placeholders::error,
-                            boost::asio::placeholders::bytes_transferred));
+                asio::buffer(m_oTempBuffer.writeable()), m_oRecvEndPoint,
+                [this](const std::error_code & ec, std::size_t bt){
+                handle_received_pkg(ec, bt);
+                });
     }
 
-    void net_udp_point::handle_received_pkg(const boost::system::error_code &error, size_t bytes_transferred) {
+    void net_udp_point::handle_received_pkg(const std::error_code &error, size_t bytes_transferred) {
         if (!error) {
             m_pEH->triger<udp_recv_data_succ>(this, bytes_transferred);
             m_oTempBuffer.filled() += bytes_transferred;

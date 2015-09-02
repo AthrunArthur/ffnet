@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "common.h"
 #include "network/asio_point.h"
 #include "middleware/package.h"
@@ -27,7 +25,7 @@ namespace ffnet {
         virtual void close() = 0;
 
     protected:
-        boost::asio::ip::udp::socket m_oSocket;
+        udp_endpoint mo_self_endpoint;
         std::vector<udp_pkg_handler *> m_pRPH;
     };
 
@@ -47,21 +45,22 @@ namespace ffnet {
     protected:
         void start_send();
 
-        void handle_pkg_sent(const boost::system::error_code &ec, std::size_t bytes_transferred);
+        void handle_pkg_sent(const std::error_code &ec, std::size_t bytes_transferred);
 
         void actual_send_pkg(const package_ptr &pkg, const udp_endpoint &endpoint);
 
         void start_recv();
 
-        void handle_received_pkg(const boost::system::error_code &error, size_t bytes_transferred);
+        void handle_received_pkg(const std::error_code &error, size_t bytes_transferred);
 
         void slice_and_dispatch_pkg(net_buffer *pBuf, const udp_endpoint &ep);
 
     protected:
-        typedef boost::function<void()> func_t;
+        typedef std::function<void()> func_t;
         typedef std::queue<func_t> tasks_t;
         typedef std::map<udp_endpoint, net_buffer *> recv_buffer_t;
 
+        asio::ip::udp::socket m_oSocket;
         udp_endpoint m_oRecvEndPoint;
         udp_endpoint m_oSendEndpoint;
         tasks_t m_oSendTasks;
@@ -73,5 +72,5 @@ namespace ffnet {
     };
 
     //end class UDPPoint
-    typedef boost::shared_ptr<udp_point> udp_point_ptr;
+    typedef std::shared_ptr<udp_point> udp_point_ptr;
 }//end namespace ffnet

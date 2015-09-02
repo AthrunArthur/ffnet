@@ -14,7 +14,7 @@ namespace ffnet {
 
     class tcp_connection_base : public asio_point  {
     public:
-        tcp_connection_base(boost::asio::io_service &ioservice, pkg_packer * bs,
+        tcp_connection_base(asio::io_service &ioservice, pkg_packer * bs,
                             event_handler *eh, const std::vector<tcp_pkg_handler *> & rph);
 
         virtual ~tcp_connection_base();
@@ -30,7 +30,7 @@ namespace ffnet {
         tcp_endpoint m_oRemoteEndpoint;
     };
 
-    class net_tcp_connection_base : public tcp_connection_base,public boost::enable_shared_from_this<net_tcp_connection_base> {
+    class net_tcp_connection_base : public tcp_connection_base,public std::enable_shared_from_this<net_tcp_connection_base> {
     public:
         virtual ~net_tcp_connection_base();
 
@@ -40,16 +40,16 @@ namespace ffnet {
 
 
     protected:
-        net_tcp_connection_base(boost::asio::io_service &ioservice, pkg_packer * bs,
+        net_tcp_connection_base(asio::io_service &ioservice, pkg_packer * bs,
                           event_handler *eh, const std::vector<tcp_pkg_handler *> & rph);
 
         void start_send();
 
         void start_recv();
 
-        void handle_pkg_sent(const boost::system::error_code &ec, std::size_t bytes_transferred);
+        void handle_pkg_sent(asio::error_code ec, std::size_t bytes_transferred);
 
-        void handle_received_pkg(const boost::system::error_code &error, size_t bytes_transferred);
+        void handle_received_pkg(const std::error_code &error, size_t bytes_transferred);
 
         void slice_and_dispatch_pkg();
 
@@ -57,7 +57,7 @@ namespace ffnet {
         friend class net_tcp_server;
 
         typedef std::queue<package_ptr> pkgs_t;
-        boost::asio::ip::tcp::socket m_oSocket;
+        asio::ip::tcp::socket m_oSocket;
         net_buffer m_oRecvBuffer;
         net_buffer m_oSendBuffer;
         pkgs_t m_oToSendPkgs;
@@ -65,7 +65,7 @@ namespace ffnet {
         std::map<uint32_t, tcp_pkg_handler *> m_oRPHCache;
     };
 
-    typedef boost::shared_ptr<tcp_connection_base> tcp_connection_base_ptr;
+    typedef std::shared_ptr<tcp_connection_base> tcp_connection_base_ptr;
 
 }//end namespace ffnet
 

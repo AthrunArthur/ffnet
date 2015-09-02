@@ -44,34 +44,32 @@ namespace ffnet {
             m_pPacker->pack(m_oSendBuffer, pPkg);
         }
         if (m_oSendBuffer.length() != 0) {
-            m_pEH->triger<tcp_start_send_stream>(this, boost::asio::buffer_cast<const char *>(m_oSendBuffer.readable()),
-                                                 boost::asio::buffer_size(m_oSendBuffer.readable()));
+            m_pEH->triger<tcp_start_send_stream>(this, asio::buffer_cast<const char *>(m_oSendBuffer.readable()),
+                                                 asio::buffer_size(m_oSendBuffer.readable()));
 
 
-            m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
-                                       boost::bind(&net_tcp_connection_base::handle_pkg_sent, this, //shared_from_this(),
-                                                   boost::asio::placeholders::error,
-                                                   boost::asio::placeholders::bytes_transferred));
+            m_oSocket.async_write_some(asio::buffer(m_oSendBuffer.readable()),[this](asio::error_code ec, std::size_t bt){
+                handle_pkg_sent(ec, bt);
+                });
         } else {
             m_bIsSending = false;
         }
     }
 
-    void net_tcp_connection_base::handle_pkg_sent(const boost::system::error_code &ec, std::size_t bytes_transferred) {
+    void net_tcp_connection_base::handle_pkg_sent(asio::error_code ec, std::size_t bytes_transferred) {
         if (!ec) {
             m_pEH->triger<tcp_send_stream_succ>(this, bytes_transferred);
             m_oSendBuffer.erase_buffer(bytes_transferred);
             LOG(INFO)<<"pkg sent "<<bytes_transferred<<" bytes, to "<<m_oRemoteEndpoint.address().to_string();
             if (m_oSendBuffer.length() != 0) {
                 m_pEH->triger<tcp_start_send_stream>(this,
-                                                     boost::asio::buffer_cast<const char *>(m_oSendBuffer.readable()),
-                                                     boost::asio::buffer_size(m_oSendBuffer.readable()));
+                                                     asio::buffer_cast<const char *>(m_oSendBuffer.readable()),
+                                                     asio::buffer_size(m_oSendBuffer.readable()));
 
 
-                m_oSocket.async_write_some(boost::asio::buffer(m_oSendBuffer.readable()),
-                                           boost::bind(&net_tcp_connection_base::handle_pkg_sent, this,//shared_from_this(),
-                                                       boost::asio::placeholders::error,
-                                                       boost::asio::placeholders::bytes_transferred));
+                m_oSocket.async_write_some(asio::buffer(m_oSendBuffer.readable()),[this](asio::error_code ec, std::size_t bt){
+                    handle_pkg_sent(ec, bt);
+                    });
             } else {
                 start_send();
             }
@@ -88,17 +86,16 @@ namespace ffnet {
             m_pEH->triger<tcp_start_recv_stream>(m_oSocket.local_endpoint(),
                                                  m_oSocket.remote_endpoint());
             LOG(INFO) << "start_recv() on " << m_oRemoteEndpoint.address().to_string();
-            m_oSocket.async_read_some(boost::asio::buffer(m_oRecvBuffer.writeable()),
-                                  boost::bind(&net_tcp_connection_base::handle_received_pkg, this, //shared_from_this(),
-                                              boost::asio::placeholders::error(),
-                                              boost::asio::placeholders::bytes_transferred()));
-        } catch (boost::system::system_error se) {
+            m_oSocket.async_read_some(asio::buffer(m_oRecvBuffer.writeable()),[this](asio::error_code ec, std::size_t bt){
+                handle_received_pkg(ec, bt);
+                });
+        } catch (std::system_error se) {
             LOG(WARNING) << "start_recv(), remote_endpoint is disconnected!";
         }
 
     }
 
-    void net_tcp_connection_base::handle_received_pkg(const boost::system::error_code &error, size_t bytes_transferred) {
+    void net_tcp_connection_base::handle_received_pkg(const std::error_code &error, size_t bytes_transferred) {
         if (!error) {
             m_pEH->triger<tcp_recv_stream_succ>(this, bytes_transferred);
             m_oRecvBuffer.filled() += bytes_transferred;

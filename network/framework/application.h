@@ -1,10 +1,9 @@
 #pragma once
 
 #include "common.h"
-#include <boost/program_options.hpp>
+#include "framework/flags.h"
 
 namespace ffnet{
-
   class routine;
   class application{
     public:
@@ -19,16 +18,15 @@ namespace ffnet{
     protected:
       void  print_help();
       void  list_routines();
-      void  run_rountine();
+      void  run_routine();
       void  start_routine(routine * r);
+      void start_simu_server();
 
       std::vector<routine *>  m_routines;
-      boost::function<void ()>  m_to_run_func;
+      std::function<void ()>  m_to_run_func;
       net_mode m_nm;
       std::vector<std::string> m_routine_name;
       std::vector<std::string> m_routine_args;
       std::string m_app_name;
-
-      boost::program_options::options_description m_desc;
   };//end class application
 }

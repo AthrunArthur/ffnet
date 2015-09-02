@@ -6,8 +6,8 @@
 #include "middleware/pkg_handler.h"
 #include "network/tcp_connection_base.h"
 #include "network/events.h"
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
+#include <mutex>
+#include <condition_variable>
 
 namespace ffnet {
     class tcp_server;
@@ -15,10 +15,10 @@ namespace ffnet {
     class udp_point;
 
 
-    typedef boost::shared_ptr<tcp_server> tcp_server_ptr;
-    typedef boost::shared_ptr<udp_point> udp_point_ptr;
+    typedef std::shared_ptr<tcp_server> tcp_server_ptr;
+    typedef std::shared_ptr<udp_point> udp_point_ptr;
 
-    using boost::asio::io_service;
+    using asio::io_service;
     using namespace event;
 
     class net_nervure {
@@ -81,7 +81,7 @@ namespace ffnet {
 
         void on_tcp_client_get_connect(tcp_connection_base * pClient);
 
-        void on_conn_recv_or_send_error(tcp_connection_base *pConn, boost::system::error_code ec);
+        void on_conn_recv_or_send_error(tcp_connection_base *pConn, std::error_code ec);
 
         void internal_stop();
 
@@ -103,9 +103,9 @@ namespace ffnet {
         udp_points_t m_oUDPPoints;
         tcp_connections_t m_oTCPConnections;
         bool m_safe_to_stop;
-        boost::mutex m_stop_mutex;
-        boost::condition_variable m_stop_cond;
-        boost::thread::id m_io_service_thrd;
+        std::mutex m_stop_mutex;
+        std::condition_variable m_stop_cond;
+        std::thread::id m_io_service_thrd;
     };//end class NetNervure
 }
 

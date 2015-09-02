@@ -20,14 +20,14 @@ namespace ffnet {
 
         protobuf_wrapper_pkg(String strPBMessageName);
 
-        protobuf_wrapper_pkg(boost::shared_ptr<google::protobuf::Message> pMsg);
+        protobuf_wrapper_pkg(std::shared_ptr<google::protobuf::Message> pMsg);
 
-        boost::shared_ptr<Message> protobuf_message() const;
+        std::shared_ptr<Message> protobuf_message() const;
 
         virtual void archive(marshaler &ar);
 
     protected:
-        typedef boost::shared_ptr<Message> message_ptr;
+        typedef std::shared_ptr<Message> message_ptr;
         message_ptr create_message(const std::string &typeName);
 
     protected:

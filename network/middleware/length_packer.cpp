@@ -1,6 +1,6 @@
 #include "middleware/pkg_packer.h"
-
 #include "network/net_buffer.h"
+#include <glog/logging.h>
 
 namespace ffnet{
   length_packer::~length_packer(){};
@@ -18,15 +18,15 @@ namespace ffnet{
     uint32_t len = lr.getLength();
 
     oSendBuffer.reserve_idle(static_cast<size_t>(len + sizeof(len)));
-    char *pBuf = boost::asio::buffer_cast<char *>(oSendBuffer.writeable());
+    char *pBuf = asio::buffer_cast<char *>(oSendBuffer.writeable());
     seralize(len, pBuf);
     oSendBuffer.filled() += sizeof(len);
-    pBuf = boost::asio::buffer_cast<char *>(oSendBuffer.writeable());
+    pBuf = asio::buffer_cast<char *>(oSendBuffer.writeable());
     marshaler s(pBuf, oSendBuffer.idle(), marshaler::seralizer);
     pkg->arch(s);
     oSendBuffer.filled() += len;
     LOG(INFO) << "length_packer::bond(), seralize pkg: "
-      << print_buf(boost::asio::buffer_cast<const char *>(oSendBuffer.readable()),
+      << print_buf(asio::buffer_cast<const char *>(oSendBuffer.readable()),
           oSendBuffer.filled());
   }
 
@@ -36,7 +36,7 @@ namespace ffnet{
       return resPkgs;
 
     uint32_t len;
-    const char *pBuf = boost::asio::buffer_cast<const char *>(oRecvBuffer.readable());
+    const char *pBuf = asio::buffer_cast<const char *>(oRecvBuffer.readable());
     uint32_t buf_len = oRecvBuffer.length();
     size_t bi = 0;
     deseralize(pBuf + bi, len);
@@ -44,7 +44,7 @@ namespace ffnet{
     while (buf_len - bi >= sizeof(len) &&
         buf_len - bi - sizeof(len) >= len) {
       LOG(INFO) << "length_packer::split() buffer is "
-        << print_buf(boost::asio::buffer_cast<const char *>(oRecvBuffer.readable()),
+        << print_buf(asio::buffer_cast<const char *>(oRecvBuffer.readable()),
             oRecvBuffer.filled());
       LOG(INFO) << "length_packer::split() " << "split pkg with len:" << len;
 

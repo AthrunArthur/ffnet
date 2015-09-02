@@ -43,7 +43,7 @@ protected:
     uint32_t                            m_iTypeID;
 };//end class Package
 
-typedef boost::shared_ptr<package>    package_ptr;
+typedef std::shared_ptr<package>    package_ptr;
 
 }//end namespace ffnet
 

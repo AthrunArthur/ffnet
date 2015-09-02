@@ -1,7 +1,6 @@
 #pragma once
 
 #include "common.h"
-#include <boost/thread/mutex.hpp>
 #include <sstream>
 
 namespace ffnet{
@@ -26,7 +25,7 @@ namespace ffnet{
           }
         protected:
           std::stringstream * m_ss;
-          static boost::mutex s_out_mutex;
+          static std::mutex s_out_mutex;
       };//end class mout_internal_stream
       template <class T>
         mout_internal_stream operator << (const T & t){
