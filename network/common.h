@@ -34,6 +34,15 @@ namespace ffnet {
       simu_udp_send_pkg_type,
       simu_udp_close_type,
 
+      simu_tcp_conn_type,
+      simu_tcp_conn_ack_type,
+      simu_tcp_conn_reject_type,
+      simu_tcp_close_type,
+      simu_tcp_listen_type,
+      simu_tcp_listen_ack_type,
+      simu_tcp_listen_reject_type,
+      simu_tcp_send_pkg_type,
+
       ffnet_internal_reserve,
     };
 

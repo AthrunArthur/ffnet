@@ -2,4 +2,5 @@
 
 #include "simu_net/pkgs/simu_send_pkg.h"
 #include "simu_net/pkgs/simu_endpoint_pkg.h"
+#include "simu_net/pkgs/simu_conn_pkg.h"
 

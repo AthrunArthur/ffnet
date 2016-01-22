@@ -32,4 +32,7 @@ namespace ffnet{
 
   typedef simu_endpoint_pkg<simu_udp_open_type, udp_endpoint> simu_udp_open_pkg;
   typedef simu_endpoint_pkg<simu_udp_close_type, udp_endpoint> simu_udp_close_pkg;
+  typedef simu_endpoint_pkg<simu_tcp_listen_type, tcp_endpoint> simu_tcp_listen_pkg;
+  typedef simu_endpoint_pkg<simu_tcp_listen_ack_type, tcp_endpoint> simu_tcp_listen_ack_pkg;
+  typedef simu_endpoint_pkg<simu_tcp_listen_reject_type, tcp_endpoint> simu_tcp_listen_reject_pkg;
 }
